@@ -14,61 +14,48 @@ export const metadata: Metadata = {
 
 function MidjourneyLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-indigo-400">
-      {/* Stylized sailboat representing Midjourney's yacht/boat aesthetic */}
-      <path d="M22 17H2a9 9 0 0 1 18-3.3" />
-      <path d="M12 2v10.5" />
-      <path d="M12 5c2.5 0 5 2 5 4.5S14.5 14 12 14c-2.5 0-5-2-5-4.5S9.5 5 12 5Z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-indigo-400">
+      {/* Premium yacht monogram lettermark M for Midjourney */}
+      <path d="M4 20V8l8 7 8-7v12" />
+      <path d="M2 21h20" opacity="0.3" />
     </svg>
   );
 }
 
 function FluxLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-purple-400">
-      {/* Lightning bolt intersecting with abstract shield representation */}
-      <path d="M11.5 2L3 13h8v9l8.5-11h-8.5z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-purple-400">
+      {/* Crisp, clean, geometric lightning bolt representing Flux/BFL */}
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" fillOpacity="0.15" />
     </svg>
   );
 }
 
 function OpenAILogo({ className = "text-emerald-400" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" className={cn("w-5 h-5", className)}>
-      {/* Accurate vector recreation of OpenAI flower/spiral */}
-      <path d="M4.5 16.5c-1.5-1-2.5-2.7-2.5-4.5 0-3 2.5-5.5 5.5-5.5.9 0 1.8.2 2.5.7" />
-      <path d="M12 6.5c0-1.8-1.5-3.3-3.3-3.3-1.8 0-3.3 1.5-3.3 3.3v1" />
-      <path d="M16.2 7.2c.7-.5 1.6-.7 2.5-.7 3 0 5.5 2.5 5.5 5.5 0 1.8-1 3.5-2.5 4.5" />
-      <path d="M17.5 12h1" />
-      <path d="M7.8 16.8c-.7.5-1.6.7-2.5.7-3 0-5.5-2.5-5.5-5.5 0-1.8 1-3.5 2.5-4.5" />
-      <path d="M6.5 12h1" />
-      <path d="M19.5 16.5c1.5-1 2.5-2.7 2.5-4.5 0-3-2.5-5.5-5.5-5.5-.9 0-1.8.2-2.5.7" />
-      <path d="M12 17.5c0 1.8 1.5 3.3 3.3 3.3 1.8 0 3.3-1.5 3.3-3.3v-1" />
-      <path d="M12 6.5v11" />
-      <path d="M6.5 12h11" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" className={cn("w-5 h-5", className)}>
+      {/* Perfectly aligned symmetric vector representing OpenAI flower */}
+      <circle cx="12" cy="12" r="3" fill="currentColor" fillOpacity="0.1" />
+      <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" opacity="0.6" />
     </svg>
   );
 }
 
 function GeminiLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-sky-400">
-      {/* Official double star sparkle representing Gemini */}
-      <path d="M12 2c0 5.5-4.5 10-10 10 5.5 0 10 4.5 10 10 0-5.5 4.5-10 10-10-5.5 0-10-4.5-10-10z" />
-      <path d="M19 17c0 2.2-1.8 4-4 4 2.2 0 4 1.8 4 4 0-2.2 1.8-4 4-4-2.2 0-4-1.8-4-4z" opacity="0.6" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-5 h-5 text-sky-400">
+      {/* Curved four-pointed star representing Gemini */}
+      <path d="M12 3c0 4.5 3.5 8 8 8-4.5 0-8 3.5-8 8 0-4.5-3.5-8-8-8 4.5 0 8-3.5 8-8z" fill="currentColor" fillOpacity="0.1" />
     </svg>
   );
 }
 
 function ClaudeLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-amber-500">
-      {/* Anthropic geometric crown/sparks design */}
-      <path d="M12 3v18" />
-      <path d="M7 6v12" />
-      <path d="M17 6v12" />
-      <path d="M3 10h18" />
-      <path d="M3 14h18" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-amber-500">
+      {/* Crisp Anthropic lettermark A crown */}
+      <path d="M6 20L12 4l6 16" />
+      <path d="M9 13h6" />
     </svg>
   );
 }
@@ -76,7 +63,6 @@ function ClaudeLogo() {
 function GoogleLogo() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      {/* Google Multicolor G logo */}
       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
       <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
@@ -87,47 +73,41 @@ function GoogleLogo() {
 
 function DeepMindLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-blue-400">
-      {/* Stylized Google DeepMind neural network logo */}
-      <circle cx="12" cy="12" r="3.5" />
-      <circle cx="5" cy="5" r="2.5" />
-      <circle cx="19" cy="5" r="2.5" />
-      <circle cx="5" cy="19" r="2.5" />
-      <circle cx="19" cy="19" r="2.5" />
-      <line x1="7" y1="7" x2="10" y2="10" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
-      <line x1="17" y1="7" x2="14" y2="10" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
-      <line x1="7" y1="17" x2="10" y2="14" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
-      <line x1="17" y1="17" x2="14" y2="14" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-blue-400">
+      {/* DeepMind neural spark nodes */}
+      <circle cx="12" cy="12" r="3" fill="currentColor" />
+      <path d="M12 2v20M2 12h20" opacity="0.5" />
     </svg>
   );
 }
 
 function KlingLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-cyan-400">
-      {/* Kling dual circular overlapping rings */}
-      <circle cx="10" cy="12" r="6" />
-      <circle cx="14" cy="12" r="6" style={{ mixBlendMode: 'screen' }} />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-cyan-400">
+      {/* Kling dual circular infinity orbits */}
+      <path d="M8 12a4 4 0 1 0 8 0c0-2.2-1.8-4-4-4s-4 1.8-4 4z" fill="currentColor" fillOpacity="0.1" />
+      <circle cx="12" cy="12" r="8" strokeDasharray="3 3" />
     </svg>
   );
 }
 
 function IdeogramLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-5 h-5 text-violet-400">
-      {/* Ideogram interlocking shapes representing design grid */}
-      <rect x="5" y="5" width="14" height="14" rx="3" />
-      <circle cx="12" cy="12" r="3" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-violet-400">
+      {/* Clean typographic iris logo */}
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <circle cx="12" cy="12" r="4" fill="currentColor" fillOpacity="0.1" />
     </svg>
   );
 }
 
 function RecraftLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-yellow-400">
-      {/* Recraft Designer stylus/pen representing vectors */}
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-yellow-500">
+      {/* Designer Recraft vector cube */}
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
     </svg>
   );
 }

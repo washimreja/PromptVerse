@@ -20,7 +20,7 @@ const QUICK_ACTIONS: QuickActionItem[] = [
   { icon: "🎨", label: "Midjourney Style", count: "55+ templates", href: "/models/midjourney" },
   { icon: "📷", label: "Product Photo", count: "25+ prompts", href: "/category/product-photography" },
   { icon: "📱", label: "Instagram Content", count: "35+ prompts", href: "/category/instagram" },
-  // Row 3 (Balanced with 3 items)
+  // Row 3
   { icon: "⚡", label: "Viral Reels Ideas", count: "40+ prompts", href: "/category/reels" },
   { icon: "🧠", label: "Productivity Hacks", count: "50+ prompts", href: "/category/productivity" },
   { icon: "🎯", label: "Logo Design", count: "20+ templates", href: "/category/logo" },
@@ -66,25 +66,25 @@ export function QuickActionCards() {
                 "bg-card/45 border border-border/10 backdrop-blur-md",
                 "transition-all duration-300",
                 "hover:scale-[1.015] hover:bg-card/65",
-                "focus:outline-none focus:ring-1 focus:ring-[#22C55E]/30"
+                "focus:outline-none focus:ring-1 focus:ring-gold/30"
               )}
             >
-              {/* V3.2 Corner Accent Lighting Borders (Sharp, Premium corner lights) */}
+              {/* V3.3 Tactile Focus Corner Accent Lighting (Violet -> Gold/Amber) */}
               {/* Top Left */}
-              <div className="absolute top-0 left-0 w-4 h-4 border-t-[1.75px] border-l-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-tl-2xl transition-all duration-300 pointer-events-none" />
+              <div className="absolute top-0 left-0 w-3.5 h-3.5 border-t-[1.75px] border-l-[1.75px] border-primary/20 group-hover:border-gold group-hover:w-5 group-hover:h-5 rounded-tl-2xl transition-all duration-300 ease-out pointer-events-none" />
               {/* Top Right */}
-              <div className="absolute top-0 right-0 w-4 h-4 border-t-[1.75px] border-r-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-tr-2xl transition-all duration-300 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-3.5 h-3.5 border-t-[1.75px] border-r-[1.75px] border-primary/20 group-hover:border-gold group-hover:w-5 group-hover:h-5 rounded-tr-2xl transition-all duration-300 ease-out pointer-events-none" />
               {/* Bottom Left */}
-              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-[1.75px] border-l-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-bl-2xl transition-all duration-300 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-3.5 h-3.5 border-b-[1.75px] border-l-[1.75px] border-primary/20 group-hover:border-gold group-hover:w-5 group-hover:h-5 rounded-bl-2xl transition-all duration-300 ease-out pointer-events-none" />
               {/* Bottom Right */}
-              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-[1.75px] border-r-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-br-2xl transition-all duration-300 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 border-b-[1.75px] border-r-[1.75px] border-primary/20 group-hover:border-gold group-hover:w-5 group-hover:h-5 rounded-br-2xl transition-all duration-300 ease-out pointer-events-none" />
 
-              {/* V3.2 Soft localized corner glows */}
+              {/* V3.3 Soft localized corner glows (using gold/amber) */}
               <div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden -z-10">
-                <div className="absolute -top-3 -left-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute -top-3 -right-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute -bottom-3 -left-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -top-3 -left-3 w-6 h-6 bg-gold/15 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -top-3 -right-3 w-6 h-6 bg-gold/15 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -bottom-3 -left-3 w-6 h-6 bg-gold/15 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-gold/15 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
               {/* Icon avatar frame */}
@@ -108,3 +108,4 @@ export function QuickActionCards() {
     </div>
   );
 }
+export default QuickActionCards;
