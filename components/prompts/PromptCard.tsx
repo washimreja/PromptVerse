@@ -258,6 +258,7 @@ export function PromptCard({ prompt, index = 0 }: PromptCardProps) {
             <button
               onClick={handleShare}
               aria-label="Share prompt link"
+              suppressHydrationWarning
               className={cn(
                 "w-9.5 h-9.5 flex items-center justify-center rounded-xl",
                 "bg-secondary/40 border border-border/20 text-muted-foreground hover:text-foreground hover:bg-secondary",

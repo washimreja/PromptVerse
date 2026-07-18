@@ -35,6 +35,7 @@ export function CopyButton({
     <button
       onClick={handleCopy}
       aria-label={copied ? "Copied" : "Copy prompt text"}
+      suppressHydrationWarning
       className={cn(
         "relative flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold w-full overflow-hidden transition-all duration-300 active:scale-[0.97] select-none",
         copied
