@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { FloatingActionButton } from "@/components/layout/FloatingActionButton";
 import {
   SITE_NAME,
   SITE_TAGLINE,
@@ -91,7 +92,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)",  color: "#0a0a0f" },
+    { media: "(prefers-color-scheme: dark)",  color: "#040508" },
   ],
 };
 
@@ -105,7 +106,7 @@ export default function RootLayout({
       <body className="min-h-dvh flex flex-col bg-background text-foreground antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange={false}
         >
@@ -119,6 +120,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <MobileNav />
+          <FloatingActionButton />
           <Toaster
             richColors
             position="top-center"

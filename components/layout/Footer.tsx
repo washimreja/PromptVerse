@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Sparkles, Heart, ExternalLink } from "lucide-react";
 import {
@@ -8,6 +10,7 @@ import {
   SITE_LINKEDIN,
   SITE_AUTHOR,
 } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 /* ── Custom SVG Social Icons ─────────────────── */
 function InstagramIcon({ className }: { className?: string }) {
@@ -36,16 +39,16 @@ function LinkedInIcon({ className }: { className?: string }) {
 
 const FOOTER_LINKS = [
   {
-    title: "Navigate",
+    title: "Explore Links",
     links: [
-      { href: "/",         label: "Home" },
+      { href: "/",         label: "Discover Feed" },
       { href: "/category", label: "Categories" },
       { href: "/models",   label: "AI Models" },
-      { href: "/search",   label: "Search" },
+      { href: "/search",   label: "Search Box" },
     ],
   },
   {
-    title: "Legal",
+    title: "Legal Pillars",
     links: [
       { href: "/privacy", label: "Privacy Policy" },
       { href: "/terms",   label: "Terms of Use" },
@@ -54,40 +57,54 @@ const FOOTER_LINKS = [
 ];
 
 const SOCIAL_LINKS = [
-  { href: SITE_INSTAGRAM, label: "Instagram", Icon: InstagramIcon },
-  { href: SITE_GITHUB,    label: "GitHub",    Icon: GitHubIcon    },
-  { href: SITE_LINKEDIN,  label: "LinkedIn",  Icon: LinkedInIcon  },
+  { href: SITE_INSTAGRAM, label: "Instagram", Icon: InstagramIcon, hoverColor: "hover:bg-pink-500/25 hover:text-pink-500" },
+  { href: SITE_GITHUB,    label: "GitHub",    Icon: GitHubIcon,    hoverColor: "hover:bg-slate-700/25 hover:text-foreground" },
+  { href: SITE_LINKEDIN,  label: "LinkedIn",  Icon: LinkedInIcon,  hoverColor: "hover:bg-blue-600/25 hover:text-blue-500" },
 ];
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-border bg-background overflow-hidden">
-      {/* Subtle gradient top edge */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+    <footer className="relative border-t border-border/10 bg-background/50 overflow-hidden noise-overlay">
+      
+      {/* Subtle brand glow line separating the footer */}
+      <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-indigo-500 via-purple-500 to-gold" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        {/* Main grid */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+        {/* V3 Stats horizontal strip bar */}
+        <div className="grid grid-cols-3 gap-4 border border-border/20 rounded-2xl bg-card/45 backdrop-blur-md p-4 mb-12 text-center max-w-3xl mx-auto shadow-sm">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-extrabold text-primary">250+</span>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground/60">AI Templates</span>
+          </div>
+          <div className="flex flex-col gap-0.5 border-x border-border/10">
+            <span className="text-sm font-extrabold text-gold">12+</span>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground/60">Models Optimization</span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-extrabold text-primary">Instant</span>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground/60">Copy Action</span>
+          </div>
+        </div>
+
+        {/* Main layout grid */}
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
-          {/* Brand column */}
+          {/* Brand block column */}
           <div className="lg:col-span-2 flex flex-col gap-5">
-            <Link href="/" className="inline-flex items-center gap-2.5 group w-fit">
-              <div className="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
-                <Sparkles className="w-4.5 h-4.5 text-white" aria-hidden="true" />
-              </div>
-              <div>
-                <div className="font-bold text-lg leading-tight">{SITE_NAME}</div>
-                <div className="text-xs text-muted-foreground tracking-widest uppercase">{SITE_TAGLINE}</div>
+            <Link href="/" className="inline-flex items-center gap-2 group w-fit">
+              <div className="font-extrabold text-lg leading-tight tracking-tight">
+                {SITE_NAME}
+                <span className="text-[10px] block font-extrabold text-muted-foreground/50 tracking-widest uppercase mt-0.5">{SITE_TAGLINE}</span>
               </div>
             </Link>
 
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm text-pretty">
-              The easiest place on the internet to discover, explore, and instantly copy premium AI prompts — for creators, designers, and prompt engineers.
+            <p className="text-xs text-muted-foreground/70 leading-relaxed max-w-sm font-semibold">
+              The easiest place on the internet to copy, customize, and discover creative prompt templates. Designed for artists, photographers, editors, and creators.
             </p>
 
-            {/* Social Icons */}
+            {/* Social Buttons with brand color triggers */}
             <div className="flex items-center gap-2">
               {SOCIAL_LINKS.map((s) => (
                 <a
@@ -96,7 +113,10 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${SITE_NAME} on ${s.label}`}
-                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-secondary text-muted-foreground hover:bg-primary hover:text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  className={cn(
+                    "w-9 h-9 flex items-center justify-center rounded-xl bg-secondary/40 border border-border/20 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 shadow-sm",
+                    s.hoverColor
+                  )}
                 >
                   <s.Icon className="h-4 w-4" />
                 </a>
@@ -104,10 +124,10 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Link columns */}
+          {/* Navigation Links Columns */}
           {FOOTER_LINKS.map((col) => (
             <div key={col.title} className="flex flex-col gap-4">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/70">
+              <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/60">
                 {col.title}
               </h3>
               <ul className="flex flex-col gap-2.5">
@@ -115,7 +135,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:underline underline-offset-4"
+                      className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors duration-300 hover:underline underline-offset-4"
                     >
                       {link.label}
                     </Link>
@@ -126,20 +146,21 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            © {year} {SITE_NAME}. All rights reserved.
+        {/* Bottom credits bar */}
+        <div className="mt-12 pt-6 border-t border-border/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[10px] font-semibold text-muted-foreground/60">
+            © {year} {SITE_NAME}. All rights reserved. Built for creators.
           </p>
-          <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+          
+          <p className="text-[10px] font-semibold text-muted-foreground/65 flex items-center gap-1.5">
             Made with{" "}
-            <Heart className="h-3 w-3 text-rose-500 fill-rose-500 animate-pulse" aria-hidden="true" />{" "}
+            <Heart className="h-3.5 w-3.5 text-rose-500 fill-rose-500 animate-pulse" aria-hidden="true" />{" "}
             by{" "}
             <a
               href={SITE_INSTAGRAM}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-foreground hover:text-primary transition-colors duration-200 inline-flex items-center gap-1"
+              className="font-extrabold text-foreground hover:text-primary transition-colors duration-300 inline-flex items-center gap-1 hover:underline underline-offset-2"
             >
               {SITE_AUTHOR}
               <ExternalLink className="h-2.5 w-2.5" />
