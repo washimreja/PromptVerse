@@ -5,7 +5,10 @@
 import type { Prompt, FilterState, SortOption } from "@/types";
 import promptsData from "@/data/prompts.json";
 
-const ALL_PROMPTS: Prompt[] = promptsData as Prompt[];
+const ALL_PROMPTS: Prompt[] = (promptsData as Prompt[]).map((p) => ({
+  ...p,
+  isPro: p.isTrending && p.copyCount > 1800,
+}));
 
 /* ── Helpers ───────────────────────────────────── */
 

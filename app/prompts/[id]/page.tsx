@@ -79,6 +79,19 @@ export default async function PromptDetailPage({ params }: Props) {
           {/* Large Preview Panel */}
           <div className="relative aspect-video sm:aspect-[21/9] rounded-3xl overflow-hidden border border-border shadow-sm">
             <SvgThumbnail prompt={prompt} />
+
+            {/* V3.5 Free/Pro badge overlay */}
+            <div className="absolute top-4 right-4 z-20 pointer-events-none select-none">
+              {prompt.isPro ? (
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest bg-gold/15 text-gold border border-gold/30 shadow-[0_2px_12px_rgba(245,158,11,0.25)] backdrop-blur-md">
+                  🔒 Pro
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 backdrop-blur-md">
+                  ✓ Free
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Prompt Core Panel */}
@@ -97,7 +110,7 @@ export default async function PromptDetailPage({ params }: Props) {
             {/* Prompt Code Block */}
             <div className="relative group">
               <div className="absolute right-3 top-3 z-10">
-                <CopyButton textToCopy={prompt.prompt} className="py-2 px-3 rounded-lg text-xs" />
+                <CopyButton textToCopy={prompt.prompt} isPro={prompt.isPro} className="py-2 px-3 rounded-lg text-xs" />
               </div>
               <pre className="font-mono text-sm leading-relaxed p-5 pt-12 sm:pt-5 bg-secondary text-foreground rounded-2xl border border-border/60 overflow-x-auto whitespace-pre-wrap select-all selection:bg-primary/20">
                 {prompt.prompt}
@@ -114,7 +127,7 @@ export default async function PromptDetailPage({ params }: Props) {
                 </div>
                 <div className="relative group">
                   <div className="absolute right-3 top-3 z-10">
-                    <CopyButton textToCopy={prompt.negativePrompt} className="py-2 px-3 rounded-lg text-xs bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20" />
+                    <CopyButton textToCopy={prompt.negativePrompt} isPro={prompt.isPro} className="py-2 px-3 rounded-lg text-xs bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20" />
                   </div>
                   <pre className="font-mono text-xs leading-relaxed p-5 pt-12 sm:pt-5 bg-rose-500/5 text-rose-600/90 dark:text-rose-400/90 rounded-2xl border border-rose-500/10 overflow-x-auto whitespace-pre-wrap select-all">
                     {prompt.negativePrompt}

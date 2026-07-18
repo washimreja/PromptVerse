@@ -198,6 +198,19 @@ export function PromptCard({ prompt, index = 0 }: PromptCardProps) {
           className="relative block h-[170px] w-full overflow-hidden border-b border-border/20 flex-shrink-0"
         >
           <SvgThumbnail prompt={prompt} />
+
+          {/* V3.5 Free/Pro badge overlay */}
+          <div className="absolute top-3 right-3 z-20 pointer-events-none select-none">
+            {prompt.isPro ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-gold/15 text-gold border border-gold/30 shadow-[0_2px_8px_rgba(245,158,11,0.25)] backdrop-blur-md">
+                🔒 Pro
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 backdrop-blur-md">
+                ✓ Free
+              </span>
+            )}
+          </div>
         </Link>
 
         {/* ── Info Content Area ── */}
@@ -253,7 +266,7 @@ export function PromptCard({ prompt, index = 0 }: PromptCardProps) {
 
           {/* Action Row */}
           <div className="flex items-center justify-between gap-2 border-t border-border/10 pt-3 flex-shrink-0">
-            <CopyButton textToCopy={prompt.prompt} className="flex-1 text-[11px] font-extrabold" />
+            <CopyButton textToCopy={prompt.prompt} isPro={prompt.isPro} className="flex-1 text-[11px] font-extrabold" />
             
             <button
               onClick={handleShare}

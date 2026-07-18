@@ -23,6 +23,7 @@ export interface Prompt {
   tags: string[];
   isFeatured: boolean;
   isTrending: boolean;
+  isPro?: boolean;
   copyCount: number;
   estimatedTime: string;
   style?: string;
