@@ -89,35 +89,45 @@ export function HeroSection() {
 
       <div className="mx-auto max-w-7xl px-4 text-center relative z-10">
         
-        {/* Animated v3 Release Badge */}
+        {/* V3.5 Premium Glossy Release Status Badge */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gold/10 text-gold text-[10px] font-bold uppercase tracking-wider mb-6 border border-gold/20"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 border border-border/30 backdrop-blur-md shadow-lg select-none mb-7"
         >
-          <Sparkles className="h-3.5 w-3.5" />
-          <span>PromptVerse v3.0 Evolution is live</span>
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+          </span>
+          <span className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-gold leading-none">
+            PromptVerse v3.0 Evolution is live
+          </span>
         </motion.div>
 
-        {/* Brand Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.05, ease: "easeOut" }}
-          className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-balance leading-[1.05] mb-5"
-        >
-          Discover. Copy. <span className="gradient-text">Create.</span>
-        </motion.h1>
+        {/* V3.5 Brand Headline (Apple/Linear inspired metallic typography) */}
+        <div className="relative mb-6 select-none">
+          {/* Subtle backdrop mesh glow specifically centered behind title */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[120px] bg-primary/8 rounded-full blur-[80px] -z-10 pointer-events-none" />
 
-        {/* Subtitle */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.05, ease: "easeOut" }}
+            className="text-5xl sm:text-7xl lg:text-8.5xl font-black tracking-[-0.04em] leading-[0.95]"
+          >
+            Discover. Copy. <span className="bg-gradient-to-r from-primary via-purple-400 to-gold bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(99,102,241,0.22)]">Create.</span>
+          </motion.h1>
+        </div>
+
+        {/* V3.5 Styled Description Subtitle */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-          className="text-xs sm:text-sm text-muted-foreground/80 max-w-xl mx-auto leading-relaxed mb-10 text-pretty"
+          transition={{ duration: 0.7, delay: 0.12, ease: "easeOut" }}
+          className="text-[11.5px] sm:text-[13px] text-muted-foreground/75 max-w-xl mx-auto leading-relaxed mb-10 text-pretty font-semibold"
         >
-          The absolute easiest place on the internet to discover, explore, and copy premium AI prompts. Instant copy, optimized for visual artists and content creators.
+          The absolute easiest place on the internet to discover, explore, and copy <span className="text-foreground/90 font-bold">premium AI prompts</span>. Features <span className="text-foreground/90 font-bold">instant copy actions</span> optimized for visual artists and content creators.
         </motion.p>
 
         {/* Glassmorphic Search Bar with Dynamic Suggestions Dropdown */}
