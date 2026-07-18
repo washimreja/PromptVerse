@@ -141,6 +141,42 @@ export const AI_MODELS: AIModel[] = [
     color: '#F59E0B',
     website: 'https://recraft.ai',
   },
+  {
+    slug: 'nano-banana',
+    name: 'Nano Banana',
+    description: 'Ultra-fast image generation optimized for social media and content creators.',
+    bestFor: ['Social Media', 'Reels', 'Instagram', 'TikTok'],
+    icon: '🍌',
+    color: '#FBBF24',
+    website: 'https://nanobanana.ai',
+  },
+  {
+    slug: 'kling',
+    name: 'Kling',
+    description: "Kuaishou's advanced AI video generation model — cinematic quality at scale.",
+    bestFor: ['Video', 'Cinematic', 'Animation', 'Motion'],
+    icon: '🎞️',
+    color: '#EC4899',
+    website: 'https://klingai.com',
+  },
+  {
+    slug: 'veo',
+    name: 'Veo',
+    description: "Google DeepMind's state-of-the-art video generation model with unmatched realism.",
+    bestFor: ['Video Generation', 'Cinematic', 'Realistic Video'],
+    icon: '🎬',
+    color: '#4285F4',
+    website: 'https://deepmind.google/veo',
+  },
+  {
+    slug: 'sora',
+    name: 'Sora',
+    description: "OpenAI's groundbreaking text-to-video model creating stunning cinematic videos.",
+    bestFor: ['Video', 'Cinematic', 'Storytelling', 'Animation'],
+    icon: '🌌',
+    color: '#6366F1',
+    website: 'https://sora.com',
+  },
 ];
 
 export const SORT_OPTIONS = [
@@ -166,6 +202,14 @@ export const POPULAR_SEARCHES = [
   'minimal logo',
   'golden hour',
   'pixar character',
+  'fashion editorial',
+  'vintage film',
+  'black and white',
+  'fantasy warrior',
+  'luxury interior',
+  'macro nature',
+  'street photography',
+  'instagram reel',
 ];
 
 export const PROMPTS_PER_PAGE = 24;

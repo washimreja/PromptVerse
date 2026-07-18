@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MobileNav } from "@/components/layout/MobileNav";
 import {
   SITE_NAME,
   SITE_TAGLINE,
@@ -18,7 +19,7 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -39,6 +40,8 @@ export const metadata: Metadata = {
     "AI image prompts",
     "Gemini prompts",
     "Claude prompts",
+    "Ideogram prompts",
+    "Stable Diffusion prompts",
   ],
   authors: [{ name: SITE_AUTHOR }],
   creator: SITE_AUTHOR,
@@ -76,13 +79,8 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  manifest: "/site.webmanifest",
   icons: {
-    icon: [
-      { url: "/favicon.ico" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
+    icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
 };
@@ -92,8 +90,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f1117" },
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)",  color: "#0a0a0f" },
   ],
 };
 
@@ -112,9 +110,24 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Toaster richColors position="bottom-center" />
+          {/* Extra bottom padding on mobile for the bottom nav */}
+          <main className="flex-1 pb-20 md:pb-0">
+            {children}
+          </main>
+          {/* Footer only shown on md+ screens; mobile uses MobileNav */}
+          <div className="hidden md:block">
+            <Footer />
+          </div>
+          <MobileNav />
+          <Toaster
+            richColors
+            position="top-center"
+            toastOptions={{
+              classNames: {
+                toast: "!rounded-2xl !shadow-xl !border-border !font-sans",
+              },
+            }}
+          />
         </ThemeProvider>
         <Analytics />
       </body>

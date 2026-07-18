@@ -1,23 +1,83 @@
-import type { Metadata } from "next";
-import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from "@/lib/constants";
+import {
+  getFeaturedPrompts,
+  getTrendingPrompts,
+  getMostCopiedPrompts,
+  getLatestPrompts,
+  getEditorChoicePrompts,
+} from "@/lib/prompts";
+import { HeroSection } from "@/components/home/HeroSection";
+import { TrendingCategories } from "@/components/home/TrendingCategories";
+import { BrowseByModel } from "@/components/home/BrowseByModel";
+import { BrowseByCategory } from "@/components/home/BrowseByCategory";
+import { FeaturedPrompts } from "@/components/home/FeaturedPrompts";
+import { NewestPrompts } from "@/components/home/NewestPrompts";
+import { TrendingToday } from "@/components/home/TrendingToday";
+import { MostCopied } from "@/components/home/MostCopied";
+import { EditorChoice } from "@/components/home/EditorChoice";
+import { RandomPrompt } from "@/components/home/RandomPrompt";
+import { AdSlot } from "@/components/ads/AdSlot";
 
-export const metadata: Metadata = {
-  title: `${SITE_NAME} — ${SITE_TAGLINE}`,
-  description: SITE_DESCRIPTION,
-};
+export const revalidate = 3600; // Cache for 1 hour
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch data in parallel on the server
+  const [
+    featured,
+    trending,
+    mostCopied,
+    latest,
+    editorChoice
+  ] = await Promise.all([
+    getFeaturedPrompts(8),
+    getTrendingPrompts(8),
+    getMostCopiedPrompts(8),
+    getLatestPrompts(8),
+    getEditorChoicePrompts(8)
+  ]);
+
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-20 text-center">
-      <div className="animate-fade-up">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight gradient-text-brand mb-4">
-          {SITE_NAME}
-        </h1>
-        <p className="text-lg text-muted-foreground mb-8">{SITE_TAGLINE}</p>
-        <p className="text-sm text-muted-foreground/60">
-          Phase 1 complete — foundation in place ✓
-        </p>
+    <div className="flex flex-col min-h-screen">
+      
+      {/* 1. Hero Section */}
+      <HeroSection />
+
+      {/* Leaderboard Ad (CLS = 0) */}
+      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-4">
+        <AdSlot format="leaderboard" />
       </div>
+
+      {/* 2. Trending Categories Pills */}
+      <TrendingCategories />
+
+      {/* 3. Featured Prompts Carousel */}
+      <FeaturedPrompts prompts={featured} />
+
+      {/* 4. Browse by AI Model Grid */}
+      <BrowseByModel />
+
+      {/* 5. Trending Today Grid */}
+      <TrendingToday prompts={trending} />
+
+      {/* Between Grid Ad (CLS = 0) */}
+      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6">
+        <AdSlot format="rectangle" />
+      </div>
+
+      {/* 6. Most Copied Grid */}
+      <MostCopied prompts={mostCopied} />
+
+      {/* 7. Editor's Choice Section */}
+      <EditorChoice prompts={editorChoice} />
+
+      {/* 8. Browse by Category Grid */}
+      <BrowseByCategory />
+
+      {/* 9. Newest/Latest Grid */}
+      <NewestPrompts prompts={latest} />
+
+      {/* 10. Random Prompt Shuffle section */}
+      <RandomPrompt />
+
     </div>
   );
 }
