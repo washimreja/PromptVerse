@@ -104,22 +104,27 @@ export function HeroSection() {
           </span>
         </motion.div>
 
-        {/* V3.5 Brand Headline (Apple/Linear inspired metallic typography) */}
-        <div className="relative mb-6 select-none">
-          {/* Subtle backdrop mesh glow specifically centered behind title */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[120px] bg-primary/8 rounded-full blur-[80px] -z-10 pointer-events-none" />
+        {/* V3.6 Brand Headline with Moving Text Gradients */}
+        <div className="relative mb-6 select-none max-w-4xl mx-auto">
+          {/* Backdrop mesh glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[140px] bg-primary/10 rounded-full blur-[90px] -z-10 pointer-events-none" />
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.05, ease: "easeOut" }}
-            className="text-5xl sm:text-7xl lg:text-8.5xl font-black tracking-[-0.04em] leading-[0.95]"
+            className="text-4xl sm:text-6xl lg:text-7.5xl font-black tracking-[-0.04em] leading-[1.05]"
           >
-            Discover. Copy. <span className="bg-gradient-to-r from-primary via-purple-400 to-gold bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(99,102,241,0.22)]">Create.</span>
+            Explore the{" "}
+            <span className="bg-gradient-to-r from-indigo-500 via-purple-400 via-gold via-pink-500 to-indigo-500 bg-clip-text text-transparent animate-text-gradient drop-shadow-[0_0_30px_rgba(139,92,246,0.25)]">
+              PromptVerse
+            </span>
+            <br />
+            <span className="text-white/95">Discover. Copy. Create.</span>
           </motion.h1>
         </div>
 
-        {/* V3.5 Styled Description Subtitle */}
+        {/* V3.6 Styled Description Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
