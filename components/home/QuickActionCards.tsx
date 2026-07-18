@@ -9,18 +9,21 @@ interface QuickActionItem {
   label: string;
   count: string;
   href: string;
-  color: string; // for custom border/shadow gradients
 }
 
 const QUICK_ACTIONS: QuickActionItem[] = [
-  { icon: "✨", label: "AI Image Prompts", count: "80+ templates", href: "/category/photography", color: "from-[#22C55E]/10 to-[#34D399]/10" },
-  { icon: "💬", label: "ChatGPT Prompts", count: "45+ prompts", href: "/category/productivity", color: "from-[#22C55E]/10 to-[#34D399]/10" },
-  { icon: "🎬", label: "Video Prompts", count: "30+ prompts", href: "/category/cinematic", color: "from-[#22C55E]/10 to-[#34D399]/10" },
-  { icon: "🎨", label: "Midjourney Style", count: "55+ templates", href: "/models/midjourney", color: "from-[#22C55E]/10 to-[#34D399]/10" },
-  { icon: "📷", label: "Product Photo", count: "25+ prompts", href: "/category/product-photography", color: "from-[#22C55E]/10 to-[#34D399]/10" },
-  { icon: "📱", label: "Instagram Content", count: "35+ prompts", href: "/category/instagram", color: "from-[#22C55E]/10 to-[#34D399]/10" },
-  { icon: "⚡", label: "Viral Reels Ideas", count: "40+ prompts", href: "/category/reels", color: "from-[#22C55E]/10 to-[#34D399]/10" },
-  { icon: "🧠", label: "Productivity Hacks", count: "50+ prompts", href: "/category/productivity", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  // Row 1
+  { icon: "✨", label: "AI Image Prompts", count: "80+ templates", href: "/category/photography" },
+  { icon: "💬", label: "ChatGPT Prompts", count: "45+ prompts", href: "/category/productivity" },
+  { icon: "🎬", label: "Video Prompts", count: "30+ prompts", href: "/category/cinematic" },
+  // Row 2
+  { icon: "🎨", label: "Midjourney Style", count: "55+ templates", href: "/models/midjourney" },
+  { icon: "📷", label: "Product Photo", count: "25+ prompts", href: "/category/product-photography" },
+  { icon: "📱", label: "Instagram Content", count: "35+ prompts", href: "/category/instagram" },
+  // Row 3 (Balanced with 3 items)
+  { icon: "⚡", label: "Viral Reels Ideas", count: "40+ prompts", href: "/category/reels" },
+  { icon: "🧠", label: "Productivity Hacks", count: "50+ prompts", href: "/category/productivity" },
+  { icon: "🎯", label: "Logo Design", count: "20+ templates", href: "/category/logo" },
 ];
 
 export function QuickActionCards() {
@@ -29,18 +32,18 @@ export function QuickActionCards() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05,
+        staggerChildren: 0.04,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 260, damping: 20 } },
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 280, damping: 22 } },
   };
 
   return (
-    <div className="w-full py-8">
+    <div className="w-full py-6">
       {/* Label header */}
       <div className="text-center mb-6">
         <span className="text-[10px] font-extrabold uppercase tracking-widest text-gold bg-gold/10 border border-gold/10 px-2.5 py-1 rounded-full">
@@ -52,60 +55,49 @@ export function QuickActionCards() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 max-w-7xl mx-auto px-4"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto px-4"
       >
         {QUICK_ACTIONS.map((item) => (
           <motion.div key={item.label} variants={itemVariants}>
             <Link
               href={item.href}
               className={cn(
-                "group relative flex flex-col items-center justify-between p-3.5 h-28 rounded-2xl",
+                "group relative flex items-center gap-4 p-4 rounded-2xl",
                 "bg-card/45 border border-border/10 backdrop-blur-md",
-                "text-center transition-all duration-300",
-                "hover:scale-[1.03] hover:border-border/10 hover:bg-card/70",
-                "focus:outline-none focus:ring-1 focus:ring-[#22C55E]/40",
-                "shine overflow-hidden"
+                "transition-all duration-300",
+                "hover:scale-[1.015] hover:bg-card/65",
+                "focus:outline-none focus:ring-1 focus:ring-[#22C55E]/30"
               )}
             >
-              {/* V3.2 Corner Accent Soft Glow Background */}
+              {/* V3.2 Corner Accent Lighting Borders (Sharp, Premium corner lights) */}
+              {/* Top Left */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-[1.75px] border-l-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-tl-2xl transition-all duration-300 pointer-events-none" />
+              {/* Top Right */}
+              <div className="absolute top-0 right-0 w-4 h-4 border-t-[1.75px] border-r-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-tr-2xl transition-all duration-300 pointer-events-none" />
+              {/* Bottom Left */}
+              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-[1.75px] border-l-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-bl-2xl transition-all duration-300 pointer-events-none" />
+              {/* Bottom Right */}
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-[1.75px] border-r-[1.75px] border-[#22C55E]/20 group-hover:border-[#34D399]/85 group-hover:shadow-[0_0_6px_rgba(52,211,153,0.3)] rounded-br-2xl transition-all duration-300 pointer-events-none" />
+
+              {/* V3.2 Soft localized corner glows */}
               <div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden -z-10">
-                {/* Top Left Glow */}
-                <div className="absolute -top-2.5 -left-2.5 w-6 h-6 bg-gradient-to-br from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                {/* Top Right Glow */}
-                <div className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-gradient-to-bl from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                {/* Bottom Left Glow */}
-                <div className="absolute -bottom-2.5 -left-2.5 w-6 h-6 bg-gradient-to-tr from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                {/* Bottom Right Glow */}
-                <div className="absolute -bottom-2.5 -right-2.5 w-6 h-6 bg-gradient-to-tl from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -top-3 -left-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -top-3 -right-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -bottom-3 -left-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-[#22C55E]/15 rounded-full blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
-              {/* V3.2 Corner Accent Borders */}
-              <div className="absolute inset-0 rounded-2xl pointer-events-none">
-                {/* Top Left Corner */}
-                <div className="absolute top-0 left-0 w-3.5 h-3.5 border-t-[1.5px] border-l-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-tl-2xl transition-colors duration-300" />
-                {/* Top Right Corner */}
-                <div className="absolute top-0 right-0 w-3.5 h-3.5 border-t-[1.5px] border-r-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-tr-2xl transition-colors duration-300" />
-                {/* Bottom Left Corner */}
-                <div className="absolute bottom-0 left-0 w-3.5 h-3.5 border-b-[1.5px] border-l-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-bl-2xl transition-colors duration-300" />
-                {/* Bottom Right Corner */}
-                <div className="absolute bottom-0 right-0 w-3.5 h-3.5 border-b-[1.5px] border-r-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-br-2xl transition-colors duration-300" />
-              </div>
-
-              {/* Backside soft centered glow */}
-              <div className={cn(
-                "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-20",
-                item.color
-              )} />
-
-              <span className="text-2xl transform group-hover:scale-110 transition-transform duration-300 select-none">
+              {/* Icon avatar frame */}
+              <div className="w-10 h-10 rounded-xl bg-secondary/50 flex items-center justify-center text-xl select-none transition-transform duration-300 group-hover:scale-105 flex-shrink-0 border border-border/10">
                 {item.icon}
-              </span>
-              
-              <div className="flex flex-col gap-0.5">
-                <span className="text-[11px] font-extrabold tracking-tight text-foreground line-clamp-1 leading-snug">
+              </div>
+
+              {/* Title & info text block */}
+              <div className="flex flex-col text-left">
+                <span className="text-[12px] font-extrabold tracking-tight text-foreground leading-normal">
                   {item.label}
                 </span>
-                <span className="text-[9px] font-bold text-muted-foreground/60 group-hover:text-primary transition-colors">
+                <span className="text-[9.5px] font-bold text-muted-foreground/60 group-hover:text-primary transition-colors">
                   {item.count}
                 </span>
               </div>
