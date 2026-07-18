@@ -15,6 +15,7 @@ import { TrendingToday } from "@/components/home/TrendingToday";
 import { MostCopied } from "@/components/home/MostCopied";
 import { EditorChoice } from "@/components/home/EditorChoice";
 import { RandomPrompt } from "@/components/home/RandomPrompt";
+import { QuickActionCards } from "@/components/home/QuickActionCards";
 import { AdSlot } from "@/components/ads/AdSlot";
 
 export const revalidate = 3600; // Cache for 1 hour
@@ -75,7 +76,10 @@ export default async function HomePage() {
       {/* 9. Newest/Latest Grid */}
       <NewestPrompts prompts={latest} />
 
-      {/* 10. Random Prompt Shuffle section */}
+      {/* 10. Quick Launchpad Cards */}
+      <QuickActionCards />
+
+      {/* 11. Random Prompt Shuffle section */}
       <RandomPrompt />
 
     </div>

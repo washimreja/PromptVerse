@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 import { useSearch } from "@/hooks/useSearch";
-import { QuickActionCards } from "./QuickActionCards";
 
 const PLACEHOLDERS = [
   "cinematic portrait of a wizard...",
@@ -317,9 +316,6 @@ export function HeroSection() {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Quick Actions Panel */}
-        <QuickActionCards />
 
       </div>
     </section>
