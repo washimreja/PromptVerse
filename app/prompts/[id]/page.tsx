@@ -11,6 +11,7 @@ import { SvgThumbnail } from "@/components/prompts/PromptCard";
 import { PromptGrid } from "@/components/prompts/PromptGrid";
 import { CopyButton } from "@/components/prompts/CopyButton";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { ModelLogo } from "@/components/models/ModelLogos";
 import {
   ArrowLeft,
   Sparkles,
@@ -78,7 +79,7 @@ export default async function PromptDetailPage({ params }: Props) {
           
           {/* Large Preview Panel with Dynamic Aspect Ratio */}
           <div
-            className="relative rounded-3xl overflow-hidden border border-border shadow-sm bg-slate-950/60 w-full"
+            className="relative rounded-3xl overflow-hidden border border-[#1a1b24] shadow-md bg-slate-950/60 w-full"
             style={{
               aspectRatio: prompt.aspectRatio ? prompt.aspectRatio.replace(":", "/") : "21/9"
             }}
@@ -95,7 +96,7 @@ export default async function PromptDetailPage({ params }: Props) {
               </div>
             )}
 
-            {/* V3.5 Free/Pro badge overlay */}
+            {/* Free/Pro badge overlay */}
             <div className="absolute top-4 right-4 z-20 pointer-events-none select-none">
               {prompt.isPro ? (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest bg-gold/15 text-gold border border-gold/30 shadow-[0_2px_12px_rgba(245,158,11,0.25)] backdrop-blur-md">
@@ -110,13 +111,13 @@ export default async function PromptDetailPage({ params }: Props) {
           </div>
 
           {/* Prompt Core Panel */}
-          <div className="border border-border rounded-3xl p-6 bg-card shadow-sm space-y-6 relative overflow-hidden">
+          <div className="border border-[#1a1b24] rounded-3xl p-6 bg-[#12131A] shadow-md space-y-6 relative overflow-hidden">
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span>Prompt Text</span>
               </h2>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground/60 font-semibold">
                 <Clock className="h-3.5 w-3.5" />
                 <span>{prompt.estimatedTime}</span>
               </div>
@@ -127,7 +128,7 @@ export default async function PromptDetailPage({ params }: Props) {
               <div className="absolute right-3 top-3 z-10">
                 <CopyButton textToCopy={prompt.prompt} isPro={prompt.isPro} className="py-2 px-3 rounded-lg text-xs" />
               </div>
-              <pre className="font-mono text-sm leading-relaxed p-5 pt-12 sm:pt-5 bg-secondary text-foreground rounded-2xl border border-border/60 overflow-x-auto whitespace-pre-wrap select-all selection:bg-primary/20">
+              <pre className="font-mono text-sm leading-relaxed p-5 pt-12 sm:pt-5 bg-[#161722]/80 text-foreground rounded-2xl border border-border/40 overflow-x-auto whitespace-pre-wrap select-all selection:bg-primary/20">
                 {prompt.prompt}
               </pre>
             </div>
@@ -160,8 +161,8 @@ export default async function PromptDetailPage({ params }: Props) {
         <div className="lg:col-span-4 space-y-6">
           
           {/* Config card */}
-          <div className="border border-border bg-card rounded-3xl p-6 shadow-sm space-y-6">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2 border-b border-border/40 pb-4">
+          <div className="border border-[#1a1b24] bg-[#12131A] rounded-3xl p-6 shadow-md space-y-6">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2 border-b border-border/40 pb-4">
               <Sliders className="h-4 w-4 text-primary" />
               <span>Recommended Config</span>
             </h2>
@@ -175,9 +176,9 @@ export default async function PromptDetailPage({ params }: Props) {
                 {modelObj && (
                   <Link
                     href={`/models/${modelObj.slug}`}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary border border-border/60 hover:text-primary hover:border-primary/20 transition-all font-bold"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-[#161722] border border-border/60 hover:text-primary hover:border-primary/20 transition-all font-bold"
                   >
-                    <span>{modelObj.icon}</span>
+                    <ModelLogo slug={modelObj.slug} />
                     <span>{modelObj.name}</span>
                   </Link>
                 )}
@@ -187,7 +188,7 @@ export default async function PromptDetailPage({ params }: Props) {
               {prompt.aspectRatio && (
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground font-semibold">Aspect Ratio</span>
-                  <span className="font-bold px-2 py-0.5 rounded bg-secondary text-foreground">
+                  <span className="font-bold px-2.5 py-1 rounded-xl bg-[#161722] text-foreground border border-border/30">
                     {prompt.aspectRatio}
                   </span>
                 </div>
@@ -197,7 +198,7 @@ export default async function PromptDetailPage({ params }: Props) {
               {prompt.lighting && (
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground font-semibold">Lighting</span>
-                  <span className="font-bold px-2 py-0.5 rounded bg-secondary text-foreground capitalize">
+                  <span className="font-bold px-2.5 py-1 rounded-xl bg-[#161722] text-foreground border border-border/30 capitalize">
                     {prompt.lighting}
                   </span>
                 </div>
@@ -207,7 +208,7 @@ export default async function PromptDetailPage({ params }: Props) {
               {prompt.style && (
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground font-semibold">Style Mode</span>
-                  <span className="font-bold px-2 py-0.5 rounded bg-secondary text-foreground capitalize">
+                  <span className="font-bold px-2.5 py-1 rounded-xl bg-[#161722] text-foreground border border-border/30 capitalize">
                     {prompt.style}
                   </span>
                 </div>
@@ -217,7 +218,7 @@ export default async function PromptDetailPage({ params }: Props) {
               {prompt.camera && (
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground font-semibold">Camera/Lens</span>
-                  <span className="font-bold px-2 py-0.5 rounded bg-secondary text-foreground">
+                  <span className="font-bold px-2.5 py-1 rounded-xl bg-[#161722] text-foreground border border-border/30">
                     {prompt.camera}
                   </span>
                 </div>
@@ -226,7 +227,7 @@ export default async function PromptDetailPage({ params }: Props) {
               {/* Difficulty */}
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground font-semibold">Difficulty</span>
-                <span className="font-bold px-2 py-0.5 rounded bg-secondary text-foreground">
+                <span className="font-bold px-2.5 py-1 rounded-xl bg-[#161722] text-foreground border border-border/30">
                   {prompt.difficulty === 1 ? "Easy" : prompt.difficulty === 2 ? "Medium" : "Expert"}
                 </span>
               </div>
@@ -234,7 +235,7 @@ export default async function PromptDetailPage({ params }: Props) {
               {/* Quality rating */}
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground font-semibold">Quality Index</span>
-                <span className="font-bold px-2 py-0.5 rounded bg-secondary text-foreground">
+                <span className="font-bold px-2.5 py-1 rounded-xl bg-[#161722] text-foreground border border-border/30">
                   {prompt.quality}/5 (Premium)
                 </span>
               </div>
@@ -242,12 +243,12 @@ export default async function PromptDetailPage({ params }: Props) {
           </div>
 
           {/* Quick tips card */}
-          <div className="border border-border bg-card rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2 border-b border-border/40 pb-4">
+          <div className="border border-[#1a1b24] bg-[#12131A] rounded-3xl p-6 shadow-md space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2 border-b border-border/40 pb-4">
               <Info className="h-4 w-4 text-primary" />
               <span>Prompt Tips</span>
             </h2>
-            <ul className="list-disc list-inside text-xs text-muted-foreground space-y-2 leading-relaxed">
+            <ul className="list-disc list-inside text-xs text-muted-foreground space-y-2.5 leading-relaxed">
               <li>Click the Copy button to copy the prompt text to your clipboard.</li>
               <li>For image generators, adjust the aspect ratio tag <code className="font-mono bg-secondary px-1 py-0.5 rounded">--ar</code> to match your composition layout.</li>
               <li>Incorporate the negative prompt keywords for a cleaner rendered output.</li>
@@ -256,7 +257,7 @@ export default async function PromptDetailPage({ params }: Props) {
           </div>
 
           {/* Author/System Details */}
-          <div className="flex items-center justify-between px-6 py-4 rounded-3xl bg-secondary/40 border border-border text-xs">
+          <div className="flex items-center justify-between px-6 py-4 rounded-3xl bg-[#12131A] border border-[#1a1b24] text-xs">
             <div className="flex items-center gap-2 text-muted-foreground">
               <User className="h-4 w-4" />
               <span>Author: <strong className="text-foreground">{prompt.author}</strong></span>
@@ -298,10 +299,11 @@ export default async function PromptDetailPage({ params }: Props) {
             "genre": prompt.category,
             "version": prompt.version,
             "keywords": prompt.tags.join(", "),
-            "text": prompt.prompt
+            "image": prompt.previewImage
           })
         }}
       />
+
     </div>
   );
 }
