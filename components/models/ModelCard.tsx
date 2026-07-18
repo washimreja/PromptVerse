@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import type { AIModel } from "@/types";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ModelLogo } from "./ModelLogos";
 
 interface ModelCardProps {
   model: AIModel;
@@ -14,7 +15,7 @@ interface ModelCardProps {
 export function ModelCard({ model, index = 0 }: ModelCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay: Math.min(index * 0.04, 0.35), ease: "easeOut" }}
       className="perspective-container"
@@ -22,45 +23,59 @@ export function ModelCard({ model, index = 0 }: ModelCardProps) {
       <Link
         href={`/models/${model.slug}`}
         className={cn(
-          "group relative flex flex-col justify-between p-6 rounded-3xl h-[175px] transition-all duration-500",
-          "bg-card/45 border border-border/30 overflow-hidden backdrop-blur-md",
-          "tilt-card noise-overlay shine"
+          "group relative flex items-center gap-3.5 p-3.5 rounded-2xl h-[100px] transition-all duration-300 ease-out",
+          "bg-[#12131A]/95 border border-[#1a1b24] shadow-md overflow-hidden",
+          "hover:-translate-y-[2px] hover:bg-[#15161E]",
+          "focus:outline-none focus:ring-1"
         )}
+        style={{
+          // @ts-ignore
+          "--tw-ring-color": `${model.color}30`
+        }}
       >
-        {/* Glow backdrop styling */}
+        {/* Soft model-specific radial backglow */}
         <div
-          className="absolute -top-10 -right-10 w-24 h-24 rounded-full blur-2xl opacity-15 transition-opacity duration-500 group-hover:opacity-30"
-          style={{ backgroundColor: model.color || "var(--color-primary)" }}
+          className="absolute -top-6 -right-6 w-14 h-14 rounded-full blur-xl opacity-0 group-hover:opacity-15 transition-opacity duration-300 pointer-events-none"
+          style={{ backgroundColor: model.color }}
         />
 
-        {/* Icon & Details */}
-        <div className="space-y-3 relative z-10">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-md select-none transition-transform duration-300 group-hover:scale-105"
-            style={{
-              backgroundColor: `${model.color || "var(--color-primary)"}15`,
-              border: `1px solid ${model.color || "var(--color-primary)"}25`
-            }}
-          >
-            {model.icon}
-          </div>
-          
-          <div className="space-y-0.5">
-            <h3 className="font-extrabold text-[0.92rem] tracking-tight group-hover:text-primary transition-colors duration-300">
-              {model.name}
-            </h3>
-            <p className="text-[10.5px] text-muted-foreground/75 font-semibold line-clamp-2 leading-relaxed">
-              {model.description}
-            </p>
-          </div>
+        {/* Dynamic model-specific border glow overlay */}
+        <div
+          className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-current opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+          style={{ color: model.color }}
+        />
+
+        {/* Logo Avatar Frame (Uses crisp SVG official logos) */}
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+          style={{
+            backgroundColor: `${model.color}10`,
+            border: `1px solid ${model.color}25`
+          }}
+        >
+          <ModelLogo slug={model.slug} />
         </div>
 
-        {/* Arrow Action */}
-        <div className="flex items-center justify-between pt-2 border-t border-border/10 text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground/60 group-hover:text-primary transition-colors duration-300">
-          <span>Explore Prompts</span>
-          <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1.5" />
+        {/* Content Block */}
+        <div className="flex-grow flex flex-col justify-center text-left min-w-0 pr-4">
+          <h3 className="font-extrabold text-[0.85rem] tracking-tight text-white/95 leading-normal truncate group-hover:text-white transition-colors">
+            {model.name}
+          </h3>
+          <p className="text-[10px] text-muted-foreground/60 font-semibold line-clamp-2 leading-relaxed mt-0.5">
+            {model.description}
+          </p>
         </div>
+
+        {/* Floating action arrow indicator */}
+        <div 
+          className="absolute right-4.5 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 ease-out"
+          style={{ color: model.color }}
+        >
+          <ArrowRight className="h-4 w-4" />
+        </div>
+
       </Link>
     </motion.div>
   );
 }
+export default ModelCard;
