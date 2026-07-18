@@ -76,9 +76,24 @@ export default async function PromptDetailPage({ params }: Props) {
         {/* Left Column: Svg Preview & Prompt Details */}
         <div className="lg:col-span-8 space-y-8">
           
-          {/* Large Preview Panel */}
-          <div className="relative aspect-video sm:aspect-[21/9] rounded-3xl overflow-hidden border border-border shadow-sm">
-            <SvgThumbnail prompt={prompt} />
+          {/* Large Preview Panel with Dynamic Aspect Ratio */}
+          <div
+            className="relative rounded-3xl overflow-hidden border border-border shadow-sm bg-slate-950/60 w-full"
+            style={{
+              aspectRatio: prompt.aspectRatio ? prompt.aspectRatio.replace(":", "/") : "21/9"
+            }}
+          >
+            {prompt.previewImage && (prompt.previewImage.startsWith("http") || !prompt.previewImage.endsWith(".svg")) ? (
+              <img
+                src={prompt.previewImage}
+                alt={prompt.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="relative w-full h-full">
+                <SvgThumbnail prompt={prompt} />
+              </div>
+            )}
 
             {/* V3.5 Free/Pro badge overlay */}
             <div className="absolute top-4 right-4 z-20 pointer-events-none select-none">

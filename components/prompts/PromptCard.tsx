@@ -192,12 +192,23 @@ export function PromptCard({ prompt, index = 0 }: PromptCardProps) {
           "noise-overlay select-none"
         )}
       >
-        {/* ── Image/Preview container ── */}
+        {/* ── Image/Preview container with Dynamic Aspect Ratio ── */}
         <Link
           href={`/prompts/${prompt.id}`}
-          className="relative block h-[170px] w-full overflow-hidden border-b border-border/20 flex-shrink-0"
+          className="relative block w-full overflow-hidden border-b border-border/20 flex-shrink-0 bg-slate-950/60"
+          style={{
+            aspectRatio: prompt.aspectRatio ? prompt.aspectRatio.replace(":", "/") : "16/9"
+          }}
         >
-          <SvgThumbnail prompt={prompt} />
+          {prompt.previewImage && (prompt.previewImage.startsWith("http") || !prompt.previewImage.endsWith(".svg")) ? (
+            <img
+              src={prompt.previewImage}
+              alt={prompt.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          ) : (
+            <SvgThumbnail prompt={prompt} />
+          )}
 
           {/* V3.5 Free/Pro badge overlay */}
           <div className="absolute top-3 right-3 z-20 pointer-events-none select-none">
