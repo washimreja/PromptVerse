@@ -66,15 +66,12 @@ function ThemeToggle({ className }: { className?: string }) {
 
   if (!mounted) return <div className="w-9 h-9 rounded-xl skeleton" />;
 
-  const cycles = ["light", "dark", "system"] as const;
-  type ThemeCycle = typeof cycles[number];
-  const current = (theme as ThemeCycle) || "system";
-  const next = cycles[(cycles.indexOf(current) + 1) % cycles.length];
+  const current = theme === "light" ? "light" : "dark";
+  const next = current === "light" ? "dark" : "light";
 
-  const icons: Record<ThemeCycle, React.ReactNode> = {
+  const icons = {
     light:  <Sun  className="h-[1.1rem] w-[1.1rem]" />,
     dark:   <Moon className="h-[1.1rem] w-[1.1rem]" />,
-    system: <Monitor className="h-[1.1rem] w-[1.1rem]" />,
   };
 
   return (
