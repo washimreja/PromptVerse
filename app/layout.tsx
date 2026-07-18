@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} — ${SITE_TAGLINE}`,
     description: SITE_DESCRIPTION,
     images: ["/og-image.png"],
-    creator: "@washimreja",
+    creator: "@Cinematic_vibes_by_washim",
   },
   robots: {
     index: true,

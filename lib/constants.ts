@@ -9,7 +9,7 @@ export const SITE_DESCRIPTION =
   'The easiest place on the internet to discover and copy AI prompts. Browse 250+ premium prompts for Midjourney, Flux, ChatGPT, Gemini, and more.';
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://promptverse.app';
 export const SITE_AUTHOR = 'Washim Reja';
-export const SITE_INSTAGRAM = 'https://instagram.com/washimreja';
+export const SITE_INSTAGRAM = 'https://instagram.com/Cinematic_vibes_by_washim';
 export const SITE_GITHUB = 'https://github.com/washimreja';
 export const SITE_LINKEDIN = 'https://linkedin.com/in/washimreja';
 
