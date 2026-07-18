@@ -30,13 +30,13 @@ function SearchPageContent() {
   } = useSearch();
 
   // Handle initial query from URL search parameters
+  const urlQuery = searchParams.get("q");
   useEffect(() => {
-    const urlQuery = searchParams.get("q");
     if (urlQuery) {
       handleQueryChange(urlQuery);
       saveToHistory(urlQuery);
     }
-  }, [searchParams, handleQueryChange, saveToHistory]);
+  }, [urlQuery, handleQueryChange, saveToHistory]);
 
   // Focus input on mount or slash keypress
   useEffect(() => {
