@@ -76,6 +76,7 @@ export function FloatingActionButton() {
                 <button
                   key={item.label}
                   onClick={item.onClick}
+                  suppressHydrationWarning
                   className={cn(
                     "flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-300 active:scale-95 text-left w-full hover:bg-secondary",
                     item.color
@@ -93,6 +94,7 @@ export function FloatingActionButton() {
         <button
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Expand quick actions"
+          suppressHydrationWarning
           className={cn(
             "w-12 h-12 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-all duration-300",
             "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white border border-white/10",

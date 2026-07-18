@@ -13,14 +13,14 @@ interface QuickActionItem {
 }
 
 const QUICK_ACTIONS: QuickActionItem[] = [
-  { icon: "✨", label: "AI Image Prompts", count: "80+ templates", href: "/category/photography", color: "from-indigo-500/20 to-purple-500/20" },
-  { icon: "💬", label: "ChatGPT Prompts", count: "45+ prompts", href: "/category/productivity", color: "from-emerald-500/20 to-teal-500/20" },
-  { icon: "🎬", label: "Video Prompts", count: "30+ prompts", href: "/category/cinematic", color: "from-pink-500/20 to-rose-500/20" },
-  { icon: "🎨", label: "Midjourney Style", count: "55+ templates", href: "/models/midjourney", color: "from-blue-500/20 to-cyan-500/20" },
-  { icon: "📷", label: "Product Photo", count: "25+ prompts", href: "/category/product-photography", color: "from-amber-500/20 to-orange-500/20" },
-  { icon: "📱", label: "Instagram Content", count: "35+ prompts", href: "/category/instagram", color: "from-purple-500/20 to-pink-500/20" },
-  { icon: "⚡", label: "Viral Reels Ideas", count: "40+ prompts", href: "/category/reels", color: "from-red-500/20 to-yellow-500/20" },
-  { icon: "🧠", label: "Productivity Hacks", count: "50+ prompts", href: "/category/productivity", color: "from-teal-500/20 to-blue-500/20" },
+  { icon: "✨", label: "AI Image Prompts", count: "80+ templates", href: "/category/photography", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  { icon: "💬", label: "ChatGPT Prompts", count: "45+ prompts", href: "/category/productivity", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  { icon: "🎬", label: "Video Prompts", count: "30+ prompts", href: "/category/cinematic", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  { icon: "🎨", label: "Midjourney Style", count: "55+ templates", href: "/models/midjourney", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  { icon: "📷", label: "Product Photo", count: "25+ prompts", href: "/category/product-photography", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  { icon: "📱", label: "Instagram Content", count: "35+ prompts", href: "/category/instagram", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  { icon: "⚡", label: "Viral Reels Ideas", count: "40+ prompts", href: "/category/reels", color: "from-[#22C55E]/10 to-[#34D399]/10" },
+  { icon: "🧠", label: "Productivity Hacks", count: "50+ prompts", href: "/category/productivity", color: "from-[#22C55E]/10 to-[#34D399]/10" },
 ];
 
 export function QuickActionCards() {
@@ -60,16 +60,40 @@ export function QuickActionCards() {
               href={item.href}
               className={cn(
                 "group relative flex flex-col items-center justify-between p-3.5 h-28 rounded-2xl",
-                "bg-card/40 border border-border/25 backdrop-blur-md",
+                "bg-card/45 border border-border/10 backdrop-blur-md",
                 "text-center transition-all duration-300",
-                "hover:scale-[1.03] hover:border-foreground/20 hover:bg-card/75",
-                "focus:outline-none focus:ring-1 focus:ring-primary/40",
+                "hover:scale-[1.03] hover:border-border/10 hover:bg-card/70",
+                "focus:outline-none focus:ring-1 focus:ring-[#22C55E]/40",
                 "shine overflow-hidden"
               )}
             >
-              {/* Backside glow */}
+              {/* V3.2 Corner Accent Soft Glow Background */}
+              <div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden -z-10">
+                {/* Top Left Glow */}
+                <div className="absolute -top-2.5 -left-2.5 w-6 h-6 bg-gradient-to-br from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Top Right Glow */}
+                <div className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-gradient-to-bl from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Bottom Left Glow */}
+                <div className="absolute -bottom-2.5 -left-2.5 w-6 h-6 bg-gradient-to-tr from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Bottom Right Glow */}
+                <div className="absolute -bottom-2.5 -right-2.5 w-6 h-6 bg-gradient-to-tl from-[#22C55E]/20 to-[#34D399]/0 rounded-full blur-[5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+
+              {/* V3.2 Corner Accent Borders */}
+              <div className="absolute inset-0 rounded-2xl pointer-events-none">
+                {/* Top Left Corner */}
+                <div className="absolute top-0 left-0 w-3.5 h-3.5 border-t-[1.5px] border-l-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-tl-2xl transition-colors duration-300" />
+                {/* Top Right Corner */}
+                <div className="absolute top-0 right-0 w-3.5 h-3.5 border-t-[1.5px] border-r-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-tr-2xl transition-colors duration-300" />
+                {/* Bottom Left Corner */}
+                <div className="absolute bottom-0 left-0 w-3.5 h-3.5 border-b-[1.5px] border-l-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-bl-2xl transition-colors duration-300" />
+                {/* Bottom Right Corner */}
+                <div className="absolute bottom-0 right-0 w-3.5 h-3.5 border-b-[1.5px] border-r-[1.5px] border-[#22C55E]/20 group-hover:border-[#34D399]/70 rounded-br-2xl transition-colors duration-300" />
+              </div>
+
+              {/* Backside soft centered glow */}
               <div className={cn(
-                "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10",
+                "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-20",
                 item.color
               )} />
 

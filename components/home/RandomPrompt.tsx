@@ -46,6 +46,7 @@ export function RandomPrompt() {
         <button
           onClick={handleShuffle}
           disabled={shuffling}
+          suppressHydrationWarning
           className={cn(
             "inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-xs",
             "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-lg border border-white/10",
