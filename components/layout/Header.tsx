@@ -210,12 +210,17 @@ export function Header() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div
             className={cn(
-              "flex h-14 items-center justify-between gap-4 px-4 sm:px-6 transition-all duration-500",
+              "flex h-14 items-center justify-between gap-4 px-4 sm:px-6 transition-all duration-500 relative overflow-hidden",
               isScrolled
-                ? "mx-auto max-w-5xl rounded-2xl border border-border/30 bg-background/65 backdrop-blur-xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.5)] glow-brand"
+                ? "mx-auto max-w-5xl rounded-2xl border border-border/30 bg-background/65 backdrop-blur-xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.5)]"
                 : "w-full"
             )}
           >
+            {/* V3.1 Animated Aurora Glow Overlay (Subtle, slow 18s GPU transitions) */}
+            <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none opacity-40 dark:opacity-65 rounded-[inherit]">
+              <div className="absolute -top-1/2 -left-1/4 w-[85%] h-[200%] bg-gradient-to-r from-violet-600/15 via-indigo-600/15 to-blue-500/10 rounded-full blur-[45px] animate-aurora-slow" />
+              <div className="absolute -top-1/2 -right-1/4 w-[85%] h-[200%] bg-gradient-to-r from-cyan-500/10 via-blue-500/15 to-indigo-600/15 rounded-full blur-[45px] animate-aurora-reverse" />
+            </div>
             {/* Logo */}
             <Link
               href="/"

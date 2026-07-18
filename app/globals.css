@@ -458,6 +458,21 @@
     100% { transform: translate(40px, -20px) scale(1.05); }
   }
 
+  @keyframes aurora-slow {
+    0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+    50% { transform: translate3d(10%, -5%, 0) rotate(180deg) scale(1.05); }
+    100% { transform: translate3d(0, 0, 0) rotate(360deg) scale(1); }
+  }
+
+  @keyframes aurora-reverse {
+    0% { transform: translate3d(0, 0, 0) rotate(360deg) scale(1); }
+    50% { transform: translate3d(-10%, 5%, 0) rotate(180deg) scale(0.95); }
+    100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  }
+
+  .animate-aurora-slow { animation: aurora-slow 18s linear infinite; }
+  .animate-aurora-reverse { animation: aurora-reverse 18s linear infinite; }
+
   .animate-fade-up    { animation: fade-up    0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
   .animate-fade-in    { animation: fade-in    0.4s ease-out both; }
   .animate-slide-down { animation: slide-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
