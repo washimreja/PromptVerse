@@ -85,6 +85,7 @@ export function TrendingCategories() {
           {canScrollLeft && (
             <button
               onClick={() => scroll("left")}
+              suppressHydrationWarning
               aria-label="Scroll Left"
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 w-8 h-8 rounded-full bg-card/90 border border-border/30 backdrop-blur-md text-muted-foreground hover:text-foreground hover:bg-secondary flex items-center justify-center shadow-lg transition-all duration-300 active:scale-90"
             >
@@ -96,6 +97,7 @@ export function TrendingCategories() {
           {canScrollRight && (
             <button
               onClick={() => scroll("right")}
+              suppressHydrationWarning
               aria-label="Scroll Right"
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 w-8 h-8 rounded-full bg-card/90 border border-border/30 backdrop-blur-md text-muted-foreground hover:text-foreground hover:bg-secondary flex items-center justify-center shadow-lg transition-all duration-300 active:scale-90"
             >
@@ -116,6 +118,7 @@ export function TrendingCategories() {
               <button
                 key={cat.slug}
                 onClick={() => setActive(cat.slug)}
+                suppressHydrationWarning
                 className={cn(
                   "flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold",
                   "transition-all duration-200 border cursor-pointer",

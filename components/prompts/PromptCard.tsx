@@ -114,13 +114,14 @@ function CardCopyButton({ text }: { text: string }) {
     <motion.button
       onClick={handleCopy}
       whileTap={{ scale: 0.9 }}
+      suppressHydrationWarning
       aria-label="Copy prompt"
       className={cn(
         "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold",
-        "backdrop-blur-md border transition-all duration-200",
+        "backdrop-blur-md border transition-all duration-200 shadow-sm",
         copied
-          ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
-          : "bg-black/50 border-white/15 text-white hover:bg-primary/25 hover:border-primary/40 hover:text-primary-foreground"
+          ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 glow-brand shadow-emerald-500/20"
+          : "bg-black/30 border-white/10 text-white hover:bg-black/60 hover:border-white/25 hover:text-white"
       )}
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -163,7 +164,7 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
     >
       <Link
         href={`/prompts/${prompt.id}`}
-        className="block group relative rounded-xl overflow-hidden bg-card border border-border/[0.07] transition-all duration-300 hover:border-border/20 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.6)]"
+        className="block group relative rounded-xl overflow-hidden bg-card border border-border/[0.07] premium-card"
         style={{ aspectRatio: "3/4" }}
         aria-label={`View prompt: ${prompt.title}`}
       >
@@ -177,15 +178,14 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent pointer-events-none" />
 
         {/* ── TOP-LEFT: Title pill ── */}
-        <div className="absolute top-2.5 left-2.5 max-w-[50%] flex items-start z-10">
+        <div className="absolute top-3 left-3 right-16 flex items-start z-10 pointer-events-none">
           <span
             className={cn(
-              "px-2 py-0.5 rounded-md text-[10px] font-bold text-white/95 tracking-wide",
-              "bg-black/50 backdrop-blur-md border border-white/10",
-              "truncate w-full"
+              "text-[11px] font-black text-white/95 tracking-wide leading-tight",
+              "drop-shadow-md line-clamp-2 text-balance"
             )}
           >
-            {prompt.title.toUpperCase()}
+            {prompt.title}
           </span>
         </div>
 
@@ -212,9 +212,9 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
           <div className="flex flex-col gap-1.5 items-start">
             {/* AI Model badge */}
             {model && (
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-md border border-white/10">
-                <span className="text-[8px] leading-none">{model.icon}</span>
-                <span className="text-[9px] font-bold text-white/85 tracking-wide">{model.name}</span>
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/40 backdrop-blur-md border border-white/15 shadow-sm">
+                <span className="text-[9px] leading-none drop-shadow-md">{model.icon}</span>
+                <span className="text-[9px] font-black text-white/90 tracking-wider uppercase">{model.name}</span>
               </div>
             )}
             {/* Copy button */}

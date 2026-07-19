@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { NextAuthProvider } from "@/components/layout/NextAuthProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
@@ -10,6 +11,8 @@ import { SponsorBanner } from "@/components/layout/SponsorBanner";
 import { FloatingActionButton } from "@/components/layout/FloatingActionButton";
 import { FavoritesProvider } from "@/components/favorites/FavoritesContext";
 import { FloatingFavoritesButton } from "@/components/favorites/FloatingFavoritesButton";
+import { AuthModalProvider } from "@/components/auth/AuthModalContext";
+import { UpgradeModalProvider } from "@/components/modals/UpgradeToProModal";
 import {
   SITE_NAME,
   SITE_TAGLINE,
@@ -107,48 +110,38 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('pv-theme') || 'dark';
-                  if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
       </head>
       <body className="min-h-dvh flex flex-col bg-background text-foreground antialiased">
-        <ThemeProvider>
-          <FavoritesProvider>
-            <SponsorBanner />
-            <Header />
-            {/* Extra bottom padding on mobile for the bottom nav */}
-            <main className="flex-1 pb-20 md:pb-0">
-              {children}
-            </main>
-            {/* Footer — visible on all screens; MobileNav overlays bottom on mobile */}
-            <Footer />
-            <MobileNav />
-            <FloatingActionButton />
-            <FloatingFavoritesButton />
-            <Toaster
-              richColors
-              position="top-center"
-              toastOptions={{
-                classNames: {
-                  toast: "!rounded-2xl !shadow-xl !border-border !font-sans",
-                },
-              }}
-            />
-          </FavoritesProvider>
-        </ThemeProvider>
+        <NextAuthProvider>
+          <ThemeProvider>
+            <AuthModalProvider>
+              <UpgradeModalProvider>
+                <FavoritesProvider>
+                  <SponsorBanner />
+                  <Header />
+                  {/* Extra bottom padding on mobile for the bottom nav */}
+                  <main className="flex-1 pb-20 md:pb-0">
+                    {children}
+                  </main>
+                  {/* Footer — visible on all screens; MobileNav overlays bottom on mobile */}
+                  <Footer />
+                  <MobileNav />
+                  <FloatingActionButton />
+                  <FloatingFavoritesButton />
+                  <Toaster
+                    richColors
+                    position="top-center"
+                    toastOptions={{
+                      classNames: {
+                        toast: "!rounded-2xl !shadow-xl !border-border !font-sans",
+                      },
+                    }}
+                  />
+                </FavoritesProvider>
+              </UpgradeModalProvider>
+            </AuthModalProvider>
+          </ThemeProvider>
+        </NextAuthProvider>
         <Analytics />
       </body>
     </html>

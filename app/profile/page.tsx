@@ -1,0 +1,249 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { getUserProfile } from "@/app/actions/user";
+import { 
+  Sparkles, 
+  Settings, 
+  Heart, 
+  FolderHeart, 
+  ChevronRight, 
+  Crown,
+  Image as ImageIcon,
+  CheckCircle2,
+  Calendar
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useFavorites } from "@/components/favorites/FavoritesContext";
+export default function ProfilePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { favorites, collections } = useFavorites();
+  const [activeTab, setActiveTab] = useState<"favorites" | "collections" | "settings">("favorites");
+  const [dbUser, setDbUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      getUserProfile().then((data) => {
+        if (data) setDbUser(data);
+      });
+    }
+  }, [status]);
+
+  if (status === "loading" || (status === "authenticated" && !dbUser)) {
+    return (
+      <div className="min-h-screen bg-[#040508] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    router.push("/auth");
+    return null;
+  }
+
+  const user = session?.user;
+  const isPro = dbUser?.membership === "PRO";
+
+  return (
+    <div className="min-h-screen bg-[#040508] text-white pt-24 pb-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Top Header Section */}
+        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <img 
+                src={user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`} 
+                alt="Profile" 
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-[2rem] object-cover ring-2 ring-white/10 shadow-2xl"
+              />
+              {isPro && (
+                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-[#FFB800] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,184,0,0.4)]">
+                  <Crown size={20} className="text-black" />
+                </div>
+              )}
+            </div>
+            
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{user?.name}</h1>
+                {isPro ? (
+                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-black bg-gradient-to-r from-yellow-400 to-amber-500 rounded-lg shadow-[0_0_15px_rgba(251,191,36,0.4)]">
+                    PRO
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-white/5 border border-white/10 rounded-lg">
+                    FREE
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              
+              <div className="flex items-center gap-2 mt-1">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md">
+                  <CheckCircle2 size={12} /> Verified
+                </span>
+                <span className="flex items-center gap-1.5 text-xs font-medium text-white/50 bg-white/5 px-2 py-1 rounded-md">
+                  <Calendar size={12} /> Joined 2026
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <button className="flex items-center gap-2 px-4 py-2.5 bg-[#090A0F] hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold transition-colors shadow-sm">
+              <Settings size={16} />
+              Edit Profile
+            </button>
+          </div>
+        </div>
+
+        {/* Dashboard Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          {/* Stats Cards */}
+          <div className="col-span-1 md:col-span-2 grid grid-cols-3 gap-5">
+            <div className="bg-[#090A0F] border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group hover:border-brand/30 transition-all hover:bg-[#0c0d14]">
+              <Heart className="w-6 h-6 text-rose-500 mb-6 group-hover:scale-110 transition-transform" />
+              <div>
+                <p className="text-3xl font-black mb-1">{favorites.length}</p>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-bold">Saved Prompts</p>
+              </div>
+            </div>
+            <div className="bg-[#090A0F] border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group hover:border-brand/30 transition-all hover:bg-[#0c0d14]">
+              <FolderHeart className="w-6 h-6 text-blue-500 mb-6 group-hover:scale-110 transition-transform" />
+              <div>
+                <p className="text-3xl font-black mb-1">{collections.length}</p>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-bold">Collections</p>
+              </div>
+            </div>
+            <div className="bg-[#090A0F] border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group hover:border-brand/30 transition-all hover:bg-[#0c0d14]">
+              <ImageIcon className="w-6 h-6 text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />
+              <div>
+                <p className="text-3xl font-black mb-1">0</p>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-bold">Generations</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Upgrade Card (Only for Free users) */}
+          {!isPro && (
+            <div className="col-span-1 relative overflow-hidden bg-gradient-to-br from-[#FFB800]/10 via-[#FFB800]/5 to-transparent border border-[#FFB800]/20 rounded-[2rem] p-8 flex flex-col justify-between group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFB800]/10 blur-[80px] rounded-full pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-3 text-[#FFB800]">
+                  <Sparkles size={18} />
+                  <span className="text-[11px] font-black uppercase tracking-widest">PromptVerse Pro</span>
+                </div>
+                <h3 className="text-2xl font-bold leading-tight mb-2 text-white">Unlock Premium<br/>Studio Access</h3>
+                <p className="text-sm text-white/60 mb-6 leading-relaxed">Get exclusive access to the best AI models, premium studio parameters, and unlimited saves.</p>
+              </div>
+              
+              <Link 
+                href="/pro" 
+                className="relative z-10 inline-flex items-center justify-between w-full px-5 py-3.5 bg-[#FFB800] hover:bg-[#e6a600] text-black font-bold text-sm rounded-xl transition-all group-hover:shadow-[0_0_30px_rgba(255,184,0,0.3)]"
+              >
+                Upgrade to Pro
+                <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Content Tabs */}
+        <div className="bg-[#090A0F] border border-white/5 rounded-[2rem] min-h-[500px] overflow-hidden">
+          <div className="flex items-center gap-8 border-b border-white/5 px-8 pt-6">
+            {(["favorites", "collections", "settings"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  "relative pb-5 text-[13px] font-bold uppercase tracking-wider transition-colors",
+                  activeTab === tab ? "text-white" : "text-muted-foreground hover:text-white/80"
+                )}
+              >
+                {tab}
+                {activeTab === tab && (
+                  <motion.div
+                    layoutId="profile-tab-indicator"
+                    className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#FFB800] rounded-t-full shadow-[0_0_15px_rgba(255,184,0,0.5)]"
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="p-8">
+            {activeTab === "favorites" && (
+              <div className="flex flex-col items-center justify-center text-center h-[300px] opacity-60">
+                <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6">
+                  <Heart size={32} className="text-white/40" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">No favorites yet</h3>
+                <p className="text-sm text-muted-foreground max-w-md mb-6">
+                  You haven't saved any prompts yet. Explore the studio to find inspiration for your next masterpiece.
+                </p>
+                <Link href="/" className="px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-xl text-sm font-bold transition-colors">
+                  Explore Prompts
+                </Link>
+              </div>
+            )}
+
+            {activeTab === "collections" && (
+              <div className="flex flex-col items-center justify-center text-center h-[300px] opacity-60">
+                <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6">
+                  <FolderHeart size={32} className="text-white/40" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">Empty Collections</h3>
+                <p className="text-sm text-muted-foreground max-w-md mb-6">
+                  Create collections to organize your favorite prompts by theme, project, or AI model.
+                </p>
+                <button className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-bold transition-colors">
+                  Create Collection
+                </button>
+              </div>
+            )}
+
+            {activeTab === "settings" && (
+              <div className="max-w-2xl">
+                <h3 className="text-xl font-bold mb-6">Account Settings</h3>
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-white/[0.02] border border-white/5 rounded-2xl gap-4">
+                    <div>
+                      <p className="font-bold text-sm text-white mb-1">Email Address</p>
+                      <p className="text-sm text-muted-foreground">{user?.email}</p>
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-3 py-1.5 rounded-lg border border-emerald-400/20">
+                      <CheckCircle2 size={14} /> Verified
+                    </span>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-white/[0.02] border border-white/5 rounded-2xl gap-4">
+                    <div>
+                      <p className="font-bold text-sm text-white mb-1">Connected Accounts</p>
+                      <p className="text-sm text-muted-foreground">Google OAuth</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 p-6 bg-red-500/5 border border-red-500/10 rounded-2xl">
+                    <h4 className="text-red-400 font-bold mb-2">Danger Zone</h4>
+                    <p className="text-sm text-white/50 mb-4">Permanently delete your account and all associated data. This action cannot be undone.</p>
+                    <button className="px-5 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-sm font-bold transition-colors">
+                      Delete Account
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

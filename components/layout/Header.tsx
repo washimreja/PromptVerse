@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
+import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, ChevronDown, Heart, BookOpen, HeartHandshake } from "lucide-react";
+import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, ChevronDown, ChevronRight, ExternalLink, Heart, BookOpen, HeartHandshake, User, FolderHeart, LogOut } from "lucide-react";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/constants";
@@ -184,8 +186,17 @@ function SearchPill() {
 /* ── Main Header ──────────────────────────────── */
 export function Header() {
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: "/" });
+  };
 
   const [exploreOpen, setExploreOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -222,10 +233,23 @@ export function Header() {
 
   // Collapsing scroll trigger
   useEffect(() => {
+    setMounted(true);
     const onScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (
@@ -436,6 +460,68 @@ export function Header() {
 
             {/* Right Side Control Pills */}
             <div className="flex items-center gap-2">
+              <Link
+                href="/pricing"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand/10 hover:bg-brand/20 border border-brand/20 text-brand text-xs font-bold uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(var(--brand),0.1)] hover:shadow-[0_0_20px_rgba(var(--brand),0.3)]"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Pro
+              </Link>
+              {user ? (
+                <div className="relative group/avatar z-50">
+                  <div className="hidden md:flex items-center gap-2 cursor-pointer p-1 pr-3 rounded-full bg-secondary/40 border border-border/10 hover:bg-secondary/60 transition-all">
+                    <img 
+                      src={user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`} 
+                      alt="Avatar" 
+                      className="w-[34px] h-[34px] rounded-full object-cover ring-2 ring-white/10" 
+                    />
+                    <span className="text-xs font-bold text-foreground max-w-[80px] truncate">{user.name}</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/60" />
+                  </div>
+                  
+                  {/* Dropdown Menu */}
+                  <div className="absolute right-0 top-[120%] w-56 rounded-2xl bg-[#09090b]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] opacity-0 invisible group-hover/avatar:opacity-100 group-hover/avatar:visible group-hover/avatar:translate-y-2 transition-all duration-300 overflow-hidden flex flex-col p-1.5 pt-2">
+                    <div className="px-3 pb-2 border-b border-white/5 mb-1 flex flex-col">
+                      <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                      <p className="text-[10px] font-medium text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                    
+                    <div className="py-1 flex flex-col gap-0.5">
+                      <Link 
+                        href="/profile" 
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-white/80 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left"
+                      >
+                        <User className="w-3.5 h-3.5 text-brand" />
+                        Profile & Dashboard
+                      </Link>
+                      <Link 
+                        href="/profile?tab=collections" 
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-white/80 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left"
+                      >
+                        <FolderHeart className="w-3.5 h-3.5 text-brand" />
+                        My Collections
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-white/5 mt-1 pt-1">
+                      <button 
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors text-left"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/auth"
+                  className="hidden md:flex items-center px-4 py-1.5 rounded-full bg-foreground text-background text-sm font-bold hover:bg-white/90 transition-colors shadow-sm"
+                >
+                  Sign In
+                </Link>
+              )}
               <SearchPill />
               <ThemeToggle />
 
@@ -483,93 +569,109 @@ export function Header() {
         </div>
       </header>
 
-      {/* ── Mobile Drawer ── */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
+      {/* ── Mobile Drawer (Portaled to root to guarantee fixed viewport positioning) ── */}
+      {mounted && typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {mobileOpen && (
             <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md md:hidden"
-              onClick={() => setMobileOpen(false)}
-              aria-hidden="true"
-            />
-            <motion.aside
-              key="drawer"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 350 }}
-              className={cn(
-                "fixed top-0 right-0 z-50 h-full w-72 md:hidden",
-                "bg-card/95 backdrop-blur-2xl noise-overlay",
-                "border-l border-border/20 shadow-2xl",
-                "flex flex-col"
-              )}
+              key="mobile-overlay"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 z-[100] bg-[#000000] flex flex-col md:hidden overflow-hidden"
             >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between p-5 border-b border-border/10">
-                <Link href="/" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
-                  <PVLogo className="w-7 h-7" />
-                  <span className="font-extrabold text-base tracking-tight">{SITE_NAME}</span>
-                </Link>
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  aria-label="Close menu"
-                  className="w-8 h-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-all duration-300"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              {/* Drawer Links */}
-              <nav className="flex-1 p-5 space-y-1" aria-label="Mobile navigation">
-                {NAV_LINKS.map((link, i) => {
-                  const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
-                  const Icon = link.icon;
-                  return (
-                    <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 + 0.05, type: "spring", damping: 25 }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={() => setMobileOpen(false)}
-                        className={cn(
-                          "flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-semibold",
-                          "transition-all duration-300",
-                          isActive
-                            ? "bg-primary/10 text-primary border border-primary/10 shadow-[0_0_12px_rgba(20,184,166,0.08)]"
-                            : "text-foreground hover:bg-secondary/40 hover:text-foreground"
-                        )}
-                      >
-                        <Icon className="w-4 h-4 text-muted-foreground" />
-                        <span>{link.label}</span>
-                        {isActive && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse-glow" />
-                        )}
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </nav>
-
-              {/* Drawer Footer */}
-              <div className="p-5 border-t border-border/10">
-                <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground/80">
-                  <span>Theme Mode</span>
-                  <ThemeToggle />
+              {/* Header inside mobile menu */}
+              <div className="flex items-center justify-between px-5 h-[64px]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[18px] font-bold text-white tracking-tight">{SITE_NAME}</span>
+                </div>
+                <div className="flex items-center gap-5">
+                  <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="text-white hover:text-gray-300 transition-colors">
+                    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  </button>
+                  <button onClick={() => setMobileOpen(false)} className="text-white hover:text-gray-300 transition-colors p-1 -mr-1">
+                    <X className="w-6 h-6" />
+                  </button>
                 </div>
               </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+
+              <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-6">
+                
+                {/* Profile Card */}
+                {user ? (
+                  <Link href="/profile" onClick={() => setMobileOpen(false)} className="w-full flex items-center gap-4 bg-[#111113] p-4 rounded-[20px] transition-transform active:scale-[0.98]">
+                    <img 
+                      src={user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`} 
+                      alt="Avatar" 
+                      className="w-[46px] h-[46px] rounded-full object-cover" 
+                    />
+                    <div className="flex flex-col flex-1 overflow-hidden">
+                      <span className="text-[14px] font-bold text-white uppercase tracking-wider truncate">{user.name}</span>
+                      <span className="text-[13px] text-muted-foreground mt-0.5">View Profile &rarr;</span>
+                    </div>
+                  </Link>
+                ) : (
+                  <Link href="/auth" onClick={() => setMobileOpen(false)} className="w-full bg-[#111113] p-5 rounded-[20px] flex items-center justify-center transition-transform active:scale-[0.98]">
+                    <span className="text-[15px] font-bold text-white uppercase tracking-wide">Sign In / Create Account</span>
+                  </Link>
+                )}
+
+                {/* Navigation Links */}
+                <nav className="flex flex-col w-full mt-2">
+                  {NAV_LINKS.map((link, idx) => {
+                    const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center justify-between py-4 border-b border-white/[0.04] active:bg-white/[0.02]"
+                      >
+                        <span className={cn(
+                          "text-[15px] font-semibold",
+                          isActive ? "text-white" : "text-white/80"
+                        )}>
+                          {link.label}
+                        </span>
+                        <ChevronRight className="w-[18px] h-[18px] text-white/30" strokeWidth={2.5} />
+                      </Link>
+                    );
+                  })}
+                  
+                  {/* Fake Extra Links to match image layout */}
+                  <div className="flex items-center justify-between py-4 border-b border-white/[0.04] active:bg-white/[0.02]">
+                    <span className="text-[15px] font-semibold text-white/80">Explore</span>
+                    <ChevronDown className="w-[18px] h-[18px] text-white/30" strokeWidth={2.5} />
+                  </div>
+                  <div className="flex items-center justify-between py-4 border-b border-white/[0.04] active:bg-white/[0.02]">
+                    <span className="text-[15px] font-semibold text-white/80">Tools</span>
+                    <ExternalLink className="w-[16px] h-[16px] text-white/30" strokeWidth={2.5} />
+                  </div>
+                  <div className="flex items-center justify-between py-4 border-b border-white/[0.04] active:bg-white/[0.02]">
+                    <span className="text-[15px] font-semibold text-white/80">More</span>
+                    <ChevronDown className="w-[18px] h-[18px] text-white/30" strokeWidth={2.5} />
+                  </div>
+                </nav>
+
+                <div className="flex-1" /> {/* Spacer */}
+
+                {/* Sign Out Button */}
+                {user && (
+                  <div className="pb-8 pt-4 w-full">
+                    <button 
+                      onClick={() => { handleSignOut(); setMobileOpen(false); }} 
+                      className="w-full py-3.5 rounded-full border border-white/[0.12] text-white font-medium text-[15px] active:bg-white/5 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      , document.body)}
     </>
   );
 }

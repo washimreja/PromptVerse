@@ -91,6 +91,7 @@ export function FavoriteButton({
     <>
       <button
         onClick={handleClick}
+        suppressHydrationWarning
         aria-label={faved ? "Remove from favorites" : "Save to favorites"}
         className={cn(
           "w-7 h-7 flex items-center justify-center rounded-full",

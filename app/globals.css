@@ -121,50 +121,53 @@
 
 /* ─── Dark Mode (Primary / Default) ────────── */
 .dark, :root {
-  --background:   oklch(0.022 0.006 220); /* Deep navy-obsidian black */
-  --foreground:   oklch(0.985 0.002 220);
+  --background:   oklch(0.12 0.01 250); /* Deep Space Black */
+  --foreground:   oklch(0.98 0.01 250);
 
-  --card:         oklch(0.050 0.008 220); /* Dark slate card base */
-  --card-foreground: oklch(0.985 0.002 220);
+  --card:         oklch(0.18 0.01 250); /* Dark Charcoal */
+  --card-foreground: oklch(0.98 0.01 250);
 
-  --popover:      oklch(0.050 0.008 220);
-  --popover-foreground: oklch(0.985 0.002 220);
+  --popover:      oklch(0.18 0.01 250);
+  --popover-foreground: oklch(0.98 0.01 250);
 
-  --primary:      oklch(0.58 0.19 185); /* Vibrant electric teal */
-  --primary-foreground: oklch(1 0 0);
+  --primary:      oklch(0.65 0.15 200); /* Deep Cyan */
+  --primary-foreground: oklch(0.12 0.01 250);
 
-  --secondary:    oklch(0.075 0.010 220);
-  --secondary-foreground: oklch(0.950 0.004 220);
+  --secondary:    oklch(0.22 0.02 250);
+  --secondary-foreground: oklch(0.98 0.01 250);
 
-  --muted:        oklch(0.065 0.008 220);
-  --muted-foreground: oklch(0.600 0.008 220);
+  --muted:        oklch(0.20 0.01 250);
+  --muted-foreground: oklch(0.70 0.02 250);
 
-  --accent:       oklch(0.100 0.022 185);
-  --accent-foreground: oklch(0.58 0.19 185);
+  --accent:       oklch(0.25 0.03 250);
+  --accent-foreground: oklch(0.65 0.15 200);
+
+  --emerald:      oklch(0.65 0.15 150);
+  --purple:       oklch(0.4 0.2 290);
 
   /* Teal Brand */
-  --brand:        oklch(0.58 0.19 185);
-  --brand-foreground: oklch(1 0 0);
-  --brand-muted:  oklch(0.110 0.040 185);
-  --brand-glow:   oklch(0.58 0.19 185 / 0.20);
+  --brand:        oklch(0.65 0.15 200);
+  --brand-foreground: oklch(0.12 0.01 250);
+  --brand-muted:  oklch(0.22 0.05 200);
+  --brand-glow:   oklch(0.65 0.15 200 / 0.20);
 
   /* Premium Champagne Gold Accent */
-  --gold:         oklch(0.790 0.140 85);
-  --gold-glow:    oklch(0.790 0.140 85 / 0.18);
+  --gold:         oklch(0.7 0.15 75);
+  --gold-glow:    oklch(0.7 0.15 75 / 0.18);
 
   --destructive:  oklch(0.600 0.200 25);
-  --border:       oklch(1 0 0 / 0.04);
-  --input:        oklch(1 0 0 / 0.05);
-  --ring:         oklch(0.58 0.19 185);
+  --border:       oklch(0.98 0.01 250 / 0.04);
+  --input:        oklch(0.98 0.01 250 / 0.05);
+  --ring:         oklch(0.65 0.15 200);
 
-  --sidebar:      oklch(0.040 0.006 220);
-  --sidebar-foreground: oklch(0.985 0.002 220);
-  --sidebar-primary: oklch(0.58 0.19 185);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.100 0.022 185);
-  --sidebar-accent-foreground: oklch(0.58 0.19 185);
-  --sidebar-border: oklch(1 0 0 / 0.04);
-  --sidebar-ring: oklch(0.58 0.19 185);
+  --sidebar:      oklch(0.18 0.01 250);
+  --sidebar-foreground: oklch(0.98 0.01 250);
+  --sidebar-primary: oklch(0.65 0.15 200);
+  --sidebar-primary-foreground: oklch(0.12 0.01 250);
+  --sidebar-accent: oklch(0.22 0.02 250);
+  --sidebar-accent-foreground: oklch(0.65 0.15 200);
+  --sidebar-border: oklch(0.98 0.01 250 / 0.04);
+  --sidebar-ring: oklch(0.65 0.15 200);
 }
 
 /* ─── Base ────────────────────────────────────── */
@@ -333,28 +336,23 @@
       0 8px 30px -4px oklch(0.780 0.170 65 / 0.25);
   }
 
-  /* ── 3D Card Hover ── */
-  .perspective-container {
-    perspective: 1000px;
+  /* ── Premium Card Hover ── */
+  .premium-card {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+    will-change: transform, box-shadow;
   }
-
-  .tilt-card {
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.3s ease;
-    transform-style: preserve-3d;
-  }
-
-  .tilt-card:hover {
+  .premium-card:hover {
+    transform: translateY(-4px) scale(1.01);
     box-shadow:
-      0 20px 40px -10px oklch(0 0 0 / 0.4),
-      0 0 40px -5px oklch(0.58 0.19 185 / 0.15);
-    border-color: oklch(0.58 0.19 185 / 0.25);
+      0 12px 30px -10px oklch(0 0 0 / 0.3),
+      0 0 20px -5px oklch(0.58 0.19 185 / 0.25);
+    border-color: oklch(0.58 0.19 185 / 0.3);
   }
-
-  .dark .tilt-card:hover {
+  .dark .premium-card:hover {
     box-shadow:
-      0 25px 50px -12px oklch(0 0 0 / 0.65),
-      0 0 50px -2px oklch(0.58 0.19 185 / 0.20);
-    border-color: oklch(0.58 0.19 185 / 0.25);
+      0 20px 40px -12px oklch(0 0 0 / 0.8),
+      0 0 30px -2px oklch(0.58 0.19 185 / 0.25);
+    border-color: oklch(0.58 0.19 185 / 0.35);
   }
 
   /* ── Shine Sweep ── */
@@ -660,4 +658,118 @@
   .delay-600 { animation-delay: 600ms; }
   .delay-700 { animation-delay: 700ms; }
   .delay-800 { animation-delay: 800ms; }
+
+  /* Premium Visual System Keyframes */
+  @keyframes spin-slow {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  @keyframes bg-pan-slow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Live Corner Light */
+  .live-border-card {
+    position: relative;
+    background: var(--card);
+    border-radius: var(--radius-xl);
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .live-border-card::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      oklch(0.65 0.15 200 / 0.3) 45deg,
+      oklch(0.65 0.15 150 / 0.8) 90deg,
+      transparent 135deg,
+      oklch(0.4 0.2 290 / 0.3) 225deg,
+      oklch(0.7 0.15 75 / 0.8) 270deg,
+      transparent 315deg
+    );
+    animation: spin-slow 20s linear infinite;
+    z-index: -2;
+  }
+
+  .live-border-card::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    background: var(--card);
+    border-radius: calc(var(--radius-xl) - 1px);
+    z-index: -1;
+    transition: background 0.3s ease;
+  }
+
+  .live-border-card:hover::before {
+    animation-duration: 8s;
+    filter: blur(8px);
+  }
+
+  .live-border-card:hover::after {
+    background: oklch(0.20 0.01 250); /* slightly lighter on hover */
+  }
+
+  /* Live Border Chip (For Category Pills) */
+  .live-border-chip {
+    position: relative;
+    background: var(--card);
+    border-radius: 9999px;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .live-border-chip::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      oklch(0.65 0.15 200 / 0.8) 45deg,
+      oklch(0.4 0.2 290 / 0.8) 180deg,
+      transparent 225deg,
+      oklch(0.7 0.15 75 / 0.8) 315deg
+    );
+    animation: spin-slow 4s linear infinite;
+    z-index: -2;
+  }
+
+  .live-border-chip::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    background: oklch(0.18 0.02 245); /* slightly lighter dark background */
+    border-radius: 9999px;
+    z-index: -1;
+    transition: background 0.3s ease;
+  }
+
+  /* Active Category Chip */
+  .active-category-chip {
+    background: linear-gradient(
+      90deg,
+      oklch(0.65 0.15 200) 0%,
+      oklch(0.4 0.2 290) 50%,
+      oklch(0.65 0.15 200) 100%
+    );
+    background-size: 200% 100%;
+    animation: bg-pan-slow 15s ease infinite;
+    color: oklch(0.12 0.01 250);
+    border: none;
+  }
 }

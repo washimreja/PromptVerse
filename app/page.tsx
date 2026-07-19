@@ -7,6 +7,7 @@ import {
 } from "@/lib/prompts";
 import { HeroSection } from "@/components/home/HeroSection";
 import { TrendingCategories } from "@/components/home/TrendingCategories";
+import { AIStudioSuite } from "@/components/home/AIStudioSuite";
 import { BrowseByModel } from "@/components/home/BrowseByModel";
 import { BrowseByCategory } from "@/components/home/BrowseByCategory";
 import { FeaturedPrompts } from "@/components/home/FeaturedPrompts";
@@ -46,6 +47,9 @@ export default async function HomePage() {
       <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-4">
         <AdSlot format="leaderboard" />
       </div>
+
+      {/* New AI Studio Suite Section */}
+      <AIStudioSuite />
 
       {/* 2. Trending Categories Pills */}
       <TrendingCategories />

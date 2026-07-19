@@ -117,6 +117,7 @@ function NewsletterSignup() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
               disabled={status !== "idle"}
+              suppressHydrationWarning
               aria-label="Email address for newsletter"
               className={cn(
                 "flex-1 min-w-0 px-3.5 py-2.5 rounded-xl text-xs font-semibold",
@@ -131,6 +132,7 @@ function NewsletterSignup() {
               type="submit"
               disabled={status !== "idle"}
               id="newsletter-subscribe"
+              suppressHydrationWarning
               aria-label="Subscribe to newsletter"
               className={cn(
                 "flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-extrabold shrink-0",
@@ -288,6 +290,7 @@ export function Footer() {
                     duration: 3000,
                   });
                 }}
+                suppressHydrationWarning
                 className={cn(
                   "hover:text-foreground font-semibold flex items-center gap-1 transition-all",
                   lang.code === "en" ? "text-foreground font-bold" : "text-muted-foreground/75"

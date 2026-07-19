@@ -8,6 +8,8 @@ import React, {
   useCallback,
 } from "react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { useAuthModal } from "../auth/AuthModalContext";
 
 // ── Types ────────────────────────────────────────────
 export interface Collection {
@@ -32,7 +34,7 @@ interface FavoritesContextType {
   toggleFavorite: (promptId: string, promptTitle?: string) => void;
   removeFavorite: (promptId: string) => void;
   addToCollection: (promptId: string, collectionId: string) => void;
-  createCollection: (name: string, icon?: string) => Collection;
+  createCollection: (name: string, icon?: string) => Collection | null;
   deleteCollection: (collectionId: string) => void;
   getFavoritesForCollection: (collectionId: string) => string[];
 }
@@ -57,6 +59,8 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [collections, setCollections] = useState<Collection[]>(DEFAULT_COLLECTIONS);
   const [mounted, setMounted] = useState(false);
+  const { status } = useSession();
+  const { openModal } = useAuthModal();
 
   // Hydrate from localStorage
   useEffect(() => {
@@ -92,6 +96,11 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   const toggleFavorite = useCallback(
     (promptId: string, promptTitle?: string) => {
+      if (status === "unauthenticated") {
+        openModal("Sign in to save this prompt to your collection");
+        return;
+      }
+
       setFavorites((prev) => {
         const exists = prev.some((f) => f.promptId === promptId);
         if (exists) {
@@ -127,7 +136,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         })
       );
     },
-    []
+    [status, openModal]
   );
 
   const removeFavorite = useCallback((promptId: string) => {
@@ -143,6 +152,11 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   const addToCollection = useCallback(
     (promptId: string, collectionId: string) => {
+      if (status === "unauthenticated") {
+        openModal("Sign in to save this prompt to your collection");
+        return;
+      }
+
       // Ensure in master favorites list
       setFavorites((prev) => {
         if (prev.some((f) => f.promptId === promptId)) return prev;
@@ -162,11 +176,16 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         duration: 1800,
       });
     },
-    [collections]
+    [collections, status, openModal]
   );
 
   const createCollection = useCallback(
-    (name: string, icon = "📁"): Collection => {
+    (name: string, icon = "📁"): Collection | null => {
+      if (status === "unauthenticated") {
+        openModal("Sign in to create a new collection");
+        return null;
+      }
+
       const newCol: Collection = {
         id: `col-${Date.now()}`,
         name,
@@ -181,7 +200,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
       });
       return newCol;
     },
-    []
+    [status, openModal]
   );
 
   const deleteCollection = useCallback((collectionId: string) => {

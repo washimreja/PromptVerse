@@ -18,6 +18,13 @@ const PLACEHOLDERS = [
   "viral Instagram reel hooks...",
 ];
 
+const TRENDING_IMAGES = [
+  { src: "/images/trending_1.png", label: "Short Film" },
+  { src: "/images/trending_2.png", label: "Music Video" },
+  { src: "/images/trending_3.png", label: "Product Ads" },
+  { src: "/images/trending_4.png", label: "Cyberpunk City" },
+];
+
 /* ── Hero Mosaic images (SVG-based rich thumbnails) ───────── */
 const MOSAIC_ITEMS = [
   {
@@ -245,11 +252,11 @@ export function HeroSection() {
 
   return (
     <section className="relative w-full overflow-hidden bg-background border-b border-border/10 noise-overlay">
-      {/* Mesh glows */}
-      <div className="mesh-gradient-bg">
-        <div className="mesh-glow-1" />
-        <div className="mesh-glow-2" />
-        <div className="mesh-glow-3" />
+      {/* Aurora Cinematic Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40 mix-blend-screen">
+        <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-brand-glow blur-[120px] animate-aurora-slow" />
+        <div className="absolute top-[30%] -right-[10%] w-[60%] h-[80%] rounded-full bg-gold-glow blur-[140px] animate-aurora-reverse" />
+        <div className="absolute -bottom-[20%] left-[20%] w-[50%] h-[60%] rounded-full bg-primary/20 blur-[100px] animate-orb-1" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24 relative z-10">
@@ -283,10 +290,10 @@ export function HeroSection() {
               transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-2"
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] text-balance">
-                <span className="text-foreground">Free AI Prompts</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.05] text-balance">
+                <span className="text-foreground drop-shadow-md">Free AI Prompts</span>
                 <br />
-                <span className="gradient-text">
+                <span className="gradient-text-gold drop-shadow-lg">
                   for Every Creator
                 </span>
               </h1>
@@ -531,26 +538,59 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* ── STATS BAR ── */}
+        {/* ── TRENDING IMAGES MARQUEE ── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-14 pt-8 border-t border-border/10"
+          className="mt-14 pt-8 border-t border-border/10 overflow-hidden relative"
         >
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
-            {STATS.map((stat, i) => (
+          {/* Gradient Edges for seamless scroll fade */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-r from-[#020204] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-[#020204] to-transparent z-10 pointer-events-none" />
+          
+          <div className="flex flex-col gap-4">
+            {/* Header / Title */}
+            <div className="flex items-center justify-between px-2">
+              <span className="text-[14px] font-extrabold tracking-tight text-white">
+                Vibe Direct Now
+              </span>
+              <Link href="/category" className="text-[11px] font-semibold text-muted-foreground hover:text-white transition-colors flex items-center gap-1">
+                More <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+            
+            <div className="flex overflow-hidden w-full pt-1 pb-4">
               <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.65 + i * 0.07 }}
-                className="stat-chip"
+                className="flex whitespace-nowrap gap-4 sm:gap-6 pl-2"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{
+                  repeat: Infinity,
+                  ease: "linear",
+                  duration: 25,
+                }}
               >
-                <span className="stat-value">{stat.value}</span>
-                <span className="stat-label">{stat.label}</span>
+                {[...TRENDING_IMAGES, ...TRENDING_IMAGES].map((item, i) => (
+                  <div 
+                    key={i} 
+                    className="relative shrink-0 w-[180px] h-[120px] rounded-[20px] overflow-hidden group cursor-pointer border border-white/5 shadow-md"
+                  >
+                    <img 
+                      src={item.src} 
+                      alt={item.label} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                    <div className="absolute bottom-3 left-4 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-white" />
+                      <span className="text-xs font-bold text-white shadow-sm">
+                        {item.label}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </motion.div>
-            ))}
+            </div>
           </div>
         </motion.div>
       </div>

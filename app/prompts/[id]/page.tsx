@@ -13,6 +13,7 @@ import { CopyButton } from "@/components/prompts/CopyButton";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { ModelLogo } from "@/components/models/ModelLogos";
 import { PromptDetailClient } from "@/components/prompts/PromptDetailClient";
+import { getUserProfile } from "@/app/actions/user";
 import {
   ArrowLeft,
   Sparkles,
@@ -60,12 +61,19 @@ export default async function PromptDetailPage({ params }: Props) {
   const categoryObj = CATEGORIES.find((c) => c.slug === prompt.category);
   const modelObj = AI_MODELS.find((m) => m.slug === prompt.model);
 
-  // Determine lock state — isPro field used as isPremium
+  // Get current user from DB
+  const dbUser = await getUserProfile();
+  const userIsPro = dbUser?.membership === "PRO";
+
+  // Determine if prompt is Premium
   const isPremium = prompt.isPro === true;
+  
+  // Determine if it should be locked for the current user
+  const isLocked = isPremium && !userIsPro;
 
   // Preview text: first 2–3 lines (~300 chars) for premium prompts
   const PREVIEW_LENGTH = 280;
-  const previewText = isPremium
+  const previewText = isLocked
     ? prompt.prompt.slice(0, PREVIEW_LENGTH) + (prompt.prompt.length > PREVIEW_LENGTH ? "…" : "")
     : prompt.prompt;
 
@@ -132,8 +140,8 @@ export default async function PromptDetailPage({ params }: Props) {
               </div>
             )}
 
-            {/* Premium overlay on image for PRO */}
-            {isPremium && (
+            {/* Premium overlay on image for PRO (only if locked) */}
+            {isLocked && (
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
             )}
           </div>
@@ -152,7 +160,7 @@ export default async function PromptDetailPage({ params }: Props) {
             </div>
 
             {/* PRO lock: preview with blur + unlock CTA */}
-            {isPremium ? (
+            {isLocked ? (
               <div className="relative">
                 <pre className="font-mono text-sm leading-relaxed p-5 bg-secondary/30 text-foreground rounded-2xl border border-border/10 overflow-hidden whitespace-pre-wrap select-none blur-[2px] pointer-events-none line-clamp-4">
                   {previewText}
@@ -194,7 +202,7 @@ export default async function PromptDetailPage({ params }: Props) {
             )}
 
             {/* Negative Prompt (only for free or below preview for pro) */}
-            {!isPremium && prompt.negativePrompt && (
+            {!isLocked && prompt.negativePrompt && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between border-b border-border/10 pb-2">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-rose-500/80">
@@ -223,8 +231,8 @@ export default async function PromptDetailPage({ params }: Props) {
         {/* Right Column: Settings & Metadata */}
         <div className="lg:col-span-4 space-y-5">
           
-          {/* PRO Upgrade card (right column for premium) */}
-          {isPremium && (
+          {/* PRO Upgrade card (right column for premium only if locked) */}
+          {isLocked && (
             <div className="relative overflow-hidden rounded-3xl p-5 border border-amber-400/20 bg-gradient-to-br from-amber-400/10 via-yellow-300/5 to-transparent shadow-[0_8px_32px_rgba(245,158,11,0.15)]">
               <div className="absolute top-3 right-3 text-2xl">✨</div>
               <h3 className="font-black text-sm mb-1 text-amber-400">PromptVerse Pro</h3>

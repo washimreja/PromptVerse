@@ -38,16 +38,15 @@ export function BrowseByModel() {
               <Link
                 href={`/models/${model.slug}`}
                 className={cn(
-                  "group flex flex-col gap-3 p-4 rounded-xl",
-                  "bg-card border border-border/[0.08]",
-                  "hover:border-border/25 hover:shadow-lg hover:-translate-y-0.5",
-                  "transition-all duration-300"
+                  "group flex flex-col gap-3 p-3.5",
+                  "live-border-card",
+                  "hover:-translate-y-1 transition-transform duration-300 cursor-pointer block h-full"
                 )}
               >
                 {/* Icon + badge */}
                 <div className="flex items-start justify-between">
                   <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center text-xl border"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-sm border"
                     style={{
                       backgroundColor: `${model.color}18`,
                       borderColor: `${model.color}28`,
@@ -59,21 +58,21 @@ export function BrowseByModel() {
                 </div>
 
                 {/* Name */}
-                <div>
-                  <p className="text-sm font-bold leading-tight group-hover:text-primary transition-colors">
+                <div className="flex-1">
+                  <p className="text-[13px] font-extrabold leading-tight group-hover:text-primary transition-colors">
                     {model.name}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/50 mt-0.5 leading-snug line-clamp-2">
+                  <p className="text-[10px] text-muted-foreground/60 mt-1 leading-snug line-clamp-2">
                     {model.description}
                   </p>
                 </div>
 
                 {/* Best for tags (first 2) */}
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-2.5 mt-1">
                   {model.bestFor.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
-                      className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-secondary/50 text-muted-foreground/70 border border-border/10"
+                      className="text-[9px] font-extrabold tracking-wide text-muted-foreground/50"
                     >
                       {tag}
                     </span>
