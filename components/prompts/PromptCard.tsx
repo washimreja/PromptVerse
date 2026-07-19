@@ -1,299 +1,232 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Copy, Share2, Eye, Clock, Check } from "lucide-react";
-import { cn, formatCopyCount, getReadingTime } from "@/lib/utils";
+import { Eye, Copy, Check } from "lucide-react";
+import { cn, formatCopyCount } from "@/lib/utils";
 import type { Prompt } from "@/types";
-import { CopyButton } from "./CopyButton";
-import { Badge } from "@/components/ui/badge";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { CATEGORIES } from "@/lib/constants";
+import { motion, AnimatePresence } from "framer-motion";
+import { CATEGORIES, AI_MODELS } from "@/lib/constants";
+import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 
 interface PromptCardProps {
   prompt: Prompt;
   index?: number;
+  /** "grid" = normal grid card | "carousel" = wider card for horizontal carousels */
+  variant?: "grid" | "carousel";
 }
 
-/** Generates a premium, highly tactile SVG animated thumbnail with noise and organic patterns. */
+/* ── Rich SVG Thumbnail ──────────────────────── */
 export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
   const colors = prompt.colorPalette || ["#6366F1", "#8B5CF6", "#EC4899"];
   const c1 = colors[0];
   const c2 = colors[1] || colors[0];
   const c3 = colors[2] || colors[0];
+  const id = prompt.id;
 
-  // Fingerprint calculation for uniquely generated shapes per prompt
-  const seedVal = prompt.title.charCodeAt(0) + prompt.title.charCodeAt(prompt.title.length - 1);
-  const pathType = seedVal % 4;
-
-  let pathElement = null;
-
-  if (pathType === 0) {
-    pathElement = (
-      <path
-        d="M-20 60 C 40 10, 90 90, 150 30 C 210 -10, 250 80, 320 20 L 320 200 L -20 200 Z"
-        fill={`url(#grad-mesh-${prompt.id})`}
-        opacity="0.85"
-      />
-    );
-  } else if (pathType === 1) {
-    pathElement = (
-      <polygon
-        points="-40,160 160,-40 340,120 120,340"
-        fill={`url(#grad-mesh-${prompt.id})`}
-        opacity="0.8"
-      />
-    );
-  } else if (pathType === 2) {
-    pathElement = (
-      <>
-        <circle cx="90" cy="110" r="100" fill={`url(#grad-mesh-${prompt.id})`} opacity="0.85" />
-        <circle cx="210" cy="50" r="80" fill={c3} opacity="0.25" style={{ mixBlendMode: 'screen' }} />
-      </>
-    );
-  } else {
-    pathElement = (
-      <path
-        d="M-10,30 Q80,0 150,80 T300,90 L300,200 L-10,200 Z"
-        fill={`url(#grad-mesh-${prompt.id})`}
-        opacity="0.85"
-      />
-    );
-  }
+  const seed = prompt.title.charCodeAt(0) + prompt.title.charCodeAt(prompt.title.length - 1);
+  const shape = seed % 4;
 
   return (
-    <div className="relative w-full h-full bg-slate-950 overflow-hidden flex items-center justify-center select-none group-hover:scale-[1.03] transition-transform duration-700">
-      {/* Background base mesh */}
-      <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+    <div className="absolute inset-0 w-full h-full overflow-hidden">
+      <svg
+        className="w-full h-full"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMidYMid slice"
+      >
         <defs>
-          <linearGradient id={`grad-bg-${prompt.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={`bg-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#050508" />
-            <stop offset="100%" stopColor="#110F24" />
+            <stop offset="100%" stopColor="#100d20" />
           </linearGradient>
-          <linearGradient id={`grad-mesh-${prompt.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={`mesh-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor={c1} />
             <stop offset="50%" stopColor={c2} />
             <stop offset="100%" stopColor={c3} />
           </linearGradient>
-          <pattern id={`dot-pat-${prompt.id}`} width="14" height="14" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="0.8" fill="#ffffff" fillOpacity="0.06" />
+          <pattern id={`dot-${id}`} width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="0.8" fill="white" fillOpacity="0.055" />
           </pattern>
+          <filter id={`blur-${id}`}>
+            <feGaussianBlur stdDeviation="22" />
+          </filter>
         </defs>
+        <rect width="100%" height="100%" fill={`url(#bg-${id})`} />
+        <rect width="100%" height="100%" fill={`url(#dot-${id})`} />
 
-        {/* Base dark gradient */}
-        <rect width="100%" height="100%" fill={`url(#grad-bg-${prompt.id})`} />
+        {/* Glow orb */}
+        <ellipse
+          cx="50%"
+          cy="42%"
+          rx="60%"
+          ry="60%"
+          fill={c1}
+          fillOpacity="0.22"
+          filter={`url(#blur-${id})`}
+        />
 
-        {/* Dot patterns */}
-        <rect width="100%" height="100%" fill={`url(#dot-pat-${prompt.id})`} />
-
-        {/* Dynamic mesh shape */}
-        {pathElement}
-
-        {/* Overlay mesh glow */}
-        <circle cx="150" cy="100" r="120" fill="url(#logo-grad)" opacity="0.05" filter="blur(40px)" />
+        {/* Shape */}
+        {shape === 0 && (
+          <path d="M-20 60 C 40 10, 90 90, 150 30 C 210 -10, 250 80, 320 20 L 320 200 L -20 200 Z"
+            fill={`url(#mesh-${id})`} opacity="0.75" />
+        )}
+        {shape === 1 && (
+          <polygon points="-40,160 160,-40 340,120 120,340"
+            fill={`url(#mesh-${id})`} opacity="0.7" />
+        )}
+        {shape === 2 && (
+          <>
+            <circle cx="50%" cy="45%" r="110" fill={`url(#mesh-${id})`} opacity="0.75" />
+            <circle cx="75%" cy="20%" r="70" fill={c3} opacity="0.20" />
+          </>
+        )}
+        {shape === 3 && (
+          <path d="M-10,30 Q80,0 150,80 T300,90 L300,200 L-10,200 Z"
+            fill={`url(#mesh-${id})`} opacity="0.75" />
+        )}
       </svg>
 
-      {/* Model Overlay watermark badge */}
-      <div className="absolute bottom-3 left-3 bg-black/55 backdrop-blur-xl border border-white/10 rounded-lg px-2.5 py-0.5 text-[9px] font-extrabold tracking-widest uppercase text-white/95 shadow-lg">
-        {prompt.model}
-      </div>
-
-      {/* Aesthetic float icon */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl flex items-center justify-center opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
-        <Sparkles className="h-4.5 w-4.5 text-white/40 group-hover:text-primary transition-colors" />
-      </div>
+      {/* Hover zoom effect */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-transparent group-hover:from-black/5 transition-all duration-500" />
     </div>
   );
 }
 
-export function PromptCard({ prompt, index = 0 }: PromptCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
+/* ── Copy Button ─────────────────────────────── */
+function CardCopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
 
-  // Mouse hover 3D tilt tracking variables
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (!card) return;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const xc = rect.width / 2;
-    const yc = rect.height / 2;
-    const rotateX = (yc - y) / 18; // Max 10 deg tilt
-    const rotateY = (x - xc) / 18;
-    card.style.setProperty("--rx", `${rotateX}deg`);
-    card.style.setProperty("--ry", `${rotateY}deg`);
-  };
-
-  const handleMouseLeave = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.setProperty("--rx", "0deg");
-    card.style.setProperty("--ry", "0deg");
-  };
-
-  const handleShare = async (e: React.MouseEvent) => {
+  const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const shareUrl = `${window.location.origin}/prompts/${prompt.id}`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: prompt.title,
-          text: prompt.description,
-          url: shareUrl,
-        });
-      } catch (err) {
-        // Fallback
-      }
-    } else {
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success("Prompt share link copied to clipboard!", { duration: 1500 });
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success("Prompt copied!", { duration: 1500 });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Copy failed");
     }
   };
 
-  // Find Category color for active chip glow
-  const categoryObject = CATEGORIES.find(
-    (c) => c.slug === prompt.category.toLowerCase() || c.name.toLowerCase() === prompt.category.toLowerCase()
-  );
-  const categoryColor = categoryObject?.color || "var(--color-primary)";
-
-  const difficultyStars = Array.from({ length: 3 }).map((_, i) => (
-    <span
-      key={i}
+  return (
+    <motion.button
+      onClick={handleCopy}
+      whileTap={{ scale: 0.9 }}
+      aria-label="Copy prompt"
       className={cn(
-        "w-1.5 h-1.5 rounded-full transition-all duration-300",
-        i < prompt.difficulty
-          ? "bg-primary shadow-[0_0_8px_var(--color-primary)]"
-          : "bg-muted-foreground/20"
+        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold",
+        "backdrop-blur-md border transition-all duration-200",
+        copied
+          ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
+          : "bg-black/50 border-white/15 text-white hover:bg-primary/25 hover:border-primary/40 hover:text-primary-foreground"
       )}
-    />
-  ));
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={copied ? "check" : "copy"}
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.6, opacity: 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+        </motion.span>
+      </AnimatePresence>
+      {copied ? "Copied!" : "Copy"}
+    </motion.button>
+  );
+}
+
+/* FavoriteButton is now imported from @/components/favorites/FavoriteButton */
+
+/* ── Main Prompt Card ────────────────────────── */
+export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardProps) {
+  const category = CATEGORIES.find((c) => c.slug === prompt.category);
+  const model = AI_MODELS.find((m) => m.slug === prompt.model);
+
+  const cardWidth = variant === "carousel"
+    ? "w-44 sm:w-52 md:w-56 flex-shrink-0"
+    : "w-full";
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 15 }}
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: Math.min(index * 0.04, 0.35), ease: "easeOut" }}
-      className="perspective-container w-full h-full"
+      transition={{
+        duration: 0.45,
+        delay: Math.min(index * 0.05, 0.4),
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className={cardWidth}
     >
-      <div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          transform: "rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))",
-        }}
-        className={cn(
-          "tilt-card relative flex flex-col w-full h-full rounded-[20px]",
-          "bg-card/45 border border-border/30 shadow-md overflow-hidden backdrop-blur-md",
-          "noise-overlay select-none"
-        )}
+      <Link
+        href={`/prompts/${prompt.id}`}
+        className="block group relative rounded-xl overflow-hidden bg-card border border-border/[0.07] transition-all duration-300 hover:border-border/20 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.6)]"
+        style={{ aspectRatio: "3/4" }}
+        aria-label={`View prompt: ${prompt.title}`}
       >
-        {/* ── Image/Preview container with Dynamic Aspect Ratio ── */}
-        <Link
-          href={`/prompts/${prompt.id}`}
-          className="relative block w-full overflow-hidden border-b border-border/20 flex-shrink-0 bg-slate-950/60"
-          style={{
-            aspectRatio: prompt.aspectRatio ? prompt.aspectRatio.replace(":", "/") : "16/9"
-          }}
-        >
-          {prompt.previewImage && (prompt.previewImage.startsWith("http") || !prompt.previewImage.endsWith(".svg")) ? (
-            <img
-              src={prompt.previewImage}
-              alt={prompt.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-          ) : (
-            <SvgThumbnail prompt={prompt} />
-          )}
+        {/* ── Thumbnail ── */}
+        <SvgThumbnail prompt={prompt} />
 
-          {/* V3.5 Free/Pro badge overlay */}
-          <div className="absolute top-3 right-3 z-20 pointer-events-none select-none">
-            {prompt.isPro ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-gold/15 text-gold border border-gold/30 shadow-[0_2px_8px_rgba(245,158,11,0.25)] backdrop-blur-md">
-                🔒 Pro
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 backdrop-blur-md">
-                ✓ Free
+        {/* ── Hover scale overlay ── */}
+        <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03] pointer-events-none" />
+
+        {/* ── Bottom gradient vignette ── */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent pointer-events-none" />
+
+        {/* ── TOP-LEFT: Title pill ── */}
+        <div className="absolute top-2.5 left-2.5 max-w-[50%] flex items-start z-10">
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-md text-[10px] font-bold text-white/95 tracking-wide",
+              "bg-black/50 backdrop-blur-md border border-white/10",
+              "truncate w-full"
+            )}
+          >
+            {prompt.title.toUpperCase()}
+          </span>
+        </div>
+
+        {/* ── TOP-RIGHT: Favorite & PRO Badge ── */}
+        <div className="absolute top-2.5 right-2.5 flex flex-col items-end gap-1.5 z-10">
+          <div className="flex items-center gap-1.5">
+            {prompt.isPro && (
+              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-gold text-black shadow-[0_2px_8px_rgba(245,158,11,0.4)]">
+                PRO
               </span>
             )}
+            <FavoriteButton promptId={prompt.id} promptTitle={prompt.title} />
           </div>
-        </Link>
-
-        {/* ── Info Content Area ── */}
-        <div className="flex flex-col flex-grow p-4.5 justify-between gap-4">
-          
-          {/* Badge & Time info */}
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <span
-              style={{
-                borderColor: `${categoryColor}30`,
-                color: categoryColor,
-                backgroundColor: `${categoryColor}08`
-              }}
-              className="text-[9px] uppercase font-black px-2 py-0.5 rounded-lg border tracking-widest leading-none"
-            >
-              {prompt.category}
-            </span>
-            
-            <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground/60">
-              <Clock className="h-3.5 w-3.5" />
-              <span>{getReadingTime(prompt.prompt)}</span>
-            </div>
-          </div>
-
-          {/* Title & Desc */}
-          <div className="flex-grow flex flex-col justify-start">
-            <Link href={`/prompts/${prompt.id}`} className="block group/title">
-              <h3 className="font-extrabold text-[0.98rem] leading-snug tracking-tight line-clamp-1 group-hover/title:text-primary transition-colors duration-300">
-                {prompt.title}
-              </h3>
-            </Link>
-            <p className="text-xs text-muted-foreground/70 line-clamp-2 mt-1.5 leading-relaxed font-semibold">
-              {prompt.description}
-            </p>
-          </div>
-
-          {/* Details row (Difficulty, Copies) */}
-          <div className="flex items-center justify-between py-2 border-t border-border/10 text-[10px] font-bold flex-shrink-0">
-            {/* Difficulty stars */}
-            <div className="flex items-center gap-1.5" title={`Complexity: ${prompt.difficulty}/3`}>
-              <span className="uppercase tracking-widest text-muted-foreground/50">Complexity</span>
-              <div className="flex gap-1">{difficultyStars}</div>
-            </div>
-
-            {/* Copies count */}
-            <div className="flex items-center gap-1 text-muted-foreground/75" title="Copies count">
-              <Eye className="h-3.5 w-3.5 text-muted-foreground/45" />
-              <span className="font-extrabold">
-                {formatCopyCount(prompt.copyCount)} copies
-              </span>
-            </div>
-          </div>
-
-          {/* Action Row */}
-          <div className="flex items-center justify-between gap-2 border-t border-border/10 pt-3 flex-shrink-0">
-            <CopyButton textToCopy={prompt.prompt} isPro={prompt.isPro} className="flex-1 text-[11px] font-extrabold" />
-            
-            <button
-              onClick={handleShare}
-              aria-label="Share prompt link"
-              suppressHydrationWarning
-              className={cn(
-                "w-9.5 h-9.5 flex items-center justify-center rounded-xl",
-                "bg-secondary/40 border border-border/20 text-muted-foreground hover:text-foreground hover:bg-secondary",
-                "transition-all duration-300 active:scale-95"
-              )}
-            >
-              <Share2 className="h-3.5 w-3.5" />
-            </button>
+          {/* View count chip */}
+          <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md border border-white/10">
+            <Eye className="h-2.5 w-2.5 text-white/70" />
+            <span className="text-[9px] font-semibold text-white/80">{formatCopyCount(prompt.copyCount)}</span>
           </div>
         </div>
-      </div>
-    </motion.article>
+
+        {/* ── BOTTOM overlays ── */}
+        <div className="absolute bottom-0 left-0 right-0 p-2.5 flex items-end justify-between gap-2 z-10">
+          {/* Copy button + Model badge */}
+          <div className="flex flex-col gap-1.5 items-start">
+            {/* AI Model badge */}
+            {model && (
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-md border border-white/10">
+                <span className="text-[8px] leading-none">{model.icon}</span>
+                <span className="text-[9px] font-bold text-white/85 tracking-wide">{model.name}</span>
+              </div>
+            )}
+            {/* Copy button */}
+            <CardCopyButton text={prompt.prompt} />
+          </div>
+
+          {/* Creator badge */}
+          <div className="text-[8px] font-semibold text-white/35 self-end pb-0.5 tracking-wide">
+            by PromptVerse
+          </div>
+        </div>
+      </Link>
+    </motion.div>
   );
 }

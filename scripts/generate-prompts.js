@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * PromptVerse Seed Data Generator
  * Generates 250 premium, highly realistic AI prompts.

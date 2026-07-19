@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, Bookmark, HelpCircle } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, ChevronDown, Heart, BookOpen, HeartHandshake } from "lucide-react";
+import { useTheme } from "@/components/layout/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/constants";
 
@@ -20,8 +20,8 @@ export function PVLogo({ className }: { className?: string }) {
     >
       <defs>
         <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="oklch(0.610 0.220 274)" />
-          <stop offset="50%" stopColor="oklch(0.700 0.160 310)" />
+          <stop offset="0%" stopColor="oklch(0.55 0.19 185)" />
+          <stop offset="50%" stopColor="oklch(0.65 0.18 200)" />
           <stop offset="100%" stopColor="oklch(0.780 0.170 65)" />
         </linearGradient>
         <clipPath id="logo-cut">
@@ -52,19 +52,36 @@ export function PVLogo({ className }: { className?: string }) {
 }
 
 const NAV_LINKS = [
-  { href: "/",         label: "Discover", icon: Compass },
+  { href: "/",         label: "Discover",   icon: Compass },
   { href: "/category", label: "Categories", icon: Sparkles },
-  { href: "/models",   label: "AI Models", icon: Cpu },
-  { href: "/search",   label: "Search", icon: Search },
+  { href: "/models",   label: "AI Models",  icon: Cpu },
+  { href: "/saved",    label: "Saved Prompts", icon: Heart },
+  { href: "/search",   label: "Search Box",   icon: Search },
+];
+
+const EXPLORE_CATEGORIES = [
+  { slug: "portrait", name: "Portrait", desc: "Studio human portraiture", icon: "👤" },
+  { slug: "cinematic", name: "Cinematic", desc: "Dramatic movie styling", icon: "🎬" },
+  { slug: "anime", name: "Anime & Manga", desc: "Japan illustrated art", icon: "🌸" },
+  { slug: "product-photography", name: "Product", desc: "Commercial display shots", icon: "📦" },
+];
+
+const EXPLORE_MODELS = [
+  { slug: "midjourney", name: "Midjourney", desc: "Unmatched artistic images", icon: "🎨" },
+  { slug: "flux", name: "Flux", desc: "Fast & photorealistic details", icon: "⚡" },
+  { slug: "chatgpt", name: "ChatGPT", desc: "Context & copy templates", icon: "💬" },
+  { slug: "claude", name: "Claude", desc: "Nuanced logic & instructions", icon: "🤖" },
+];
+
+const MORE_LINKS = [
+  { href: "/saved", label: "Saved Prompts", desc: "View bookmarked templates", icon: Heart },
+  { href: "/blog", label: "Blog & Guides", desc: "Tips, tutorials & news", icon: BookOpen },
+  { href: "/sponsor", label: "Sponsor Us", desc: "Promote your brand to creators", icon: HeartHandshake },
 ];
 
 /* ── Theme Toggle ─────────────────────────────── */
 function ThemeToggle({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) return <div className="w-9 h-9 rounded-xl skeleton" />;
 
   const current = theme === "light" ? "light" : "dark";
   const next = current === "light" ? "dark" : "light";
@@ -170,7 +187,38 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
+  const [exploreOpen, setExploreOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const exploreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const moreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleExploreEnter = () => {
+    if (exploreTimeoutRef.current) clearTimeout(exploreTimeoutRef.current);
+    setExploreOpen(true);
+    setMoreOpen(false);
+  };
+  const handleExploreLeave = () => {
+    exploreTimeoutRef.current = setTimeout(() => setExploreOpen(false), 200);
+  };
+
+  const handleMoreEnter = () => {
+    if (moreTimeoutRef.current) clearTimeout(moreTimeoutRef.current);
+    setMoreOpen(true);
+    setExploreOpen(false);
+  };
+  const handleMoreLeave = () => {
+    moreTimeoutRef.current = setTimeout(() => setMoreOpen(false), 200);
+  };
+
+  useEffect(() => {
+    let active = true;
+    setTimeout(() => {
+      if (active) setMobileOpen(false);
+    }, 0);
+    return () => {
+      active = false;
+    };
+  }, [pathname]);
 
   // Collapsing scroll trigger
   useEffect(() => {
@@ -197,11 +245,12 @@ export function Header() {
   return (
     <>
       <header
+        style={{ top: "var(--banner-height, 0px)" }}
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-500",
+          "sticky z-50 w-full transition-all duration-500",
           isScrolled
             ? "py-3 bg-transparent"
-            : "py-4 bg-background/70 backdrop-blur-md border-b border-border/10"
+            : "py-4 bg-background/50 backdrop-blur-lg border-b border-border/10"
         )}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -209,7 +258,7 @@ export function Header() {
             className={cn(
               "flex h-14 items-center justify-between gap-4 px-4 sm:px-6 transition-all duration-500 relative overflow-hidden",
               isScrolled
-                ? "mx-auto max-w-5xl rounded-2xl border border-border/30 bg-background/65 backdrop-blur-xl shadow-[0_12px_40px_-12px_rgba(0,0,0,0.5)]"
+                ? "mx-auto max-w-5xl rounded-2xl border border-primary/10 bg-card/60 backdrop-blur-xl shadow-[0_16px_40px_-15px_rgba(0,0,0,0.7)]"
                 : "w-full"
             )}
           >
@@ -224,43 +273,165 @@ export function Header() {
               className="flex items-center gap-3 group flex-shrink-0"
               aria-label={`${SITE_NAME} — Home`}
             >
-              <div className="w-8 h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                <PVLogo className="w-8 h-8" />
+              <div className="w-8 h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-[1.04]">
+                <PVLogo className="w-8 h-8 filter drop-shadow-[0_0_8px_rgba(20,184,166,0.35)]" />
               </div>
-              <span className="font-extrabold text-[1.1rem] tracking-tight hidden sm:block">
+              <span className="font-extrabold text-[1.1rem] tracking-tight hidden sm:flex items-center gap-1.5 select-none">
                 {SITE_NAME}
-                <span className="text-[10px] ml-1.5 font-bold uppercase tracking-wider text-gold px-1.5 py-0.5 rounded-md bg-gold/10 border border-gold/10">v3.0</span>
+                <span className="relative flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true">
+                  <svg className="w-2 h-2 text-white" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6.5L4.5 9L10 3" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"></path>
+                  </svg>
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-wider text-gold px-2 py-0.5 rounded-lg bg-gold/10 border border-gold/15 shadow-[0_2px_8px_rgba(245,158,11,0.15)]">PRO</span>
               </span>
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
-              {NAV_LINKS.map((link) => {
-                const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "relative px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 flex items-center gap-1.5 select-none",
-                      isActive
-                        ? "text-primary bg-primary/5"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
-                    )}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{link.label}</span>
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-active"
-                        className="absolute inset-0 rounded-xl bg-primary/8 border border-primary/10 shadow-[0_0_12px_rgba(97,0,220,0.08)]"
-                        transition={{ type: "spring", damping: 28, stiffness: 350 }}
-                      />
-                    )}
-                  </Link>
-                );
-              })}
+            <nav className="hidden md:flex items-center gap-1.5" aria-label="Main navigation">
+              <Link
+                href="/"
+                className={cn(
+                  "relative px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 select-none",
+                  pathname === "/"
+                    ? "text-primary bg-primary/[0.02]"
+                    : "text-muted-foreground/80 hover:text-foreground hover:bg-secondary/40"
+                )}
+              >
+                <Compass className="w-3.5 h-3.5" />
+                <span>Discover</span>
+                {pathname === "/" && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-xl bg-primary/[0.03] border border-primary/15 shadow-[0_0_15px_rgba(20,184,166,0.15)]"
+                    transition={{ type: "spring", damping: 30, stiffness: 380 }}
+                  />
+                )}
+              </Link>
+
+              {/* Explore Mega Menu Trigger */}
+              <div
+                className="relative"
+                onMouseEnter={handleExploreEnter}
+                onMouseLeave={handleExploreLeave}
+              >
+                <button
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 select-none outline-none",
+                    exploreOpen || pathname.startsWith("/category") || pathname.startsWith("/models")
+                      ? "text-primary bg-primary/[0.02]"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-secondary/40"
+                  )}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Explore</span>
+                  <ChevronDown className={cn("w-3 h-3 transition-transform duration-300", exploreOpen && "rotate-180")} />
+                </button>
+
+                <AnimatePresence>
+                  {exploreOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute left-1/2 -translate-x-[40%] mt-2 w-[540px] bg-card/95 border border-[#23203c]/20 rounded-2xl shadow-[0_24px_60px_-8px_rgba(0,0,0,0.7)] backdrop-blur-2xl p-5 z-50 grid grid-cols-2 gap-6"
+                    >
+                      {/* Categories Column */}
+                      <div className="space-y-3">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary/80">Popular Categories</span>
+                        <div className="space-y-1">
+                          {EXPLORE_CATEGORIES.map((cat) => (
+                            <Link
+                              key={cat.slug}
+                              href={`/category/${cat.slug}`}
+                              onClick={() => setExploreOpen(false)}
+                              className="group flex items-start gap-3 p-2 rounded-xl hover:bg-white/[0.03] transition-colors"
+                            >
+                              <span className="text-base select-none leading-none pt-0.5">{cat.icon}</span>
+                              <div className="flex flex-col gap-0.5">
+                                <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{cat.name}</span>
+                                <span className="text-[10px] text-muted-foreground/60 leading-none">{cat.desc}</span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* AI Models Column */}
+                      <div className="space-y-3 border-l border-border/10 pl-6">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gold">AI Models</span>
+                        <div className="space-y-1">
+                          {EXPLORE_MODELS.map((model) => (
+                            <Link
+                              key={model.slug}
+                              href={`/models/${model.slug}`}
+                              onClick={() => setExploreOpen(false)}
+                              className="group flex items-start gap-3 p-2 rounded-xl hover:bg-white/[0.03] transition-colors"
+                            >
+                              <span className="text-base select-none leading-none pt-0.5">{model.icon}</span>
+                              <div className="flex flex-col gap-0.5">
+                                <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{model.name}</span>
+                                <span className="text-[10px] text-muted-foreground/60 leading-none">{model.desc}</span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* More Dropdown Trigger */}
+              <div
+                className="relative"
+                onMouseEnter={handleMoreEnter}
+                onMouseLeave={handleMoreLeave}
+              >
+                <button
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 select-none outline-none",
+                    moreOpen || pathname === "/saved" || pathname === "/blog" || pathname === "/sponsor"
+                      ? "text-primary bg-primary/[0.02]"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-secondary/40"
+                  )}
+                >
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>More</span>
+                  <ChevronDown className={cn("w-3 h-3 transition-transform duration-300", moreOpen && "rotate-180")} />
+                </button>
+
+                <AnimatePresence>
+                  {moreOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute right-0 mt-2 w-64 bg-card/95 border border-[#23203c]/20 rounded-2xl shadow-[0_24px_60px_-8px_rgba(0,0,0,0.7)] backdrop-blur-2xl p-2.5 z-50 flex flex-col gap-1"
+                    >
+                      {MORE_LINKS.map((link) => {
+                        const Icon = link.icon;
+                        return (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            onClick={() => setMoreOpen(false)}
+                            className="group flex items-start gap-3.5 p-2.5 rounded-xl hover:bg-white/[0.03] transition-colors"
+                          >
+                            <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors mt-0.5 shrink-0" />
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{link.label}</span>
+                              <span className="text-[10px] text-muted-foreground/60 leading-tight">{link.desc}</span>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </nav>
 
             {/* Right Side Control Pills */}
@@ -373,14 +544,14 @@ export function Header() {
                           "flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-semibold",
                           "transition-all duration-300",
                           isActive
-                            ? "bg-primary/10 text-primary border border-primary/10 shadow-[0_0_12px_rgba(97,0,220,0.05)]"
+                            ? "bg-primary/10 text-primary border border-primary/10 shadow-[0_0_12px_rgba(20,184,166,0.08)]"
                             : "text-foreground hover:bg-secondary/40 hover:text-foreground"
                         )}
                       >
                         <Icon className="w-4 h-4 text-muted-foreground" />
                         <span>{link.label}</span>
                         {isActive && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
+                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse-glow" />
                         )}
                       </Link>
                     </motion.div>

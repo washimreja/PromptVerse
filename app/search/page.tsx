@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense, useMemo } from "react";
+import { useEffect, useState, useRef, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Search, X, History, TrendingUp, Cpu, Grid3X3, ArrowRight, CornerDownLeft, SlidersHorizontal, Sliders, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,10 +31,36 @@ function SearchPageContent() {
     clearHistory,
   } = useSearch();
 
-  // Filters State
-  const [modelFilter, setModelFilter] = useState("all");
-  const [aspectFilter, setAspectFilter] = useState("all");
-  const [difficultyFilter, setDifficultyFilter] = useState("all");
+  // Filters State — initialised from URL params for shareability
+  const [modelFilter, setModelFilter] = useState(() => searchParams.get("model") || "all");
+  const [aspectFilter, setAspectFilter] = useState(() => searchParams.get("aspect") || "all");
+  const [difficultyFilter, setDifficultyFilter] = useState(() => searchParams.get("difficulty") || "all");
+
+  // Sync a single filter param to the URL without clobbering q= or other params
+  const syncParam = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value === "all") {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+      const qs = params.toString();
+      router.replace(`/search${qs ? `?${qs}` : ""}`, { scroll: false });
+    },
+    [router, searchParams]
+  );
+
+  const setModel = (v: string) => { setModelFilter(v); syncParam("model", v); };
+  const setAspect = (v: string) => { setAspectFilter(v); syncParam("aspect", v); };
+  const setDifficulty = (v: string) => { setDifficultyFilter(v); syncParam("difficulty", v); };
+
+  // Reflect URL changes back to state (e.g. browser back/forward)
+  useEffect(() => {
+    setModelFilter(searchParams.get("model") || "all");
+    setAspectFilter(searchParams.get("aspect") || "all");
+    setDifficultyFilter(searchParams.get("difficulty") || "all");
+  }, [searchParams]);
 
   // Dropdown UI States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -72,11 +98,17 @@ function SearchPageContent() {
     inputRef.current?.focus();
   };
 
-  // Reset all filters
+  // Reset all filters — also clears URL params
   const resetFilters = () => {
     setModelFilter("all");
     setAspectFilter("all");
     setDifficultyFilter("all");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("model");
+    params.delete("aspect");
+    params.delete("difficulty");
+    const qs = params.toString();
+    router.replace(`/search${qs ? `?${qs}` : ""}`, { scroll: false });
   };
 
   const isFilterActive = modelFilter !== "all" || aspectFilter !== "all" || difficultyFilter !== "all";
@@ -108,8 +140,8 @@ function SearchPageContent() {
       <div className="relative max-w-3xl mx-auto mb-10">
         <div className={cn(
           "flex items-center gap-3 p-1.5 rounded-2xl",
-          "bg-[#12131A] border border-[#1a1b24] shadow-lg",
-          "focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20",
+          "bg-[#080713]/60 border border-[#23203c]/20 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
+          "focus-within:border-primary/45 focus-within:shadow-[0_0_30px_rgba(139,92,246,0.15)]",
           "transition-all duration-300 relative"
         )}>
           <div className="flex-grow relative flex items-center pl-3">
@@ -146,14 +178,14 @@ function SearchPageContent() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
-              className="absolute left-0 right-0 mt-2.5 z-20 bg-[#12131A]/95 border border-[#1a1b24] rounded-2xl shadow-xl overflow-hidden backdrop-blur-md"
+              className="absolute left-0 right-0 mt-2.5 z-20 bg-[#080713]/95 border border-[#23203c]/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-md"
             >
               <div className="py-2">
                 {suggestions.map((suggestion) => (
                   <button
                     key={suggestion}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="w-full text-left px-5 py-3 text-xs hover:bg-[#1a1b24] text-muted-foreground hover:text-white transition-colors flex items-center justify-between"
+                    className="w-full text-left px-5 py-3 text-xs hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white transition-colors flex items-center justify-between"
                   >
                     <span>{suggestion}</span>
                     <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 text-primary transition-opacity" />
@@ -302,7 +334,7 @@ function SearchPageContent() {
                 Search Results
               </h2>
               <p className="text-[11px] text-muted-foreground/60 font-semibold">
-                Found {filteredResults.length} {filteredResults.length === 1 ? 'prompt' : 'prompts'} matching "{query}"
+                Found {filteredResults.length} {filteredResults.length === 1 ? 'prompt' : 'prompts'} matching &quot;{query}&quot;
                 {isFilterActive && " (filters applied)"}
               </p>
             </div>
@@ -327,8 +359,8 @@ function SearchPageContent() {
                   className={cn(
                     "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all",
                     modelFilter !== "all" 
-                      ? "bg-primary/10 text-primary border-primary/25" 
-                      : "bg-[#12131A] text-muted-foreground border-border/60 hover:border-border"
+                      ? "bg-primary/10 text-primary border-primary/25 shadow-[0_0_12px_rgba(139,92,246,0.1)]" 
+                      : "bg-[#080713]/60 text-muted-foreground/80 border-[#23203c]/20 hover:border-primary/25 hover:text-foreground"
                   )}
                 >
                   <span>{activeModelName}</span>
@@ -337,16 +369,16 @@ function SearchPageContent() {
                 <AnimatePresence>
                   {openDropdown === "model" && (
                     <>
-                      <div className="fixed inset-0 z-20" onClick={() => setOpenDropdown(null)} />
+                       <div className="fixed inset-0 z-20" onClick={() => setOpenDropdown(null)} />
                       <motion.div
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 5 }}
-                        className="absolute right-0 mt-2 w-48 bg-[#12131A] border border-[#1a1b24] rounded-2xl shadow-xl z-35 py-1.5 overflow-hidden"
+                        className="absolute right-0 mt-2 w-48 bg-[#080713]/95 border border-[#23203c]/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-35 py-1.5 overflow-hidden backdrop-blur-md"
                       >
                         <button
-                          onClick={() => { setModelFilter("all"); setOpenDropdown(null); }}
-                          className="w-full text-left px-4 py-2 text-xs flex items-center justify-between hover:bg-[#1a1b24] text-muted-foreground hover:text-white"
+                          onClick={() => { setModel("all"); setOpenDropdown(null); }}
+                          className="w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white"
                         >
                           <span>All Models</span>
                           {modelFilter === "all" && <Check className="h-3.5 w-3.5 text-primary" />}
@@ -354,8 +386,8 @@ function SearchPageContent() {
                         {AI_MODELS.map((m) => (
                           <button
                             key={m.slug}
-                            onClick={() => { setModelFilter(m.slug); setOpenDropdown(null); }}
-                            className="w-full text-left px-4 py-2 text-xs flex items-center justify-between hover:bg-[#1a1b24] text-muted-foreground hover:text-white"
+                            onClick={() => { setModel(m.slug); setOpenDropdown(null); }}
+                            className="w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white"
                           >
                             <span>{m.name}</span>
                             {modelFilter === m.slug && <Check className="h-3.5 w-3.5 text-primary" />}
@@ -374,8 +406,8 @@ function SearchPageContent() {
                   className={cn(
                     "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all",
                     aspectFilter !== "all" 
-                      ? "bg-primary/10 text-primary border-primary/25" 
-                      : "bg-[#12131A] text-muted-foreground border-border/60 hover:border-border"
+                      ? "bg-primary/10 text-primary border-primary/25 shadow-[0_0_12px_rgba(139,92,246,0.1)]" 
+                      : "bg-[#080713]/60 text-muted-foreground/80 border-[#23203c]/20 hover:border-primary/25 hover:text-foreground"
                   )}
                 >
                   <span>{aspectFilter === "all" ? "All Formats" : aspectFilter}</span>
@@ -389,11 +421,11 @@ function SearchPageContent() {
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 5 }}
-                        className="absolute right-0 mt-2 w-40 bg-[#12131A] border border-[#1a1b24] rounded-2xl shadow-xl z-35 py-1.5 overflow-hidden"
+                        className="absolute right-0 mt-2 w-40 bg-[#080713]/95 border border-[#23203c]/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-35 py-1.5 overflow-hidden backdrop-blur-md"
                       >
                         <button
-                          onClick={() => { setAspectFilter("all"); setOpenDropdown(null); }}
-                          className="w-full text-left px-4 py-2 text-xs flex items-center justify-between hover:bg-[#1a1b24] text-muted-foreground hover:text-white"
+                          onClick={() => { setAspect("all"); setOpenDropdown(null); }}
+                          className="w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white"
                         >
                           <span>All Formats</span>
                           {aspectFilter === "all" && <Check className="h-3.5 w-3.5 text-primary" />}
@@ -401,8 +433,8 @@ function SearchPageContent() {
                         {ASPECT_RATIOS.map((ratio) => (
                           <button
                             key={ratio}
-                            onClick={() => { setAspectFilter(ratio); setOpenDropdown(null); }}
-                            className="w-full text-left px-4 py-2 text-xs flex items-center justify-between hover:bg-[#1a1b24] text-muted-foreground hover:text-white"
+                            onClick={() => { setAspect(ratio); setOpenDropdown(null); }}
+                            className="w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white"
                           >
                             <span>{ratio}</span>
                             {aspectFilter === ratio && <Check className="h-3.5 w-3.5 text-primary" />}
@@ -421,8 +453,8 @@ function SearchPageContent() {
                   className={cn(
                     "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all",
                     difficultyFilter !== "all" 
-                      ? "bg-primary/10 text-primary border-primary/25" 
-                      : "bg-[#12131A] text-muted-foreground border-border/60 hover:border-border"
+                      ? "bg-primary/10 text-primary border-primary/25 shadow-[0_0_12px_rgba(139,92,246,0.1)]" 
+                      : "bg-[#080713]/60 text-muted-foreground/80 border-[#23203c]/20 hover:border-primary/25 hover:text-foreground"
                   )}
                 >
                   <span>{activeDifficultyName}</span>
@@ -436,11 +468,11 @@ function SearchPageContent() {
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 5 }}
-                        className="absolute right-0 mt-2 w-44 bg-[#12131A] border border-[#1a1b24] rounded-2xl shadow-xl z-35 py-1.5 overflow-hidden"
+                        className="absolute right-0 mt-2 w-44 bg-[#080713]/95 border border-[#23203c]/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-35 py-1.5 overflow-hidden backdrop-blur-md"
                       >
                         <button
-                          onClick={() => { setDifficultyFilter("all"); setOpenDropdown(null); }}
-                          className="w-full text-left px-4 py-2 text-xs flex items-center justify-between hover:bg-[#1a1b24] text-muted-foreground hover:text-white"
+                          onClick={() => { setDifficulty("all"); setOpenDropdown(null); }}
+                          className="w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white"
                         >
                           <span>All Levels</span>
                           {difficultyFilter === "all" && <Check className="h-3.5 w-3.5 text-primary" />}
@@ -448,8 +480,8 @@ function SearchPageContent() {
                         {Object.entries(DIFFICULTY_LABELS).map(([val, label]) => (
                           <button
                             key={val}
-                            onClick={() => { setDifficultyFilter(val); setOpenDropdown(null); }}
-                            className="w-full text-left px-4 py-2 text-xs flex items-center justify-between hover:bg-[#1a1b24] text-muted-foreground hover:text-white"
+                            onClick={() => { setDifficulty(val); setOpenDropdown(null); }}
+                            className="w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white"
                           >
                             <span>{label}</span>
                             {difficultyFilter === val && <Check className="h-3.5 w-3.5 text-primary" />}

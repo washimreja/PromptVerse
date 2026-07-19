@@ -49,12 +49,12 @@ export function CopyButton({
       aria-label={isPro ? "Unlock Pro Prompt" : (copied ? "Copied" : "Copy prompt text")}
       suppressHydrationWarning
       className={cn(
-        "relative flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold w-full overflow-hidden transition-all duration-300 active:scale-[0.97] select-none",
+        "relative flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold w-full overflow-hidden transition-all duration-300 active:scale-[0.97] select-none border",
         isPro
-          ? "bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 text-white shadow-[0_4px_15px_rgba(245,158,11,0.22)] border border-amber-400/20 hover:brightness-105"
+          ? "bg-gold/10 hover:bg-gold/20 text-gold border-gold/25 shadow-[0_4px_12px_rgba(245,158,11,0.12)]"
           : (copied
-              ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-emerald-400/20"
-              : "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-[0_4px_15px_rgba(99,102,241,0.2)] hover:shadow-[0_4px_20px_rgba(99,102,241,0.45)] border border-white/10 hover:brightness-105"),
+              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25 shadow-[0_4px_12px_rgba(16,185,129,0.15)]"
+              : "bg-[#181724]/40 text-foreground/90 border-[#262438] hover:bg-primary/10 hover:text-primary hover:border-primary/25 hover:shadow-[0_0_15px_rgba(139,92,246,0.12)]"),
         animating && "animate-copy-pop",
         className
       )}

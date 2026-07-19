@@ -25,12 +25,12 @@ export function CategoryCard({ category, index = 0 }: CategoryCardProps) {
         href={`/category/${category.slug}`}
         className={cn(
           "group relative flex items-center justify-between p-4 rounded-2xl h-[92px] transition-all duration-300 ease-out",
-          "bg-[#12131A]/95 border border-[#1a1b24] shadow-md overflow-hidden",
-          "hover:-translate-y-[2px] hover:bg-[#15161E]",
+          "bg-[#080713]/60 border border-[#23203c]/20 shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden",
+          "hover:-translate-y-[2px] hover:bg-[#0a0917]/70 hover:border-primary/20",
           "focus:outline-none focus:ring-1"
         )}
         style={{
-          // @ts-ignore
+          // @ts-expect-error - Custom CSS Variable mapping
           "--tw-ring-color": `${category.color}30`
         }}
       >
@@ -85,7 +85,7 @@ export function CategoryCard({ category, index = 0 }: CategoryCardProps) {
 
 export function CategorySkeleton() {
   return (
-    <div className="flex items-center justify-between p-4 rounded-2xl bg-[#12131A] border border-[#1a1b24] h-[92px]">
+    <div className="flex items-center justify-between p-4 rounded-2xl bg-[#080713]/60 border border-[#23203c]/20 h-[92px]">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl skeleton" />
         <div className="space-y-1.5">

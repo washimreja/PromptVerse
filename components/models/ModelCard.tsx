@@ -24,12 +24,12 @@ export function ModelCard({ model, index = 0 }: ModelCardProps) {
         href={`/models/${model.slug}`}
         className={cn(
           "group relative flex items-center gap-3.5 p-3.5 rounded-2xl h-[100px] transition-all duration-300 ease-out",
-          "bg-[#12131A]/95 border border-[#1a1b24] shadow-md overflow-hidden",
-          "hover:-translate-y-[2px] hover:bg-[#15161E]",
+          "bg-[#080713]/60 border border-[#23203c]/20 shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden",
+          "hover:-translate-y-[2px] hover:bg-[#0a0917]/70 hover:border-primary/20",
           "focus:outline-none focus:ring-1"
         )}
         style={{
-          // @ts-ignore
+          // @ts-expect-error - Custom CSS Variable mapping
           "--tw-ring-color": `${model.color}30`
         }}
       >

@@ -1,35 +1,51 @@
 "use client";
 
+import Link from "next/link";
+import { Sparkles, ArrowRight } from "lucide-react";
 import type { Prompt } from "@/types";
 import { PromptGrid } from "@/components/prompts/PromptGrid";
-import { Sparkles } from "lucide-react";
+import { ScrollCarousel } from "@/components/ui/ScrollCarousel";
 
 export function FeaturedPrompts({ prompts }: { prompts: Prompt[] }) {
+  const sidebar = (
+    <div className="flex flex-col gap-4">
+      <span className="section-label">Premium Spotlight</span>
+      <div className="space-y-2">
+        <h2 className="text-2xl font-extrabold tracking-tight leading-tight">
+          Featured<br />Prompts
+        </h2>
+        <p className="text-xs text-muted-foreground/70 leading-relaxed">
+          Hand-crafted AI prompts for stunning, professional results.
+        </p>
+      </div>
+      <Link
+        href="/search?sort=most-popular"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline underline-offset-3 transition-colors mt-1"
+      >
+        See more premium prompts
+        <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
+    </div>
+  );
+
   return (
-    <section className="py-14 bg-background border-b border-border/10">
+    <section className="py-12 bg-background border-b border-border/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* V3 Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-3">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-extrabold tracking-widest text-primary bg-primary/15 border border-primary/20 px-2.5 py-0.5 rounded-md uppercase">
-                Pillar 01
-              </span>
-              <span className="text-muted-foreground/30 font-mono text-[10px]">// Curated Masterclass</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2.5">
-              <Sparkles className="h-6 w-6 text-gold fill-gold/15" />
-              <span>Featured Masterpieces</span>
-            </h2>
-            <p className="text-xs text-muted-foreground/75 leading-relaxed max-w-xl">
-              Curated by prompt engineers: highly popular, top-quality prompts for professional-grade AI outputs.
-            </p>
+
+        {/* Mobile section header */}
+        <div className="lg:hidden flex items-center justify-between mb-6">
+          <div className="space-y-1">
+            <span className="section-label">Premium Spotlight</span>
+            <h2 className="text-2xl font-extrabold tracking-tight">Featured Prompts</h2>
           </div>
+          <Link href="/search?sort=most-popular" className="text-xs font-bold text-primary flex items-center gap-1">
+            See all <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
-        {/* Prompts Grid */}
-        <PromptGrid prompts={prompts} />
+        <ScrollCarousel leftSidebar={sidebar} gap={12}>
+          <PromptGrid prompts={prompts} variant="carousel" />
+        </ScrollCarousel>
 
       </div>
     </section>

@@ -1,16 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Heart, ExternalLink } from "lucide-react";
-import {
-  SITE_NAME,
-  SITE_TAGLINE,
-  SITE_INSTAGRAM,
-  SITE_GITHUB,
-  SITE_LINKEDIN,
-  SITE_AUTHOR,
-} from "@/lib/constants";
+import { useState } from "react";
+import { Sparkles, Heart, ExternalLink, Mail, ArrowRight, Check } from "lucide-react";
+import { SITE_NAME, SITE_TAGLINE, SITE_INSTAGRAM, SITE_GITHUB, SITE_LINKEDIN, SITE_AUTHOR } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 /* ── Custom SVG Social Icons ─────────────────── */
 function InstagramIcon({ className }: { className?: string }) {
@@ -48,7 +43,16 @@ const FOOTER_LINKS = [
     ],
   },
   {
-    title: "Legal Pillars",
+    title: "Company",
+    links: [
+      { href: "/about",   label: "About Us" },
+      { href: "/contact", label: "Contact" },
+      { href: "/sponsor", label: "Sponsor Us" },
+      { href: "/blog",    label: "Blog & Guides" },
+    ],
+  },
+  {
+    title: "Legal",
     links: [
       { href: "/privacy", label: "Privacy Policy" },
       { href: "/terms",   label: "Terms of Use" },
@@ -61,6 +65,95 @@ const SOCIAL_LINKS = [
   { href: SITE_GITHUB,    label: "GitHub",    Icon: GitHubIcon,    hoverColor: "hover:bg-slate-700/25 hover:text-foreground" },
   { href: SITE_LINKEDIN,  label: "LinkedIn",  Icon: LinkedInIcon,  hoverColor: "hover:bg-blue-600/25 hover:text-blue-500" },
 ];
+
+/* ── Newsletter Signup ─────────────────────────── */
+function NewsletterSignup() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    setStatus("loading");
+    // Simulated API call — swap with real provider (Mailchimp / Resend / etc.)
+    await new Promise((r) => setTimeout(r, 900));
+    setStatus("done");
+    toast.success("You're subscribed! 🎉", {
+      description: "We'll send you the best new prompts weekly.",
+    });
+    setEmail("");
+  };
+
+  return (
+    <div className="w-full max-w-2xl mx-auto mb-14">
+      <div className={cn(
+        "relative rounded-2xl border border-border/20 bg-card/45 backdrop-blur-md p-6 overflow-hidden",
+        "shadow-[0_12px_32px_rgba(0,0,0,0.3)]"
+      )}>
+        {/* Decorative glow */}
+        <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
+
+        <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
+          {/* Left text */}
+          <div className="flex-shrink-0 space-y-1">
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-primary" />
+              <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">Newsletter</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground/70 font-semibold max-w-[200px]">
+              Get weekly top prompts & AI tips in your inbox — free forever.
+            </p>
+          </div>
+
+          {/* Right form */}
+          <form onSubmit={handleSubmit} className="flex-1 flex gap-2 min-w-0">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              disabled={status !== "idle"}
+              aria-label="Email address for newsletter"
+              className={cn(
+                "flex-1 min-w-0 px-3.5 py-2.5 rounded-xl text-xs font-semibold",
+                "bg-background/60 border border-border/30 text-foreground",
+                "placeholder:text-muted-foreground/40",
+                "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40",
+                "transition-all duration-200",
+                status === "done" && "opacity-50"
+              )}
+            />
+            <button
+              type="submit"
+              disabled={status !== "idle"}
+              id="newsletter-subscribe"
+              aria-label="Subscribe to newsletter"
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-extrabold shrink-0",
+                "transition-all duration-300 active:scale-95 border",
+                status === "done"
+                  ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/25"
+                  : "bg-primary text-primary-foreground border-primary/40 hover:bg-primary/90 hover:shadow-[0_0_15px_rgba(139,92,246,0.3)]",
+                status === "loading" && "opacity-70 cursor-not-allowed"
+              )}
+            >
+              {status === "done" ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <ArrowRight className={cn("h-3.5 w-3.5", status === "loading" && "animate-pulse")} />
+              )}
+              <span>{status === "done" ? "Done!" : status === "loading" ? "..." : "Subscribe"}</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -80,7 +173,7 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-0.5 border-x border-border/10">
             <span className="text-sm font-extrabold text-gold">12+</span>
-            <span className="text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground/60">Models Optimization</span>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground/60">Models Optimized</span>
           </div>
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-extrabold text-primary">Instant</span>
@@ -88,8 +181,11 @@ export function Footer() {
           </div>
         </div>
 
+        {/* ── Newsletter Signup ── */}
+        <NewsletterSignup />
+
         {/* Main layout grid */}
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-5">
 
           {/* Brand block column */}
           <div className="lg:col-span-2 flex flex-col gap-5">
@@ -124,7 +220,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Navigation Links Columns */}
+          {/* Navigation Links Columns (3 cols on lg) */}
           {FOOTER_LINKS.map((col) => (
             <div key={col.title} className="flex flex-col gap-4">
               <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/60">
@@ -168,6 +264,43 @@ export function Footer() {
           </p>
         </div>
       </div>
+
+      {/* ── Language Selector Bar ── */}
+      <nav aria-label="Available languages" className="border-t border-[#1a1a2e]/30 dark:border-[#1a1a2e]/80 bg-slate-900/10 dark:bg-black/30 py-3 px-4 text-center text-[10px] text-muted-foreground select-none">
+        <span className="mr-2 text-muted-foreground/50 font-bold uppercase tracking-wider">Available in:</span>
+        <span className="inline-flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
+          {[
+            { code: "en", flag: "🇺🇸", name: "English" },
+            { code: "es", flag: "🇪🇸", name: "Español" },
+            { code: "pt", flag: "🇧🇷", name: "Português" },
+            { code: "hi", flag: "🇮🇳", name: "हिन्दी" },
+            { code: "fr", flag: "🇫🇷", name: "Français" },
+            { code: "zh", flag: "🇨🇳", name: "中文" },
+            { code: "ja", flag: "🇯🇵", name: "日本語" },
+            { code: "ar", flag: "🇸🇦", name: "العربية" }
+          ].map((lang, idx, arr) => (
+            <span key={lang.code} className="inline-flex items-center">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  toast.info(`${lang.name} translation loading...`, {
+                    description: "Premium multilingual templates are coming in the next release!",
+                    duration: 3000,
+                  });
+                }}
+                className={cn(
+                  "hover:text-foreground font-semibold flex items-center gap-1 transition-all",
+                  lang.code === "en" ? "text-foreground font-bold" : "text-muted-foreground/75"
+                )}
+              >
+                <span>{lang.flag}</span>
+                <span>{lang.name}</span>
+              </button>
+              {idx < arr.length - 1 && <span className="text-muted-foreground/20 ml-2 select-none">·</span>}
+            </span>
+          ))}
+        </span>
+      </nav>
     </footer>
   );
 }

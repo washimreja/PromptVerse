@@ -1,37 +1,86 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import { AI_MODELS } from "@/lib/constants";
-import { ModelCard } from "@/components/models/ModelCard";
-import { Cpu } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export function BrowseByModel() {
   return (
-    <section className="py-14 bg-background border-b border-border/10">
+    <section className="py-12 bg-muted/[0.02] border-b border-border/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* V3 Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-3">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-extrabold tracking-widest text-primary bg-primary/15 border border-primary/20 px-2.5 py-0.5 rounded-md uppercase">
-                Pillar 06
-              </span>
-              <span className="text-muted-foreground/30 font-mono text-[10px]">// Model Optimization</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2.5">
-              <Cpu className="h-6 w-6 text-primary" />
-              <span>Optimized AI Engines</span>
-            </h2>
-            <p className="text-xs text-muted-foreground/75 leading-relaxed max-w-xl">
-              Explore prompts optimized for specific image, text, and video models to get the best out of each AI platform.
-            </p>
+
+        {/* Header */}
+        <div className="flex items-end justify-between mb-7">
+          <div className="space-y-1.5">
+            <span className="section-label">AI Models</span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Browse by AI Model</h2>
+            <p className="text-xs text-muted-foreground/60">Find the perfect prompt for every AI tool</p>
           </div>
+          <Link
+            href="/models"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline underline-offset-3"
+          >
+            See all models <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
-        {/* Models Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {AI_MODELS.map((model, idx) => (
-            <ModelCard key={model.slug} model={model} index={idx} />
+        {/* Model grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          {AI_MODELS.slice(0, 10).map((model, i) => (
+            <motion.div
+              key={model.slug}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+            >
+              <Link
+                href={`/models/${model.slug}`}
+                className={cn(
+                  "group flex flex-col gap-3 p-4 rounded-xl",
+                  "bg-card border border-border/[0.08]",
+                  "hover:border-border/25 hover:shadow-lg hover:-translate-y-0.5",
+                  "transition-all duration-300"
+                )}
+              >
+                {/* Icon + badge */}
+                <div className="flex items-start justify-between">
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-xl border"
+                    style={{
+                      backgroundColor: `${model.color}18`,
+                      borderColor: `${model.color}28`,
+                    }}
+                  >
+                    {model.icon}
+                  </div>
+                  <ExternalLink className="h-3 w-3 text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors" />
+                </div>
+
+                {/* Name */}
+                <div>
+                  <p className="text-sm font-bold leading-tight group-hover:text-primary transition-colors">
+                    {model.name}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/50 mt-0.5 leading-snug line-clamp-2">
+                    {model.description}
+                  </p>
+                </div>
+
+                {/* Best for tags (first 2) */}
+                <div className="flex flex-wrap gap-1">
+                  {model.bestFor.slice(0, 2).map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-secondary/50 text-muted-foreground/70 border border-border/10"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </Link>
+            </motion.div>
           ))}
         </div>
 

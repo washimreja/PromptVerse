@@ -16,7 +16,7 @@ export function NewestPrompts({ prompts }: { prompts: Prompt[] }) {
               <span className="text-[10px] font-extrabold tracking-widest text-primary bg-primary/15 border border-primary/20 px-2.5 py-0.5 rounded-md uppercase">
                 Pillar 05
               </span>
-              <span className="text-muted-foreground/30 font-mono text-[10px]">// Fresh Horizon</span>
+              <span className="text-muted-foreground/30 font-mono text-[10px]">{"// Fresh Horizon"}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2.5">
               <Calendar className="h-5.5 w-5.5 text-primary" />

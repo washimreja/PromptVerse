@@ -1,36 +1,43 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight, Flame } from "lucide-react";
 import type { Prompt } from "@/types";
 import { PromptGrid } from "@/components/prompts/PromptGrid";
-import { Flame } from "lucide-react";
+import { ScrollCarousel } from "@/components/ui/ScrollCarousel";
 
 export function TrendingToday({ prompts }: { prompts: Prompt[] }) {
   return (
-    <section className="py-14 bg-background border-b border-border/10">
+    <section className="py-12 bg-background border-b border-border/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* V3 Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-3">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-extrabold tracking-widest text-primary bg-primary/15 border border-primary/20 px-2.5 py-0.5 rounded-md uppercase">
-                Pillar 02
-              </span>
-              <span className="text-muted-foreground/30 font-mono text-[10px]">// Speed & Momentum</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2.5">
-              <Flame className="h-6 w-6 text-orange-500 fill-orange-500/15" />
-              <span>Trending Today</span>
+
+        {/* Section Header */}
+        <div className="flex items-end justify-between mb-6">
+          <div className="space-y-1.5">
+            <span className="section-label">What&apos;s Hot</span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2">
+              <Flame className="h-6 w-6 text-orange-500" />
+              Trending Prompts
             </h2>
-            <p className="text-xs text-muted-foreground/75 leading-relaxed max-w-xl">
-              Real-time activity spikes: prompts getting the most copies and views over the last 24 hours.
-            </p>
+            <p className="text-xs text-muted-foreground/60">Top AI prompts this week</p>
           </div>
+          <Link
+            href="/search?sort=trending"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline underline-offset-3"
+          >
+            See all Trending Prompts <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
-        {/* Prompts Grid */}
-        <PromptGrid prompts={prompts} />
+        <ScrollCarousel gap={12}>
+          <PromptGrid prompts={prompts} variant="carousel" />
+        </ScrollCarousel>
 
+        <div className="mt-5 sm:hidden text-center">
+          <Link href="/search?sort=trending" className="text-xs font-bold text-primary flex items-center justify-center gap-1">
+            See all Trending Prompts <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
       </div>
     </section>
   );
