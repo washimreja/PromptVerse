@@ -35,6 +35,7 @@ export function SaveToCollectionModal({
   const handleCreate = () => {
     if (!newName.trim()) return;
     const newCol = createCollection(newName.trim(), newIcon);
+    if (!newCol) return;
     addToCollection(promptId, newCol.id);
     setNewName("");
     setCreatingNew(false);
