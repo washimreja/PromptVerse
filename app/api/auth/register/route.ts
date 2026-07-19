@@ -1,7 +1,6 @@
-import { NextResponse } from "next-auth/next";
+import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import bcrypt from "bcrypt";
-import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
