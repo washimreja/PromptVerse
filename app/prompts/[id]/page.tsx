@@ -32,9 +32,7 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-export async function generateStaticParams() {
-  return getAllPromptSlugs();
-}
+
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
