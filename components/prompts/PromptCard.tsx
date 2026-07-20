@@ -144,7 +144,6 @@ function CardCopyButton({ text }: { text: string }) {
 
 /* ── Main Prompt Card ────────────────────────── */
 export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardProps) {
-  const category = CATEGORIES.find((c) => c.slug === prompt.category);
   const model = AI_MODELS.find((m) => m.slug === prompt.model);
 
   const cardWidth = variant === "carousel"

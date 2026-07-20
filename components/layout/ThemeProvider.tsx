@@ -18,6 +18,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Read from localStorage on mount
     const savedTheme = localStorage.getItem("pv-theme") as Theme | null;
     const initialTheme = savedTheme || "dark";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(initialTheme);
     
     // Apply classes correctly

@@ -10,6 +10,7 @@ export function SponsorBanner() {
   useEffect(() => {
     const dismissed = localStorage.getItem("pv:banner:dismissed");
     if (!dismissed) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVisible(true);
       document.documentElement.style.setProperty("--banner-height", "40px");
     } else {

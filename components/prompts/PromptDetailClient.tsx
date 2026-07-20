@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Share2, Link as LinkIcon, Check } from "lucide-react";
+import { Share2, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -29,7 +29,7 @@ export function PromptDetailClient({ prompt, isPremium }: PromptDetailClientProp
         toast.success("Link copied to clipboard!", { icon: "🔗", duration: 1800 });
         setTimeout(() => setCopied(false), 2500);
       }
-    } catch (_) {
+    } catch {
       // user cancelled share
     }
   };

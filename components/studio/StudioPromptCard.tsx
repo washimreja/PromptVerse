@@ -27,7 +27,6 @@ interface StudioPromptCardProps {
 export function StudioPromptCard({ prompt, onPremiumClick }: StudioPromptCardProps) {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
-  const { openModal } = useAuthModal();
   const { isPro } = useUpgradeModal();
 
   const handleCopy = (e: React.MouseEvent) => {
