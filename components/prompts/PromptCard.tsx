@@ -168,7 +168,15 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
         aria-label={`View prompt: ${prompt.title}`}
       >
         {/* ── Thumbnail ── */}
-        <SvgThumbnail prompt={prompt} />
+        {prompt.previewImage && !prompt.previewImage.endsWith(".svg") ? (
+          <img
+            src={prompt.previewImage}
+            alt={prompt.title}
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <SvgThumbnail prompt={prompt} />
+        )}
 
         {/* ── Hover scale overlay ── */}
         <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03] pointer-events-none" />
