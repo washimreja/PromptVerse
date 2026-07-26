@@ -153,7 +153,7 @@ function SearchPill() {
       onClick={() => router.push("/search")}
       aria-label="Search prompts"
       className={cn(
-        "hidden lg:flex items-center gap-2.5 px-4 py-2 rounded-xl w-64 xl:w-72",
+        "hidden lg:flex items-center gap-2.5 px-3.5 py-2 rounded-xl w-44 xl:w-56",
         "bg-secondary/30 border border-border/40 backdrop-blur-md",
         "text-left text-xs text-muted-foreground/80",
         "hover:border-primary/40 hover:bg-secondary/70 hover:shadow-[0_0_12px_rgba(97,0,220,0.05)]",
@@ -464,34 +464,59 @@ export function Header() {
             </nav>
 
             {/* Right Side Control Pills */}
-            <div className="flex items-center gap-2">
-              <Link
-                href="/pricing"
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand/10 hover:bg-brand/20 border border-brand/20 text-brand text-xs font-bold uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(var(--brand),0.1)] hover:shadow-[0_0_20px_rgba(var(--brand),0.3)]"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Pro
-              </Link>
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Show Upgrade button ONLY for Free users & Guests */}
+              {!((user as any)?.membership === "PRO" || (user as any)?.role === "ADMIN") && (
+                <Link
+                  href="/pricing"
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 text-xs font-bold transition-all shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Upgrade</span>
+                </Link>
+              )}
+
               {user ? (
                 <div className="relative group/avatar z-50">
                   <div className="hidden md:flex items-center gap-2 cursor-pointer p-1 pr-3 rounded-full bg-secondary/40 border border-border/10 hover:bg-secondary/60 transition-all">
                     <img 
                       src={user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`} 
                       alt="Avatar" 
-                      className="w-[34px] h-[34px] rounded-full object-cover ring-2 ring-white/10" 
+                      className="w-[32px] h-[32px] rounded-full object-cover ring-2 ring-white/10" 
                     />
-                    <span className="text-xs font-bold text-foreground max-w-[80px] truncate">{user.name}</span>
+                    <span className="text-xs font-bold text-foreground max-w-[85px] truncate">{user.name}</span>
                     <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/60" />
                   </div>
                   
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 top-[120%] w-56 rounded-2xl bg-[#09090b]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] opacity-0 invisible group-hover/avatar:opacity-100 group-hover/avatar:visible group-hover/avatar:translate-y-2 transition-all duration-300 overflow-hidden flex flex-col p-1.5 pt-2">
-                    <div className="px-3 pb-2 border-b border-white/5 mb-1 flex flex-col">
-                      <p className="text-xs font-bold text-white truncate">{user.name}</p>
-                      <p className="text-[10px] font-medium text-muted-foreground truncate">{user.email}</p>
+                  <div className="absolute right-0 top-[120%] w-60 rounded-2xl bg-[#09090b]/95 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover/avatar:opacity-100 group-hover/avatar:visible group-hover/avatar:translate-y-2 transition-all duration-300 overflow-hidden flex flex-col p-1.5 pt-2">
+                    <div className="px-3 pb-2.5 border-b border-white/5 mb-1 flex items-center justify-between">
+                      <div className="flex flex-col truncate pr-2">
+                        <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground truncate">{user.email}</p>
+                      </div>
+                      <span className={cn(
+                        "text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shrink-0",
+                        (user as any)?.role === "ADMIN" 
+                          ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                          : (user as any)?.membership === "PRO"
+                          ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                          : "bg-neutral-800 text-neutral-400"
+                      )}>
+                        {(user as any)?.role === "ADMIN" ? "Admin" : (user as any)?.membership === "PRO" ? "PRO" : "FREE"}
+                      </span>
                     </div>
                     
                     <div className="py-1 flex flex-col gap-0.5">
+                      {(user as any)?.role === "ADMIN" && (
+                        <Link 
+                          href="/admin/upload" 
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 rounded-xl transition-colors text-left"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+                          Admin Upload Console
+                        </Link>
+                      )}
                       <Link 
                         href="/profile" 
                         className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-white/80 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left"
@@ -522,7 +547,7 @@ export function Header() {
               ) : (
                 <Link
                   href="/auth"
-                  className="hidden md:flex items-center px-4 py-1.5 rounded-full bg-foreground text-background text-sm font-bold hover:bg-white/90 transition-colors shadow-sm"
+                  className="hidden md:flex items-center px-4 py-1.5 rounded-full bg-foreground text-background text-xs font-bold hover:bg-white/90 transition-colors shadow-sm"
                 >
                   Sign In
                 </Link>
