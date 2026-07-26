@@ -83,6 +83,22 @@ export const authOptions: NextAuthOptions = {
         token.role = (user as any).role;
         token.membership = (user as any).membership;
         token.plan = (user as any).plan;
+      } else if (token.email) {
+        // Query latest role & membership from database on session refresh
+        try {
+          const dbUser = await db.user.findUnique({
+            where: { email: token.email },
+            select: { id: true, role: true, membership: true, plan: true }
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.role = dbUser.role;
+            token.membership = dbUser.membership;
+            token.plan = dbUser.plan || undefined;
+          }
+        } catch (e) {
+          // Fallback to existing token
+        }
       }
       return token;
     },

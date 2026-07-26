@@ -303,12 +303,16 @@ export function Header() {
               </div>
               <span className="font-extrabold text-[1.1rem] tracking-tight hidden sm:flex items-center gap-1.5 select-none">
                 {SITE_NAME}
-                <span className="relative flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true">
-                  <svg className="w-2 h-2 text-white" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6.5L4.5 9L10 3" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"></path>
-                  </svg>
-                </span>
-                <span className="text-[9px] font-black uppercase tracking-wider text-gold px-2 py-0.5 rounded-lg bg-gold/10 border border-gold/15 shadow-[0_2px_8px_rgba(245,158,11,0.15)]">PRO</span>
+                {Boolean(user) && (
+                  <span className="relative flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" title="Verified Account">
+                    <svg className="w-2 h-2 text-white" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 6.5L4.5 9L10 3" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"></path>
+                    </svg>
+                  </span>
+                )}
+                {((user as any)?.membership === "PRO" || (user as any)?.role === "ADMIN") && (
+                  <span className="text-[9px] font-black uppercase tracking-wider text-gold px-2 py-0.5 rounded-lg bg-gold/10 border border-gold/15 shadow-[0_2px_8px_rgba(245,158,11,0.15)]">PRO</span>
+                )}
               </span>
             </Link>
 
