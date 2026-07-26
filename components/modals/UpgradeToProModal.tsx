@@ -101,7 +101,7 @@ export function UpgradeModalProvider({ children }: { children: ReactNode }) {
                 </div>
 
                 <Link
-                  href="/pro"
+                  href="/pricing"
                   onClick={closeUpgradeModal}
                   className="w-full py-3.5 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
                 >

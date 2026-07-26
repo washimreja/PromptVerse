@@ -150,7 +150,7 @@ export default function PricingPage() {
                   </div>
                 ))}
                 
-                {tier.missing.map((feature, i) => (
+                {tier.missing?.map((feature, i) => (
                   <div key={`missing-${i}`} className="flex items-start gap-3 opacity-40">
                     <div className="mt-0.5 rounded-full p-0.5 shrink-0 bg-white/5 text-white/50">
                       <X className="w-3 h-3 stroke-[3]" />

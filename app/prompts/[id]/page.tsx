@@ -179,7 +179,7 @@ export default async function PromptDetailPage({ params }: Props) {
                     </p>
                   </div>
                   <Link
-                    href="/pro"
+                    href="/pricing"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-black shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:shadow-[0_6px_28px_rgba(245,158,11,0.55)] hover:scale-105 transition-all duration-200 active:scale-95"
                   >
                     🔒 Unlock Pro — Get Full Access
@@ -240,7 +240,7 @@ export default async function PromptDetailPage({ params }: Props) {
                 Unlock this prompt and 100+ premium templates with unlimited copies, negative prompts, and advanced configs.
               </p>
               <Link
-                href="/pro"
+                href="/pricing"
                 className="block w-full py-2.5 rounded-xl text-center text-xs font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-black hover:opacity-95 transition-opacity shadow-[0_2px_12px_rgba(245,158,11,0.3)]"
               >
                 🔒 Unlock Pro Access

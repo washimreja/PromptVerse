@@ -148,7 +148,7 @@ export default function ProfilePage() {
               </div>
               
               <Link 
-                href="/pro" 
+                href="/pricing" 
                 className="relative z-10 inline-flex items-center justify-between w-full px-5 py-3.5 bg-[#FFB800] hover:bg-[#e6a600] text-black font-bold text-sm rounded-xl transition-all group-hover:shadow-[0_0_30px_rgba(255,184,0,0.3)]"
               >
                 Upgrade to Pro

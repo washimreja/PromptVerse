@@ -9,7 +9,7 @@ export interface PricingPlan {
   features: string[];
   missing?: string[];
   buttonText: string;
-  buttonVariant?: "brand" | "outline";
+  buttonVariant?: "brand" | "outline" | "gold";
 }
 
 export const PRICING_PLANS: PricingPlan[] = [
