@@ -7,6 +7,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { useAuthModal } from "../auth/AuthModalContext";
@@ -56,6 +57,7 @@ const DEFAULT_COLLECTIONS: Collection[] = [
 ];
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [collections, setCollections] = useState<Collection[]>(DEFAULT_COLLECTIONS);
   const [mounted, setMounted] = useState(false);
@@ -79,14 +81,17 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   // Persist favorites
   useEffect(() => {
     if (!mounted) return;
-    localStorage.setItem(STORAGE_KEY_FAV, JSON.stringify(favorites));
-    window.dispatchEvent(new Event("pv:favorites:change"));
+    try {
+      localStorage.setItem(STORAGE_KEY_FAV, JSON.stringify(favorites));
+    } catch (_) {}
   }, [favorites, mounted]);
 
   // Persist collections
   useEffect(() => {
     if (!mounted) return;
-    localStorage.setItem(STORAGE_KEY_COL, JSON.stringify(collections));
+    try {
+      localStorage.setItem(STORAGE_KEY_COL, JSON.stringify(collections));
+    } catch (_) {}
   }, [collections, mounted]);
 
   const isFavorited = useCallback(
@@ -96,8 +101,8 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   const toggleFavorite = useCallback(
     (promptId: string, promptTitle?: string) => {
-      if (status === "unauthenticated") {
-        openModal("Sign in to save this prompt to your collection");
+      if (status !== "authenticated") {
+        openModal("Sign in to save this prompt to your favorites");
         return;
       }
 
@@ -110,11 +115,31 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
           });
           return prev.filter((f) => f.promptId !== promptId);
         } else {
-          toast.success("Added to favorites!", {
-            description: promptTitle,
-            icon: "❤️",
-            duration: 2000,
-          });
+          toast.custom(
+            (t) => (
+              <div
+                onClick={() => {
+                  toast.dismiss(t);
+                  router.push("/profile");
+                }}
+                className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-[#090a0f]/95 border border-emerald-500/30 text-white shadow-2xl backdrop-blur-xl cursor-pointer hover:bg-emerald-950/60 active:scale-95 transition-all w-full max-w-sm group"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">❤️</span>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-emerald-400">Added to favorites!</span>
+                    <span className="text-[11px] text-muted-foreground truncate max-w-[200px]">
+                      {promptTitle || "Tap to view saved prompts"}
+                    </span>
+                  </div>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-black transition-colors shrink-0">
+                  View
+                </span>
+              </div>
+            ),
+            { duration: 3500 }
+          );
           return [
             ...prev,
             { promptId, addedAt: Date.now(), collectionId: "favorites" },
