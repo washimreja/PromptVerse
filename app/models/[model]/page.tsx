@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPromptsByModel } from "@/lib/prompts";
+
+export const dynamic = "force-dynamic";
 import { AI_MODELS } from "@/lib/constants";
 import { PromptGrid } from "@/components/prompts/PromptGrid";
 import { Cpu, ArrowLeft, ExternalLink } from "lucide-react";

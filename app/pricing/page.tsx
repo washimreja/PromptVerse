@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -12,7 +12,7 @@ import { PRICING_PLANS } from "@/data/pricingConfig";
 
 const TIERS = PRICING_PLANS;
 
-export default function PricingPage() {
+function PricingPageContent() {
   const { data: session, status, update: updateSession } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -281,4 +281,16 @@ declare global {
   interface Window {
     Razorpay: any;
   }
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#020204] flex items-center justify-center text-white">
+        <Loader2 className="w-8 h-8 animate-spin text-brand" />
+      </div>
+    }>
+      <PricingPageContent />
+    </Suspense>
+  );
 }

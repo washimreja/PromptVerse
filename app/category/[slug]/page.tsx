@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPromptsByCategory, getCategoryCounts } from "@/lib/prompts";
+
+export const dynamic = "force-dynamic";
 import { CATEGORIES } from "@/lib/constants";
 import { PromptGrid } from "@/components/prompts/PromptGrid";
 import { Grid3X3, ArrowLeft } from "lucide-react";
