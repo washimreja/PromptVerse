@@ -47,14 +47,7 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(
 const STORAGE_KEY_FAV = "pv:favorites:v2";
 const STORAGE_KEY_COL = "pv:collections:v2";
 
-const DEFAULT_COLLECTIONS: Collection[] = [
-  { id: "favorites", name: "Favorites", icon: "⭐", promptIds: [], createdAt: 0 },
-  { id: "images", name: "Image Prompts", icon: "🎨", promptIds: [], createdAt: 1 },
-  { id: "chatgpt", name: "ChatGPT", icon: "💬", promptIds: [], createdAt: 2 },
-  { id: "video", name: "Video", icon: "🎬", promptIds: [], createdAt: 3 },
-  { id: "coding", name: "Coding", icon: "🧠", promptIds: [], createdAt: 4 },
-  { id: "writing", name: "Writing", icon: "📚", promptIds: [], createdAt: 5 },
-];
+const DEFAULT_COLLECTIONS: Collection[] = [];
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();

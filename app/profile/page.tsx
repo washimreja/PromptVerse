@@ -94,12 +94,13 @@ export default function ProfilePage() {
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{user?.name}</h1>
                 {isPro ? (
-                  <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-black bg-gradient-to-r from-yellow-400 to-amber-500 rounded-lg shadow-[0_0_15px_rgba(251,191,36,0.4)]">
-                    PRO
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-black uppercase tracking-wider text-black bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.5)] border border-amber-200">
+                    <Crown className="w-3.5 h-3.5 fill-black" />
+                    <span>Pro Access</span>
                   </span>
                 ) : (
-                  <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-white/5 border border-white/10 rounded-lg">
-                    FREE
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-white/5 border border-white/10 rounded-full">
+                    <span>Free Plan</span>
                   </span>
                 )}
               </div>

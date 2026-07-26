@@ -27,6 +27,7 @@ import {
   User,
   GitBranch,
   Lock,
+  Crown,
   CheckCircle2,
 } from "lucide-react";
 
@@ -105,13 +106,19 @@ export default async function PromptDetailPage({ params }: Props) {
                 <p className="text-sm text-muted-foreground/70 leading-relaxed">{prompt.description}</p>
               )}
             </div>
-            {/* PRO / FREE Badge */}
             {isPremium ? (
               <div className="flex-shrink-0">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-400/20 to-yellow-300/10 text-amber-400 border border-amber-400/30 shadow-[0_2px_16px_rgba(245,158,11,0.20)]">
-                  <Lock className="h-3 w-3" />
-                  PRO
-                </span>
+                {isLocked ? (
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-500/10 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                    <Crown className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
+                    <span>PromptVerse Pro</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider text-black bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 shadow-[0_0_25px_rgba(245,158,11,0.5)] border border-amber-200">
+                    <Sparkles className="h-3.5 w-3.5 text-black fill-black" />
+                    <span>Pro Unlocked</span>
+                  </span>
+                )}
               </div>
             ) : (
               <div className="flex-shrink-0">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, Copy, Check, Lock } from "lucide-react";
+import { Eye, Copy, Check, Lock, Crown } from "lucide-react";
 import { cn, formatCopyCount } from "@/lib/utils";
 import type { Prompt } from "@/types";
 import { useState } from "react";
@@ -196,8 +196,9 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
         <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10 pointer-events-none">
           <div className="flex items-center gap-1.5">
             {prompt.isPro && (
-              <span className="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 text-black shadow-md">
-                PRO
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-black shadow-md border border-amber-200">
+                <Crown className="w-2.5 h-2.5 fill-black" />
+                <span>PRO</span>
               </span>
             )}
             <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white/80 text-[10px] font-semibold">
