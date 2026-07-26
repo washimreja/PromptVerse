@@ -74,10 +74,11 @@ model User {
 model Favorite {
   id        String   @id @default(cuid())
   userId    String
-  promptId  String   // The ID of the prompt on the platform
+  promptId  String   
   createdAt DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt    Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
 
   @@unique([userId, promptId]) // A user can only favorite a prompt once
 }
@@ -92,4 +93,35 @@ model Collection {
   updatedAt   DateTime @updatedAt
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Prompt {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  title           String
+  description     String
+  prompt          String
+  negativePrompt  String?
+  previewImage    String
+  category        String
+  subCategory     String?
+  model           String
+  difficulty      Int         @default(1)
+  quality         Int         @default(5)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  tags            String[]
+  isFeatured      Boolean     @default(false)
+  isTrending      Boolean     @default(false)
+  copyCount       Int         @default(0)
+  estimatedTime   String?
+  style           String?
+  camera          String?
+  lighting        String?
+  aspectRatio     String?
+  colorPalette    String[]
+  author          String      @default("Admin")
+  version         String      @default("1.0")
+
+  favorites       Favorite[]
 }

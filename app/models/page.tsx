@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   description: "Browse prompts sorted by AI model architectures like Midjourney, Flux, Claude, ChatGPT, Imagen, and Ideogram.",
 };
 
-export default function AIModelsPage() {
-  const counts = getModelCounts();
+export default async function AIModelsPage() {
+  const counts = await getModelCounts();
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 noise-overlay">
