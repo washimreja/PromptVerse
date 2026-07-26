@@ -23,6 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useFavorites } from "@/components/favorites/FavoritesContext";
 import { ActiveDevicesList } from "@/components/profile/ActiveDevicesList";
+import { EditProfileModal } from "@/components/profile/EditProfileModal";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -32,13 +33,18 @@ export default function ProfilePage() {
   const [dbUser, setDbUser] = useState<any>(null);
   const [favoritePrompts, setFavoritePrompts] = useState<Prompt[]>([]);
   const [loadingPrompts, setLoadingPrompts] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchUserProfile = () => {
     if (status === "authenticated") {
       getUserProfile().then((data) => {
         if (data) setDbUser(data);
       });
     }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
   }, [status]);
 
   useEffect(() => {
@@ -79,7 +85,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-6">
             <div className="relative">
               <img 
-                src={user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`} 
+                src={dbUser?.image || user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(dbUser?.name || user?.name || "User")}&background=random`} 
                 alt="Profile" 
                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-[2rem] object-cover ring-2 ring-white/10 shadow-2xl"
               />
@@ -92,7 +98,7 @@ export default function ProfilePage() {
             
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{user?.name}</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{dbUser?.name || user?.name}</h1>
                 {isPro ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-black uppercase tracking-wider text-black bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.5)] border border-amber-200">
                     <Crown className="w-3.5 h-3.5 fill-black" />
@@ -104,7 +110,17 @@ export default function ProfilePage() {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              
+              <div className="flex items-center gap-2">
+                {dbUser?.username && (
+                  <span className="text-xs font-bold text-cyan-400">@{dbUser.username}</span>
+                )}
+                <span className="text-sm text-muted-foreground">{dbUser?.email || user?.email}</span>
+              </div>
+
+              {dbUser?.bio && (
+                <p className="text-xs text-white/80 max-w-md line-clamp-2 mt-0.5 font-medium">{dbUser.bio}</p>
+              )}
               
               <div className="flex items-center gap-2 mt-1">
                 <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md">
@@ -118,7 +134,10 @@ export default function ProfilePage() {
           </div>
           
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-[#090A0F] hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold transition-colors shadow-sm">
+            <button 
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#090A0F] hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold transition-colors shadow-sm cursor-pointer"
+            >
               <Settings size={16} />
               Edit Profile
             </button>
@@ -277,6 +296,13 @@ export default function ProfilePage() {
         </div>
 
       </div>
+
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        currentUser={dbUser || user || {}}
+        onSaveSuccess={fetchUserProfile}
+      />
     </div>
   );
 }
