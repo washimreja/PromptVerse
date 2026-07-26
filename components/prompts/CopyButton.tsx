@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCopy } from "@/hooks/useCopy";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { useUpgradeModal } from "@/components/modals/UpgradeToProModal";
 
 interface CopyButtonProps {
   textToCopy: string;
@@ -19,6 +21,13 @@ export function CopyButton({
   isPro,
   onCopySuccess,
 }: CopyButtonProps) {
+  const { data: session } = useSession();
+  const { openUpgradeModal } = useUpgradeModal();
+  const user = session?.user as any;
+  const userIsPro = user?.membership === "PRO" || user?.role === "ADMIN";
+
+  const isLocked = isPro && !userIsPro;
+
   const { copied, copy } = useCopy({ successMessage: "Prompt copied to clipboard!" });
   const [animating, setAnimating] = useState(false);
 
@@ -26,12 +35,13 @@ export function CopyButton({
     e.preventDefault();
     e.stopPropagation();
     
-    if (isPro) {
+    if (isLocked) {
       toast("PromptVerse Pro", {
         description: "Subscribe to unlock premium AI prompts!",
         icon: "🔒",
         duration: 3000,
       });
+      openUpgradeModal();
       return;
     }
 

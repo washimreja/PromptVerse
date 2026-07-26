@@ -63,7 +63,7 @@ export default async function PromptDetailPage({ params }: Props) {
 
   // Get current user from DB
   const dbUser = await getUserProfile();
-  const userIsPro = dbUser?.membership === "PRO";
+  const userIsPro = dbUser?.membership === "PRO" || dbUser?.role === "ADMIN";
 
   // Determine if prompt is Premium
   const isPremium = prompt.isPro === true;

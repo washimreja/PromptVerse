@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, ChevronDown, ChevronRight, ExternalLink, Heart, BookOpen, HeartHandshake, User, FolderHeart, LogOut } from "lucide-react";
+import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, ChevronDown, ChevronRight, ExternalLink, Heart, BookOpen, HeartHandshake, User, FolderHeart, LogOut, ShieldCheck } from "lucide-react";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/constants";

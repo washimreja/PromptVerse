@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, Copy, Check } from "lucide-react";
+import { Eye, Copy, Check, Lock } from "lucide-react";
 import { cn, formatCopyCount } from "@/lib/utils";
 import type { Prompt } from "@/types";
 import { useState } from "react";
@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { CATEGORIES, AI_MODELS } from "@/lib/constants";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
+import { useSession } from "next-auth/react";
+import { useUpgradeModal } from "@/components/modals/UpgradeToProModal";
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -94,12 +96,29 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
 }
 
 /* ── Copy Button ─────────────────────────────── */
-function CardCopyButton({ text }: { text: string }) {
+function CardCopyButton({ text, isPro }: { text: string; isPro?: boolean }) {
+  const { data: session } = useSession();
+  const { openUpgradeModal } = useUpgradeModal();
+  const user = session?.user as any;
+  const userIsPro = user?.membership === "PRO" || user?.role === "ADMIN";
+
+  const isLocked = isPro && !userIsPro;
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (isLocked) {
+      toast("PromptVerse Pro", {
+        description: "Subscribe to unlock premium PRO prompts!",
+        icon: "🔒",
+        duration: 3000,
+      });
+      openUpgradeModal();
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -115,27 +134,29 @@ function CardCopyButton({ text }: { text: string }) {
       onClick={handleCopy}
       whileTap={{ scale: 0.9 }}
       suppressHydrationWarning
-      aria-label="Copy prompt"
+      aria-label={isLocked ? "Unlock Pro Prompt" : copied ? "Copied" : "Copy prompt"}
       className={cn(
         "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold",
         "backdrop-blur-md border transition-all duration-200 shadow-sm",
-        copied
+        isLocked
+          ? "bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30"
+          : copied
           ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 glow-brand shadow-emerald-500/20"
           : "bg-black/30 border-white/10 text-white hover:bg-black/60 hover:border-white/25 hover:text-white"
       )}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
-          key={copied ? "check" : "copy"}
+          key={isLocked ? "lock" : copied ? "check" : "copy"}
           initial={{ scale: 0.6, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.6, opacity: 0 }}
           transition={{ duration: 0.15 }}
         >
-          {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+          {isLocked ? <Lock className="h-3 w-3 text-amber-400" /> : copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
         </motion.span>
       </AnimatePresence>
-      {copied ? "Copied!" : "Copy"}
+      {isLocked ? "Unlock" : copied ? "Copied!" : "Copy"}
     </motion.button>
   );
 }
@@ -225,7 +246,7 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
               </div>
             )}
             {/* Copy button */}
-            <CardCopyButton text={prompt.prompt} />
+            <CardCopyButton text={prompt.prompt} isPro={prompt.isPro} />
           </div>
 
           {/* Creator badge */}
