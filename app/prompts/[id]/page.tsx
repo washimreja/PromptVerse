@@ -66,17 +66,28 @@ export default async function PromptDetailPage({ params }: Props) {
   const dbUser = await getUserProfile();
   const userIsPro = dbUser?.membership === "PRO" || dbUser?.role === "ADMIN";
 
-  // Determine if prompt is Premium
-  const isPremium = prompt.isPro === true;
+  // Determine if prompt is PRO access level (authoritative DB field)
+  const isPremium = prompt.accessLevel === "PRO";
   
   // Determine if it should be locked for the current user
   const isLocked = isPremium && !userIsPro;
 
-  // Preview text: first 2–3 lines (~300 chars) for premium prompts
+  // For the detail page, we need the full prompt text regardless of listing-level stripping.
+  // If locked, fetch only the first 280 chars via DB (safer than trusting stripped listing data).
+  // If unlocked (PRO user or FREE prompt), fetch the full text from DB directly.
+  let fullPromptText = prompt.prompt; // may be "" if PRO and accessed via listing cache
+  if (isPremium) {
+    // Fetch full text from DB — detail page always has direct DB access (server component)
+    const { db } = await import("@/lib/db");
+    const raw = await db.prompt.findUnique({ where: { id: prompt.id }, select: { prompt: true } });
+    fullPromptText = raw?.prompt ?? "";
+  }
+
+  // Preview text: first ~280 chars blurred for locked PRO prompts
   const PREVIEW_LENGTH = 280;
   const previewText = isLocked
-    ? prompt.prompt.slice(0, PREVIEW_LENGTH) + (prompt.prompt.length > PREVIEW_LENGTH ? "…" : "")
-    : prompt.prompt;
+    ? fullPromptText.slice(0, PREVIEW_LENGTH) + (fullPromptText.length > PREVIEW_LENGTH ? "\u2026" : "")
+    : fullPromptText;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -197,13 +208,13 @@ export default async function PromptDetailPage({ params }: Props) {
                 </div>
               </div>
             ) : (
-              /* FREE: full prompt, no restrictions */
+              /* FREE/PRO-Unlocked: full prompt, no restrictions */
               <div className="relative group">
                 <div className="absolute right-3 top-3 z-10">
-                  <CopyButton textToCopy={prompt.prompt} isPro={false} className="py-2 px-3 rounded-lg text-xs" />
+                  <CopyButton textToCopy={fullPromptText} isPro={false} className="py-2 px-3 rounded-lg text-xs" />
                 </div>
                 <pre className="font-mono text-sm leading-relaxed p-5 pt-12 sm:pt-5 bg-secondary/20 text-foreground rounded-2xl border border-border/10 overflow-x-auto whitespace-pre-wrap select-all selection:bg-primary/20">
-                  {prompt.prompt}
+                  {fullPromptText}
                 </pre>
               </div>
             )}

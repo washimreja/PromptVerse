@@ -11,6 +11,7 @@ import { AI_MODELS } from "@/lib/constants";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { useSession } from "next-auth/react";
 import { useUpgradeModal } from "@/components/modals/UpgradeToProModal";
+import { copyProPromptAction } from "@/app/actions/user";
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -93,24 +94,71 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
 }
 
 /* ── Copy Button ─────────────────────────────── */
-function CardCopyButton({ text, isPro }: { text: string; isPro?: boolean }) {
+/**
+ * For FREE prompts: copies `text` directly (always populated from listing data).
+ * For PRO prompts: calls copyProPromptAction(promptId) server action — membership
+ * is verified on the SERVER from the DB before any text is returned.
+ * The `text` prop is intentionally empty ("") for PRO prompts on listing pages.
+ */
+function CardCopyButton({
+  promptId,
+  text,
+  accessLevel,
+}: {
+  promptId: string;
+  text: string;
+  accessLevel: "FREE" | "PRO";
+}) {
   const { data: session } = useSession();
   const { openUpgradeModal } = useUpgradeModal();
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const isPro = accessLevel === "PRO";
 
   const isUserPro =
     (session?.user as any)?.membership === "PRO" ||
-    (session?.user as any)?.membership === "LIFETIME";
+    (session?.user as any)?.membership === "LIFETIME" ||
+    (session?.user as any)?.role === "ADMIN";
 
-  const handleCopy = (e: React.MouseEvent) => {
+  const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
+    // Case 1: PRO prompt, FREE user → show upgrade modal
     if (isPro && !isUserPro) {
       openUpgradeModal();
       return;
     }
 
+    // Case 2: PRO prompt, PRO user → call server action for text
+    if (isPro && isUserPro) {
+      setLoading(true);
+      try {
+        const result = await copyProPromptAction(promptId);
+        if (!result.success) {
+          // Server denied — shouldn't happen for valid PRO user, but handle gracefully
+          if (result.error === "UNAUTHENTICATED") {
+            toast.error("Please sign in to copy this prompt.");
+          } else {
+            toast.error("PRO subscription required.");
+            openUpgradeModal();
+          }
+          return;
+        }
+        await navigator.clipboard.writeText(result.text);
+        setCopied(true);
+        toast.success("Prompt copied to clipboard!");
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        toast.error("Failed to copy. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Case 3: FREE prompt → copy directly (text is already in listing data)
     navigator.clipboard.writeText(text);
     setCopied(true);
     toast.success("Prompt copied to clipboard!");
@@ -120,6 +168,7 @@ function CardCopyButton({ text, isPro }: { text: string; isPro?: boolean }) {
   return (
     <button
       onClick={handleCopy}
+      disabled={loading}
       className={cn(
         "relative flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 z-20",
         isPro && !isUserPro
@@ -130,7 +179,11 @@ function CardCopyButton({ text, isPro }: { text: string; isPro?: boolean }) {
       )}
     >
       <AnimatePresence mode="wait" initial={false}>
-        {copied ? (
+        {loading ? (
+          <motion.span key="loading" className="flex items-center gap-1">
+            <span className="w-3 h-3 rounded-full border-2 border-current border-t-transparent animate-spin" />
+          </motion.span>
+        ) : copied ? (
           <motion.span
             key="check"
             initial={{ scale: 0 }}
@@ -195,7 +248,7 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
         {/* ── TOP BADGES ── */}
         <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-1 z-10 pointer-events-none">
           <div className="flex items-center gap-1.5 flex-wrap shrink-0">
-            {prompt.isPro && (
+            {prompt.accessLevel === "PRO" && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-black shadow-md border border-amber-200 shrink-0">
                 <Crown className="w-2.5 h-2.5 fill-black shrink-0" />
                 <span className="whitespace-nowrap">PRO</span>
@@ -228,7 +281,11 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
             )}
 
             {/* Copy Button */}
-            <CardCopyButton text={prompt.prompt} isPro={prompt.isPro} />
+            <CardCopyButton
+              promptId={prompt.id}
+              text={prompt.prompt}
+              accessLevel={prompt.accessLevel}
+            />
           </div>
         </div>
       </Link>

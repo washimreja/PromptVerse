@@ -106,6 +106,7 @@ model Collection {
 
 model Prompt {
   id              String      @id @default(cuid())
+  accessLevel     String      @default("FREE")
   slug            String      @unique
   title           String
   description     String

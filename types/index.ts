@@ -23,7 +23,8 @@ export interface Prompt {
   tags: string[];
   isFeatured: boolean;
   isTrending: boolean;
-  isPro?: boolean;
+  /** "FREE" | "PRO" — authoritative access level from DB. Set by admin at upload time. */
+  accessLevel: "FREE" | "PRO";
   copyCount: number;
   estimatedTime: string;
   style?: string;

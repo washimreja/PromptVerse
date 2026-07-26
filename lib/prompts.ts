@@ -4,11 +4,16 @@
 import type { Prompt, FilterState, SortOption } from "@/types";
 import { db } from "@/lib/db";
 
-// Helper to map DB prompt to UI Prompt (e.g. adding isPro calculated property)
+// Helper to map DB prompt to UI Prompt type
 function mapPrompt(p: any): Prompt {
+  const isPro = p.accessLevel === "PRO";
   return {
     ...p,
-    isPro: p.isTrending && p.copyCount > 1800,
+    accessLevel: (p.accessLevel ?? "FREE") as "FREE" | "PRO",
+    // SECURITY: Never send full prompt text to the browser for PRO prompts on listing pages.
+    // PRO prompt text is only returned via the copyProPromptAction() server action
+    // after verifying the user's membership from the database.
+    prompt: isPro ? "" : p.prompt,
   } as Prompt;
 }
 

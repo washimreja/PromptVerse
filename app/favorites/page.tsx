@@ -79,9 +79,9 @@ export default function FavoritesPage() {
         return tA - tB;
       });
     } else if (sortBy === "free") {
-      prompts = prompts.filter((p) => !p.isPro);
+      prompts = prompts.filter((p) => p.accessLevel !== "PRO");
     } else if (sortBy === "pro") {
-      prompts = prompts.filter((p) => p.isPro);
+      prompts = prompts.filter((p) => p.accessLevel === "PRO");
     }
 
     return prompts;

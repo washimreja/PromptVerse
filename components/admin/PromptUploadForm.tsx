@@ -46,6 +46,7 @@ export function PromptUploadForm() {
 
   const [isFeatured, setIsFeatured] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
+  const [accessLevel, setAccessLevel] = useState<"FREE" | "PRO">("FREE");
   
   const [tags, setTags] = useState("");
   const [colorPalette, setColorPalette] = useState("");
@@ -139,6 +140,7 @@ export function PromptUploadForm() {
       formData.append("version", version);
       formData.append("isFeatured", isFeatured.toString());
       formData.append("isTrending", isTrending.toString());
+      formData.append("accessLevel", accessLevel);
       formData.append("tags", tags);
       formData.append("colorPalette", colorPalette);
 
@@ -165,6 +167,7 @@ export function PromptUploadForm() {
         setImageUrl("");
         setIsFeatured(false);
         setIsTrending(false);
+        setAccessLevel("FREE");
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
@@ -556,6 +559,44 @@ export function PromptUploadForm() {
                   />
                   <span className="text-xs font-bold text-neutral-300">Trending</span>
                 </label>
+              </div>
+
+              {/* Access Level Toggle */}
+              <div className="pt-2">
+                <label className="block text-xs font-bold text-neutral-400 uppercase mb-2">
+                  Access Level <span className="text-red-500">*</span>
+                </label>
+                <div className="flex gap-2 p-1 rounded-xl bg-neutral-950 border border-neutral-800/60">
+                  <button
+                    type="button"
+                    onClick={() => setAccessLevel("FREE")}
+                    className={cn(
+                      "flex-1 py-2.5 rounded-lg text-xs font-black transition-all duration-300 flex items-center justify-center gap-1.5",
+                      accessLevel === "FREE"
+                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+                        : "text-neutral-500 hover:text-neutral-300"
+                    )}
+                  >
+                    ✅ FREE
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAccessLevel("PRO")}
+                    className={cn(
+                      "flex-1 py-2.5 rounded-lg text-xs font-black transition-all duration-300 flex items-center justify-center gap-1.5",
+                      accessLevel === "PRO"
+                        ? "bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.25)]"
+                        : "text-neutral-500 hover:text-neutral-300"
+                    )}
+                  >
+                    👑 PRO
+                  </button>
+                </div>
+                {accessLevel === "PRO" && (
+                  <p className="text-[10px] text-amber-400/70 mt-1.5 font-semibold">
+                    PRO prompts are locked for FREE users. Only PRO subscribers can copy.
+                  </p>
+                )}
               </div>
             </div>
           </div>

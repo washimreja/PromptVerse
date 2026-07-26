@@ -278,18 +278,75 @@ export async function deleteUserAccountAction() {
 export async function getPromptsByIdsAction(ids: string[]) {
   try {
     if (!ids || ids.length === 0) return [];
+
+    // Check caller's membership from DB to decide whether to strip PRO text
+    const session = await getServerSession(authOptions);
+    let callerIsPro = false;
+    if (session?.user?.email) {
+      const caller = await db.user.findUnique({
+        where: { email: session.user.email },
+        select: { membership: true, role: true },
+      });
+      callerIsPro = caller?.membership === "PRO" || caller?.role === "ADMIN";
+    }
+
     const prompts = await db.prompt.findMany({
-      where: {
-        id: { in: ids },
-      },
+      where: { id: { in: ids } },
     });
 
     return prompts.map((p) => ({
       ...p,
-      isPro: p.isTrending && p.copyCount > 1800,
+      accessLevel: (p.accessLevel ?? "FREE") as "FREE" | "PRO",
+      // Strip prompt text for PRO prompts when caller is FREE
+      prompt: p.accessLevel === "PRO" && !callerIsPro ? "" : p.prompt,
     })) as any[];
   } catch (error) {
     console.error("Error fetching prompts by IDs:", error);
     return [];
+  }
+}
+
+/**
+ * SECURE server action: returns the full prompt text for a PRO prompt.
+ * Membership is verified against the DATABASE — never trusted from the client.
+ * Returns { success: false, error: "PRO_REQUIRED" } for FREE users (HTTP 403 equivalent).
+ */
+export async function copyProPromptAction(promptId: string): Promise<
+  | { success: true; text: string }
+  | { success: false; error: "UNAUTHENTICATED" | "PRO_REQUIRED" | "NOT_FOUND" }
+> {
+  try {
+    // 1. Require authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: "UNAUTHENTICATED" };
+    }
+
+    // 2. Verify membership from DB — authoritative, never from JWT/client
+    const user = await db.user.findUnique({
+      where: { email: session.user.email },
+      select: { membership: true, role: true },
+    });
+
+    const userIsPro = user?.membership === "PRO" || user?.role === "ADMIN";
+    if (!userIsPro) {
+      // FREE user attempting to copy a PRO prompt — deny
+      return { success: false, error: "PRO_REQUIRED" };
+    }
+
+    // 3. Fetch the full prompt text from DB
+    const prompt = await db.prompt.findUnique({
+      where: { id: promptId },
+      select: { prompt: true, accessLevel: true },
+    });
+
+    if (!prompt) {
+      return { success: false, error: "NOT_FOUND" };
+    }
+
+    return { success: true, text: prompt.prompt };
+  } catch (error) {
+    console.error("Error in copyProPromptAction:", error);
+    return { success: false, error: "PRO_REQUIRED" };
   }
 }

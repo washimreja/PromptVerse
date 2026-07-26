@@ -56,6 +56,8 @@ export async function createPromptAction(prevState: any, formData: FormData) {
 
     const isFeatured = formData.get("isFeatured") === "true";
     const isTrending = formData.get("isTrending") === "true";
+    const accessLevelVal = formData.get("accessLevel") as string;
+    const accessLevel = accessLevelVal === "PRO" ? "PRO" : "FREE";
 
     // Parse tags and colorPalette arrays from comma-separated strings
     const tagsStr = (formData.get("tags") as string) || "";
@@ -114,6 +116,7 @@ export async function createPromptAction(prevState: any, formData: FormData) {
         tags,
         isFeatured,
         isTrending,
+        accessLevel,
         estimatedTime,
         style,
         camera,
