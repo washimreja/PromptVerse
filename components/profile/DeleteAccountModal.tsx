@@ -6,6 +6,8 @@ import { AlertTriangle, Trash2, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { signOut } from "next-auth/react";
 
+import { deleteUserAccountAction } from "@/app/actions/user";
+
 interface DeleteAccountModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,12 +23,16 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
       setIsDeleting(true);
       toast.loading("Deleting account and purging data...");
       
-      // Simulate API call for deletion
-      await new Promise((r) => setTimeout(r, 1200));
-
+      const res = await deleteUserAccountAction();
       toast.dismiss();
-      toast.success("Account deleted permanently");
-      signOut({ callbackUrl: "/" });
+
+      if (res.success) {
+        toast.success("Account deleted permanently");
+        signOut({ callbackUrl: "/" });
+      } else {
+        toast.error(res.error || "Failed to delete account");
+        setIsDeleting(false);
+      }
     } catch (err) {
       toast.dismiss();
       toast.error("Failed to delete account");

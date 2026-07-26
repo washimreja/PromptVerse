@@ -15,8 +15,12 @@ export function RandomPrompt() {
     setShuffling(true);
     try {
       const prompt = await getRandomPrompt();
-      toast.success("Found a random template!", { duration: 1500 });
-      router.push(`/prompts/${prompt.id}`);
+      if (prompt?.id) {
+        toast.success("Found a random template!", { duration: 1500 });
+        router.push(`/prompts/${prompt.id}`);
+      } else {
+        toast.error("No prompt found");
+      }
     } catch {
       toast.error("Failed to find a random prompt");
     } finally {

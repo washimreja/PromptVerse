@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: "Browse prompts sorted by AI model architectures like Midjourney, Flux, Claude, ChatGPT, Imagen, and Ideogram.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AIModelsPage() {
   const counts = await getModelCounts();
 

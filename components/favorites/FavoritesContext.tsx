@@ -11,6 +11,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { useAuthModal } from "../auth/AuthModalContext";
+import {
+  getUserCollectionsAction,
+  createCollectionAction,
+  getUserFavoritesAction,
+  toggleFavoriteAction,
+} from "@/app/actions/user";
 
 // ── Types ────────────────────────────────────────────
 export interface Collection {
@@ -35,9 +41,10 @@ interface FavoritesContextType {
   toggleFavorite: (promptId: string, promptTitle?: string) => void;
   removeFavorite: (promptId: string) => void;
   addToCollection: (promptId: string, collectionId: string) => void;
-  createCollection: (name: string, icon?: string) => Collection | null;
+  createCollection: (name: string, icon?: string) => Promise<Collection | null>;
   deleteCollection: (collectionId: string) => void;
   getFavoritesForCollection: (collectionId: string) => string[];
+  refreshCollections: () => Promise<void>;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(
@@ -47,31 +54,46 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(
 const STORAGE_KEY_FAV = "pv:favorites:v2";
 const STORAGE_KEY_COL = "pv:collections:v2";
 
-const DEFAULT_COLLECTIONS: Collection[] = [];
-
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
-  const [collections, setCollections] = useState<Collection[]>(DEFAULT_COLLECTIONS);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [mounted, setMounted] = useState(false);
   const { status } = useSession();
   const { openModal } = useAuthModal();
 
-  // Hydrate from localStorage
-  useEffect(() => {
-    try {
-      const rawFav = localStorage.getItem(STORAGE_KEY_FAV);
-      if (rawFav) setFavorites(JSON.parse(rawFav));
+  // Load real DB data when authenticated, or localStorage when guest
+  const refreshCollections = useCallback(async () => {
+    if (status === "authenticated") {
+      const dbCols = await getUserCollectionsAction();
+      setCollections(dbCols);
+    }
+  }, [status]);
 
-      const rawCol = localStorage.getItem(STORAGE_KEY_COL);
-      if (rawCol) setCollections(JSON.parse(rawCol));
-    } catch (_) {
-      // ignore parse errors
+  const refreshFavorites = useCallback(async () => {
+    if (status === "authenticated") {
+      const dbFavs = await getUserFavoritesAction();
+      setFavorites(dbFavs);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      refreshCollections();
+      refreshFavorites();
+    } else {
+      try {
+        const rawFav = localStorage.getItem(STORAGE_KEY_FAV);
+        if (rawFav) setFavorites(JSON.parse(rawFav));
+
+        const rawCol = localStorage.getItem(STORAGE_KEY_COL);
+        if (rawCol) setCollections(JSON.parse(rawCol));
+      } catch (_) {}
     }
     setMounted(true);
-  }, []);
+  }, [status, refreshCollections, refreshFavorites]);
 
-  // Persist favorites
+  // Persist to localStorage for offline / guest state
   useEffect(() => {
     if (!mounted) return;
     try {
@@ -79,7 +101,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     } catch (_) {}
   }, [favorites, mounted]);
 
-  // Persist collections
   useEffect(() => {
     if (!mounted) return;
     try {
@@ -98,6 +119,9 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         openModal("Sign in to save this prompt to your favorites");
         return;
       }
+
+      // DB sync
+      toggleFavoriteAction(promptId);
 
       setFavorites((prev) => {
         const exists = prev.some((f) => f.promptId === promptId);
@@ -139,32 +163,13 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
           ];
         }
       });
-
-      // Also update the default "favorites" collection
-      setCollections((prev) =>
-        prev.map((col) => {
-          if (col.id !== "favorites") return col;
-          const has = col.promptIds.includes(promptId);
-          return {
-            ...col,
-            promptIds: has
-              ? col.promptIds.filter((id) => id !== promptId)
-              : [...col.promptIds, promptId],
-          };
-        })
-      );
     },
-    [status, openModal]
+    [status, openModal, router]
   );
 
   const removeFavorite = useCallback((promptId: string) => {
+    toggleFavoriteAction(promptId);
     setFavorites((prev) => prev.filter((f) => f.promptId !== promptId));
-    setCollections((prev) =>
-      prev.map((col) => ({
-        ...col,
-        promptIds: col.promptIds.filter((id) => id !== promptId),
-      }))
-    );
     toast.success("Removed from favorites", { icon: "💔", duration: 1500 });
   }, []);
 
@@ -175,7 +180,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Ensure in master favorites list
       setFavorites((prev) => {
         if (prev.some((f) => f.promptId === promptId)) return prev;
         return [...prev, { promptId, addedAt: Date.now(), collectionId }];
@@ -198,31 +202,30 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   );
 
   const createCollection = useCallback(
-    (name: string, icon = "📁"): Collection | null => {
+    async (name: string, icon = "📁"): Promise<Collection | null> => {
       if (status === "unauthenticated") {
         openModal("Sign in to create a new collection");
         return null;
       }
 
-      const newCol: Collection = {
-        id: `col-${Date.now()}`,
-        name,
-        icon,
-        promptIds: [],
-        createdAt: Date.now(),
-      };
-      setCollections((prev) => [...prev, newCol]);
-      toast.success(`Collection "${name}" created!`, {
-        icon,
-        duration: 1800,
-      });
-      return newCol;
+      const res = await createCollectionAction(name, icon);
+      if (res.success && res.collection) {
+        const newCol: Collection = res.collection;
+        setCollections((prev) => [newCol, ...prev]);
+        toast.success(`Collection "${name}" created! 🎉`, {
+          icon,
+          duration: 2000,
+        });
+        return newCol;
+      } else {
+        toast.error(res.error || "Failed to create collection");
+        return null;
+      }
     },
     [status, openModal]
   );
 
   const deleteCollection = useCallback((collectionId: string) => {
-    if (collectionId === "favorites") return; // can't delete default
     setCollections((prev) => prev.filter((c) => c.id !== collectionId));
   }, []);
 
@@ -250,6 +253,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         createCollection,
         deleteCollection,
         getFavoritesForCollection,
+        refreshCollections,
       }}
     >
       {children}
@@ -258,7 +262,9 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useFavorites() {
-  const ctx = useContext(FavoritesContext);
-  if (!ctx) throw new Error("useFavorites must be inside FavoritesProvider");
-  return ctx;
+  const context = useContext(FavoritesContext);
+  if (!context) {
+    throw new Error("useFavorites must be used within a FavoritesProvider");
+  }
+  return context;
 }

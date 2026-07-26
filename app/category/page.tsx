@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "Browse 40+ premium prompt categories ranging from cinematic portraiture to YouTube thumbnails.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function CategoriesPage() {
   const counts = await getCategoryCounts();
 

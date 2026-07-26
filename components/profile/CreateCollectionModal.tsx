@@ -18,21 +18,23 @@ export function CreateCollectionModal({ isOpen, onClose }: CreateCollectionModal
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       toast.error("Please enter a collection name");
       return;
     }
 
-    const created = createCollection(name.trim(), icon);
+    setIsLoading(true);
+    const created = await createCollection(name.trim(), icon);
+    setIsLoading(false);
+
     if (created) {
-      toast.success(`Collection "${name.trim()}" created! 🎉`);
       setName("");
       setIcon("📁");
       onClose();
-    } else {
-      toast.error("Failed to create collection");
     }
   };
 

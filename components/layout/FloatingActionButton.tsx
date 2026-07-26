@@ -37,9 +37,13 @@ export function FloatingActionButton() {
     setShuffling(true);
     try {
       const prompt = await getRandomPrompt();
-      toast.success("Found a random prompt!", { duration: 1500 });
-      router.push(`/prompts/${prompt.id}`);
-      setIsOpen(false);
+      if (prompt?.id) {
+        toast.success("Found a random prompt!", { duration: 1500 });
+        router.push(`/prompts/${prompt.id}`);
+        setIsOpen(false);
+      } else {
+        toast.error("No prompt found");
+      }
     } catch {
       toast.error("Failed to find a random prompt");
     } finally {

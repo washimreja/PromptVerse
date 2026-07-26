@@ -32,9 +32,9 @@ export function SaveToCollectionModal({
     onClose();
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!newName.trim()) return;
-    const newCol = createCollection(newName.trim(), newIcon);
+    const newCol = await createCollection(newName.trim(), newIcon);
     if (!newCol) return;
     addToCollection(promptId, newCol.id);
     setNewName("");
