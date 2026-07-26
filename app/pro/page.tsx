@@ -19,7 +19,7 @@ const PLANS = [
   {
     id: "monthly",
     name: "Monthly",
-    price: "$9",
+    price: "$0.010",
     period: "/month",
     description: "Full access, billed monthly",
     highlight: false,
