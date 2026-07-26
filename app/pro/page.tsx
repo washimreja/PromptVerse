@@ -15,33 +15,9 @@ const FEATURES = [
   "Early access to new features",
 ];
 
-const PLANS = [
-  {
-    id: "monthly",
-    name: "Monthly",
-    price: "$0.010",
-    period: "/month",
-    description: "Full access, billed monthly",
-    highlight: false,
-  },
-  {
-    id: "annual",
-    name: "Annual",
-    price: "$59",
-    period: "/year",
-    description: "Save 45% vs monthly",
-    badge: "Best Value",
-    highlight: true,
-  },
-  {
-    id: "lifetime",
-    name: "Lifetime",
-    price: "$149",
-    period: " once",
-    description: "Pay once, own forever",
-    highlight: false,
-  },
-];
+import { PRICING_PLANS } from "@/data/pricingConfig";
+
+const PLANS = PRICING_PLANS;
 
 export default function ProPage() {
   return (
