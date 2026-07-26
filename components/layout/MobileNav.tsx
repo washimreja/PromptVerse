@@ -3,45 +3,52 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Compass, Sparkles, Cpu, Search } from "lucide-react";
+import { Compass, Sparkles, Cpu, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/",         label: "Discover",   icon: Compass },
+  { href: "/", label: "Discover", icon: Compass },
   { href: "/category", label: "Categories", icon: Sparkles },
-  { href: "/models",   label: "AI Models",  icon: Cpu },
-  { href: "/search",   label: "Search",     icon: Search },
+  { href: "/models", label: "AI Models", icon: Cpu },
+  { href: "/search", label: "Search", icon: Search },
+  { href: "/profile", label: "Profile", icon: User },
 ];
 
-export function MobileNav() {
+export function BottomNavigation() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-40 md:hidden">
-      <div className="flex h-14 items-center justify-around rounded-2xl border border-border/30 bg-background/65 backdrop-blur-xl px-2 shadow-[0_8px_30px_rgb(0,0,0,0.5)] glow-brand">
+    <nav 
+      aria-label="Bottom Navigation"
+      className="fixed bottom-3 left-3 right-3 z-50 md:hidden pointer-events-auto"
+    >
+      <div className="flex h-16 items-center justify-around rounded-2xl border border-white/10 bg-[#090a0f]/90 backdrop-blur-2xl px-2 shadow-[0_16px_40px_rgba(0,0,0,0.8)]">
         {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          const isActive =
+            item.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.href);
           const Icon = item.icon;
 
           return (
             <Link
               key={item.href}
               href={item.href}
-              className="relative flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-300 active:scale-90"
+              className="relative flex flex-1 flex-col items-center justify-center py-2 px-1 rounded-xl transition-all active:scale-95"
             >
-              <div className="relative z-10 flex flex-col items-center gap-0.5">
+              <div className="relative z-10 flex flex-col items-center gap-1">
                 <Icon
                   className={cn(
                     "h-5 w-5 transition-all duration-300",
-                    isActive 
-                      ? "text-primary scale-110" 
-                      : "text-muted-foreground hover:text-foreground"
+                    isActive
+                      ? "text-cyan-400 scale-110"
+                      : "text-white/50 hover:text-white"
                   )}
                 />
                 <span
                   className={cn(
                     "text-[10px] font-bold tracking-tight transition-all duration-300",
-                    isActive ? "text-primary opacity-100" : "text-muted-foreground/60 opacity-80"
+                    isActive ? "text-cyan-400 font-extrabold" : "text-white/40"
                   )}
                 >
                   {item.label}
@@ -50,17 +57,17 @@ export function MobileNav() {
 
               {isActive && (
                 <motion.div
-                  layoutId="mobile-nav-indicator"
-                  className="absolute inset-0 rounded-xl bg-primary/8 border border-primary/10"
-                  transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                  layoutId="bottom-nav-active-pill"
+                  className="absolute inset-x-1 inset-y-1 rounded-xl bg-cyan-500/10 border border-cyan-500/20"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
             </Link>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }
 
-export default MobileNav;
+export default BottomNavigation;

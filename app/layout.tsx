@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { NextAuthProvider } from "@/components/layout/NextAuthProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MobileNav } from "@/components/layout/MobileNav";
+import { BottomNavigation } from "@/components/layout/MobileNav";
 import { SponsorBanner } from "@/components/layout/SponsorBanner";
 import { FloatingActionButton } from "@/components/layout/FloatingActionButton";
 import { FavoritesProvider } from "@/components/favorites/FavoritesContext";
@@ -125,7 +125,7 @@ export default function RootLayout({
                   </main>
                   {/* Footer — visible on all screens; MobileNav overlays bottom on mobile */}
                   <Footer />
-                  <MobileNav />
+                  <BottomNavigation />
                   <FloatingActionButton />
                   <FloatingFavoritesButton />
                   <Toaster

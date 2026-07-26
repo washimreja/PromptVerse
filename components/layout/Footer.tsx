@@ -161,7 +161,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-border/10 bg-background/50 overflow-hidden noise-overlay">
+    <footer className="relative border-t border-border/10 bg-background/50 overflow-hidden noise-overlay mb-20 md:mb-0">
       
       {/* Subtle brand glow line separating the footer */}
       <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-indigo-500 via-purple-500 to-gold" />
