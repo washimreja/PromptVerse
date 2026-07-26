@@ -7,7 +7,7 @@ import type { Prompt } from "@/types";
 import { useState } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { CATEGORIES, AI_MODELS } from "@/lib/constants";
+import { AI_MODELS } from "@/lib/constants";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { useSession } from "next-auth/react";
 import { useUpgradeModal } from "@/components/modals/UpgradeToProModal";
@@ -88,9 +88,6 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
             fill={`url(#mesh-${id})`} opacity="0.75" />
         )}
       </svg>
-
-      {/* Hover zoom effect */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-transparent group-hover:from-black/5 transition-all duration-500" />
     </div>
   );
 }
@@ -98,97 +95,90 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
 /* ── Copy Button ─────────────────────────────── */
 function CardCopyButton({ text, isPro }: { text: string; isPro?: boolean }) {
   const { data: session } = useSession();
-  const { openUpgradeModal } = useUpgradeModal();
-  const user = session?.user as any;
-  const userIsPro = user?.membership === "PRO" || user?.role === "ADMIN";
-
-  const isLocked = isPro && !userIsPro;
+  const { openModal } = useUpgradeModal();
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async (e: React.MouseEvent) => {
+  const isUserPro =
+    (session?.user as any)?.membership === "PRO" ||
+    (session?.user as any)?.membership === "LIFETIME";
+
+  const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (isLocked) {
-      toast("PromptVerse Pro", {
-        description: "Subscribe to unlock premium PRO prompts!",
-        icon: "🔒",
-        duration: 3000,
-      });
-      openUpgradeModal();
+    if (isPro && !isUserPro) {
+      openModal("Upgrade to PRO to copy premium prompts");
       return;
     }
 
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      toast.success("Prompt copied!", { duration: 1500 });
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Copy failed");
-    }
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    toast.success("Prompt copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <motion.button
+    <button
       onClick={handleCopy}
-      whileTap={{ scale: 0.9 }}
-      suppressHydrationWarning
-      aria-label={isLocked ? "Unlock Pro Prompt" : copied ? "Copied" : "Copy prompt"}
       className={cn(
-        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold",
-        "backdrop-blur-md border transition-all duration-200 shadow-sm",
-        isLocked
-          ? "bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30"
+        "relative flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 z-20",
+        isPro && !isUserPro
+          ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30"
           : copied
-          ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 glow-brand shadow-emerald-500/20"
-          : "bg-black/30 border-white/10 text-white hover:bg-black/60 hover:border-white/25 hover:text-white"
+          ? "bg-emerald-500/90 text-white shadow-emerald-500/20"
+          : "bg-black/60 hover:bg-brand hover:text-brand-foreground text-white border border-white/10 backdrop-blur-md"
       )}
     >
       <AnimatePresence mode="wait" initial={false}>
-        <motion.span
-          key={isLocked ? "lock" : copied ? "check" : "copy"}
-          initial={{ scale: 0.6, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.6, opacity: 0 }}
-          transition={{ duration: 0.15 }}
-        >
-          {isLocked ? <Lock className="h-3 w-3 text-amber-400" /> : copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-        </motion.span>
+        {copied ? (
+          <motion.span
+            key="check"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            className="flex items-center gap-1"
+          >
+            <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+            <span>Copied!</span>
+          </motion.span>
+        ) : isPro && !isUserPro ? (
+          <motion.span key="pro" className="flex items-center gap-1">
+            <Lock className="h-3 w-3" />
+            <span>Pro Prompt</span>
+          </motion.span>
+        ) : (
+          <motion.span key="copy" className="flex items-center gap-1">
+            <Copy className="h-3.5 w-3.5" />
+            <span>Copy</span>
+          </motion.span>
+        )}
       </AnimatePresence>
-      {isLocked ? "Unlock" : copied ? "Copied!" : "Copy"}
-    </motion.button>
+    </button>
   );
 }
 
-/* FavoriteButton is now imported from @/components/favorites/FavoriteButton */
-
-/* ── Main Prompt Card ────────────────────────── */
 export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardProps) {
   const model = AI_MODELS.find((m) => m.slug === prompt.model);
-
-  const cardWidth = variant === "carousel"
-    ? "w-44 sm:w-52 md:w-56 flex-shrink-0"
-    : "w-full";
+  const cardWidth = variant === "carousel" ? "w-[240px] sm:w-[280px] flex-shrink-0" : "w-full";
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.45,
-        delay: Math.min(index * 0.05, 0.4),
+        duration: 0.4,
+        delay: Math.min(index * 0.04, 0.3),
         ease: [0.16, 1, 0.3, 1],
       }}
       className={cardWidth}
     >
       <Link
         href={`/prompts/${prompt.id}`}
-        className="block group relative rounded-xl overflow-hidden bg-card border border-border/[0.07] premium-card"
+        className="block group relative rounded-2xl overflow-hidden bg-[#090a0f] border border-white/[0.08] hover:border-white/20 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
         style={{ aspectRatio: "3/4" }}
         aria-label={`View prompt: ${prompt.title}`}
       >
-        {/* ── Thumbnail ── */}
+        {/* ── Thumbnail Image ── */}
         {prompt.previewImage && !prompt.previewImage.endsWith(".svg") ? (
           <img
             src={prompt.previewImage}
@@ -199,59 +189,45 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
           <SvgThumbnail prompt={prompt} />
         )}
 
-        {/* ── Hover scale overlay ── */}
-        <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03] pointer-events-none" />
+        {/* ── Vignette Overlays ── */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none group-hover:from-black/90 transition-colors duration-300" />
 
-        {/* ── Bottom gradient vignette ── */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent pointer-events-none" />
-
-        {/* ── TOP-LEFT: Title pill ── */}
-        <div className="absolute top-3 left-3 right-16 flex items-start z-10 pointer-events-none">
-          <span
-            className={cn(
-              "text-[11px] font-black text-white/95 tracking-wide leading-tight",
-              "drop-shadow-md line-clamp-2 text-balance"
-            )}
-          >
-            {prompt.title}
-          </span>
-        </div>
-
-        {/* ── TOP-RIGHT: Favorite & PRO Badge ── */}
-        <div className="absolute top-2.5 right-2.5 flex flex-col items-end gap-1.5 z-10">
+        {/* ── TOP BADGES ── */}
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10 pointer-events-none">
           <div className="flex items-center gap-1.5">
             {prompt.isPro && (
-              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-gold text-black shadow-[0_2px_8px_rgba(245,158,11,0.4)]">
+              <span className="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 text-black shadow-md">
                 PRO
               </span>
             )}
-            <FavoriteButton promptId={prompt.id} promptTitle={prompt.title} />
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white/80 text-[10px] font-semibold">
+              <Eye className="h-3 w-3 text-cyan-400" />
+              <span>{formatCopyCount(prompt.copyCount)}</span>
+            </div>
           </div>
-          {/* View count chip */}
-          <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md border border-white/10">
-            <Eye className="h-2.5 w-2.5 text-white/70" />
-            <span className="text-[9px] font-semibold text-white/80">{formatCopyCount(prompt.copyCount)}</span>
+
+          <div className="pointer-events-auto">
+            <FavoriteButton promptId={prompt.id} promptTitle={prompt.title} />
           </div>
         </div>
 
-        {/* ── BOTTOM overlays ── */}
-        <div className="absolute bottom-0 left-0 right-0 p-2.5 flex items-end justify-between gap-2 z-10">
-          {/* Copy button + Model badge */}
-          <div className="flex flex-col gap-1.5 items-start">
-            {/* AI Model badge */}
+        {/* ── BOTTOM CONTENT ── */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 flex flex-col gap-2.5 z-10">
+          <h3 className="text-xs font-bold text-white leading-snug line-clamp-2 drop-shadow-md group-hover:text-cyan-300 transition-colors">
+            {prompt.title}
+          </h3>
+
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/10">
+            {/* Model Badge */}
             {model && (
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/40 backdrop-blur-md border border-white/15 shadow-sm">
-                <span className="text-[9px] leading-none drop-shadow-md">{model.icon}</span>
-                <span className="text-[9px] font-black text-white/90 tracking-wider uppercase">{model.name}</span>
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/10">
+                <span className="text-[10px]">{model.icon}</span>
+                <span className="text-[9px] font-bold text-white/90 uppercase tracking-wider">{model.name}</span>
               </div>
             )}
-            {/* Copy button */}
-            <CardCopyButton text={prompt.prompt} isPro={prompt.isPro} />
-          </div>
 
-          {/* Creator badge */}
-          <div className="text-[8px] font-semibold text-white/35 self-end pb-0.5 tracking-wide">
-            by PromptVerse
+            {/* Copy Button */}
+            <CardCopyButton text={prompt.prompt} isPro={prompt.isPro} />
           </div>
         </div>
       </Link>
