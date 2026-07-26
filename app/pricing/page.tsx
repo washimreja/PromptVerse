@@ -210,12 +210,12 @@ function PricingPageContent() {
                 </div>
 
                 {tier.id === "free" ? (
-                  <button
-                    disabled
-                    className="w-full py-4 rounded-2xl text-sm font-bold bg-white/5 text-muted-foreground border border-white/5 cursor-default mb-8"
+                  <Link
+                    href="/"
+                    className="w-full flex items-center justify-center py-4 rounded-2xl text-sm font-bold transition-all bg-white/5 text-white/70 hover:bg-white/10 border border-white/10 mb-8"
                   >
-                    {!isPro ? "Current Plan" : "Included"}
-                  </button>
+                    {!isPro ? "Continue with Free" : "Included"}
+                  </Link>
                 ) : isCurrentTier ? (
                   <button
                     disabled

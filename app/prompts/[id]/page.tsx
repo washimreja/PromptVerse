@@ -83,10 +83,10 @@ export default async function PromptDetailPage({ params }: Props) {
     fullPromptText = raw?.prompt ?? "";
   }
 
-  // Preview text: first ~280 chars blurred for locked PRO prompts
-  const PREVIEW_LENGTH = 280;
+  // Preview text: first ~150 chars for locked PRO prompts, then dots
+  const PREVIEW_LENGTH = 150;
   const previewText = isLocked
-    ? fullPromptText.slice(0, PREVIEW_LENGTH) + (fullPromptText.length > PREVIEW_LENGTH ? "\u2026" : "")
+    ? fullPromptText.slice(0, PREVIEW_LENGTH) + "\n\n••••••••••••••••••••••••••••••••\n••••••••••••••••••••••••••••••••\n🔒 Remaining prompt locked\nUpgrade to PRO to reveal the full prompt."
     : fullPromptText;
 
   return (
@@ -177,34 +177,28 @@ export default async function PromptDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* PRO lock: preview with blur + unlock CTA */}
+            {/* PRO lock: readable preview + unlock CTA */}
             {isLocked ? (
               <div className="relative">
-                <pre className="font-mono text-sm leading-relaxed p-5 bg-secondary/30 text-foreground rounded-2xl border border-border/10 overflow-hidden whitespace-pre-wrap select-none blur-[2px] pointer-events-none line-clamp-4">
+                <pre className="font-mono text-sm leading-relaxed p-5 bg-secondary/30 text-foreground/80 rounded-2xl border border-border/10 overflow-hidden whitespace-pre-wrap select-none">
                   {previewText}
                 </pre>
-                {/* Fade gradient overlay */}
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-card via-card/80 to-transparent rounded-b-2xl pointer-events-none" />
-
+                
                 {/* Unlock CTA */}
-                <div className="absolute inset-0 flex flex-col items-center justify-end pb-5 gap-3">
-                  <div className="flex flex-col items-center gap-2 text-center">
-                    <div className="w-10 h-10 rounded-full bg-amber-400/15 border border-amber-400/30 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-                      <Lock className="h-5 w-5 text-amber-400" />
-                    </div>
-                    <p className="text-xs font-bold text-muted-foreground/80">
-                      This prompt requires <span className="text-amber-400 font-black">PromptVerse Pro</span>
-                    </p>
+                <div className="mt-4 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-amber-500/5 to-amber-500/10 rounded-2xl border border-amber-500/20">
+                  <div className="w-12 h-12 rounded-full bg-amber-400/20 flex items-center justify-center mb-3 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                    <Lock className="h-5 w-5 text-amber-400" />
                   </div>
+                  <h3 className="text-sm font-bold text-foreground mb-1">Premium Prompt</h3>
+                  <p className="text-xs text-muted-foreground mb-5 text-center max-w-sm">
+                    Get unlimited access to this and 100+ other premium prompts with PromptVerse Pro.
+                  </p>
                   <Link
                     href="/pricing"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-black shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:shadow-[0_6px_28px_rgba(245,158,11,0.55)] hover:scale-105 transition-all duration-200 active:scale-95"
+                    className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-black shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:shadow-[0_6px_28px_rgba(245,158,11,0.55)] hover:scale-105 transition-all duration-200 active:scale-95"
                   >
                     🔒 Unlock Pro — Get Full Access
                   </Link>
-                  <p className="text-[10px] text-muted-foreground/40">
-                    Unlock 100+ premium prompts with PromptVerse Pro
-                  </p>
                 </div>
               </div>
             ) : (

@@ -12,6 +12,7 @@ import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { useSession } from "next-auth/react";
 import { useUpgradeModal } from "@/components/modals/UpgradeToProModal";
 import { copyProPromptAction } from "@/app/actions/user";
+import { useRouter } from "next/navigation";
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -110,7 +111,7 @@ function CardCopyButton({
   accessLevel: "FREE" | "PRO";
 }) {
   const { data: session } = useSession();
-  const { openUpgradeModal } = useUpgradeModal();
+  const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -125,9 +126,9 @@ function CardCopyButton({
     e.preventDefault();
     e.stopPropagation();
 
-    // Case 1: PRO prompt, FREE user → show upgrade modal
+    // Case 1: PRO prompt, FREE user → redirect to pricing
     if (isPro && !isUserPro) {
-      openUpgradeModal();
+      router.push("/pricing");
       return;
     }
 
@@ -142,7 +143,7 @@ function CardCopyButton({
             toast.error("Please sign in to copy this prompt.");
           } else {
             toast.error("PRO subscription required.");
-            openUpgradeModal();
+            router.push('/pricing');
           }
           return;
         }
@@ -211,8 +212,15 @@ function CardCopyButton({
 }
 
 export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardProps) {
+  const { data: session } = useSession();
   const model = AI_MODELS.find((m) => m.slug === prompt.model);
   const cardWidth = variant === "carousel" ? "w-[240px] sm:w-[280px] flex-shrink-0" : "w-full";
+
+  const isPro = prompt.accessLevel === "PRO";
+  const isUserPro =
+    (session?.user as any)?.membership === "PRO" ||
+    (session?.user as any)?.membership === "LIFETIME" ||
+    (session?.user as any)?.role === "ADMIN";
 
   return (
     <motion.div
@@ -248,10 +256,19 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
         {/* ── TOP BADGES ── */}
         <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-1 z-10 pointer-events-none">
           <div className="flex items-center gap-1.5 flex-wrap shrink-0">
-            {prompt.accessLevel === "PRO" && (
+            {isPro && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-black shadow-md border border-amber-200 shrink-0">
-                <Crown className="w-2.5 h-2.5 fill-black shrink-0" />
-                <span className="whitespace-nowrap">PRO</span>
+                {isUserPro ? (
+                  <Crown className="w-2.5 h-2.5 fill-black shrink-0" />
+                ) : (
+                  <Lock className="w-2.5 h-2.5 fill-black shrink-0" />
+                )}
+                <span className="whitespace-nowrap">{isUserPro ? "PRO" : "LOCKED"}</span>
+              </span>
+            )}
+            {isPro && !isUserPro && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider bg-black/60 text-amber-400 border border-amber-500/30 backdrop-blur-md shrink-0">
+                <span>⭐ Premium</span>
               </span>
             )}
             <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white/80 text-[10px] font-semibold shrink-0">
