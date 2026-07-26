@@ -33,6 +33,14 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Device & Session Tracking Metadata
+  deviceName   String?
+  browser      String?
+  os           String?
+  ip           String?
+  lastActive   DateTime @default(now())
+  createdAt    DateTime @default(now())
 }
 
 model VerificationToken {

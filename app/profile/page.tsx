@@ -15,15 +15,18 @@ import {
   Crown,
   Image as ImageIcon,
   CheckCircle2,
-  Calendar
+  Calendar,
+  Laptop
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useFavorites } from "@/components/favorites/FavoritesContext";
+import { ActiveDevicesList } from "@/components/profile/ActiveDevicesList";
+
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { favorites, collections } = useFavorites();
-  const [activeTab, setActiveTab] = useState<"favorites" | "collections" | "settings">("favorites");
+  const [activeTab, setActiveTab] = useState<"favorites" | "collections" | "devices" | "settings">("favorites");
   const [dbUser, setDbUser] = useState<any>(null);
 
   useEffect(() => {
@@ -158,7 +161,7 @@ export default function ProfilePage() {
         {/* Content Tabs */}
         <div className="bg-[#090A0F] border border-white/5 rounded-[2rem] min-h-[500px] overflow-hidden">
           <div className="flex items-center gap-8 border-b border-white/5 px-8 pt-6">
-            {(["favorites", "collections", "settings"] as const).map((tab) => (
+            {(["favorites", "collections", "devices", "settings"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -167,7 +170,7 @@ export default function ProfilePage() {
                   activeTab === tab ? "text-white" : "text-muted-foreground hover:text-white/80"
                 )}
               >
-                {tab}
+                {tab === "devices" ? "Active Devices" : tab}
                 {activeTab === tab && (
                   <motion.div
                     layoutId="profile-tab-indicator"
@@ -179,6 +182,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="p-8">
+            {activeTab === "devices" && <ActiveDevicesList />}
             {activeTab === "favorites" && (
               <div className="flex flex-col items-center justify-center text-center h-[300px] opacity-60">
                 <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6">

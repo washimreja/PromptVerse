@@ -478,15 +478,18 @@ export function Header() {
 
               {user ? (
                 <div className="relative group/avatar z-50">
-                  <div className="hidden md:flex items-center gap-2 cursor-pointer p-1 pr-3 rounded-full bg-secondary/40 border border-border/10 hover:bg-secondary/60 transition-all">
+                  <Link 
+                    href="/profile"
+                    className="hidden md:flex items-center gap-2 cursor-pointer p-1 pr-3 rounded-full bg-secondary/40 border border-border/10 hover:bg-secondary/60 transition-all"
+                  >
                     <img 
                       src={user?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`} 
                       alt="Avatar" 
                       className="w-[32px] h-[32px] rounded-full object-cover ring-2 ring-white/10" 
                     />
                     <span className="text-xs font-bold text-foreground max-w-[85px] truncate">{user.name}</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/60" />
-                  </div>
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/60 group-hover/avatar:rotate-180 transition-transform duration-200" />
+                  </Link>
                   
                   {/* Dropdown Menu */}
                   <div className="absolute right-0 top-[120%] w-60 rounded-2xl bg-[#09090b]/95 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover/avatar:opacity-100 group-hover/avatar:visible group-hover/avatar:translate-y-2 transition-all duration-300 overflow-hidden flex flex-col p-1.5 pt-2">

@@ -7,6 +7,7 @@ import DiscordProvider from "next-auth/providers/discord";
 import FacebookProvider from "next-auth/providers/facebook";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
+import { enforceDeviceLimit } from "@/lib/session-manager";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
@@ -67,6 +68,12 @@ export const authOptions: NextAuthOptions = {
     error: "/auth",
   },
   callbacks: {
+    async signIn({ user }) {
+      if (user?.id) {
+        await enforceDeviceLimit(user.id, (user as any).membership || "FREE");
+      }
+      return true;
+    },
     async session({ session, token }) {
       if (token && session.user) {
         const u = session.user as any;
