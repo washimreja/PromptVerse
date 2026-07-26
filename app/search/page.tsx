@@ -62,8 +62,9 @@ function SearchPageContent() {
     setDifficultyFilter(searchParams.get("difficulty") || "all");
   }, [searchParams]);
 
-  // Dropdown UI States
+  // Dropdown & Suggestions UI States
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(true);
 
   // Handle initial query from URL search parameters
   const urlQuery = searchParams.get("q");
@@ -80,6 +81,7 @@ function SearchPageContent() {
   }, []);
 
   const handleSuggestionClick = (val: string) => {
+    setShowSuggestions(false);
     handleQueryChange(val);
     saveToHistory(val);
     router.replace(`/search?q=${encodeURIComponent(val)}`);
@@ -87,12 +89,14 @@ function SearchPageContent() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && query.trim()) {
+      setShowSuggestions(false);
       saveToHistory(query);
       router.replace(`/search?q=${encodeURIComponent(query)}`);
     }
   };
 
   const handleClear = () => {
+    setShowSuggestions(true);
     handleQueryChange("");
     router.replace("/search");
     inputRef.current?.focus();
@@ -150,7 +154,10 @@ function SearchPageContent() {
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => handleQueryChange(e.target.value)}
+              onChange={(e) => {
+                setShowSuggestions(true);
+                handleQueryChange(e.target.value);
+              }}
               onKeyDown={handleKeyDown}
               placeholder="Search by title, tags, description, model..."
               className="w-full bg-transparent border-0 py-3 pl-8 pr-10 text-sm text-foreground focus:outline-none focus:ring-0 placeholder:text-muted-foreground/45"
@@ -173,7 +180,7 @@ function SearchPageContent() {
 
         {/* Suggestion Dropdown Panel */}
         <AnimatePresence>
-          {query && suggestions.length > 0 && (
+          {showSuggestions && query && suggestions.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
