@@ -79,9 +79,13 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (status === "authenticated") {
+      // Authenticated: always use DB data, clear any stale localStorage first
+      setFavorites([]);
+      setCollections([]);
       refreshCollections();
       refreshFavorites();
-    } else {
+    } else if (status === "unauthenticated") {
+      // Only load from localStorage for guests
       try {
         const rawFav = localStorage.getItem(STORAGE_KEY_FAV);
         if (rawFav) setFavorites(JSON.parse(rawFav));
@@ -90,23 +94,24 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         if (rawCol) setCollections(JSON.parse(rawCol));
       } catch (_) {}
     }
+    // When status === "loading", do nothing — wait for a definitive state
     setMounted(true);
   }, [status, refreshCollections, refreshFavorites]);
 
-  // Persist to localStorage for offline / guest state
+  // Persist to localStorage — only for unauthenticated users (guests)
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || status === "authenticated") return;
     try {
       localStorage.setItem(STORAGE_KEY_FAV, JSON.stringify(favorites));
     } catch (_) {}
-  }, [favorites, mounted]);
+  }, [favorites, mounted, status]);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || status === "authenticated") return;
     try {
       localStorage.setItem(STORAGE_KEY_COL, JSON.stringify(collections));
     } catch (_) {}
-  }, [collections, mounted]);
+  }, [collections, mounted, status]);
 
   const isFavorited = useCallback(
     (promptId: string) => favorites.some((f) => f.promptId === promptId),

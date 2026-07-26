@@ -15,10 +15,9 @@ export function CreateCollectionModal({ isOpen, onClose }: CreateCollectionModal
   const { createCollection } = useFavorites();
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("📁");
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

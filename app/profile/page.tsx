@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -40,7 +40,7 @@ export default function ProfilePage() {
   const [isCreateCollectionOpen, setIsCreateCollectionOpen] = useState(false);
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
 
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     if (status === "authenticated") {
       try {
         const data = await getUserProfile();
@@ -69,11 +69,12 @@ export default function ProfilePage() {
     } else if (status === "unauthenticated") {
       setLoadingProfile(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]); // Only depend on status — session object changes reference every render
 
   useEffect(() => {
     fetchUserProfile();
-  }, [status, session]);
+  }, [fetchUserProfile]);
 
   useEffect(() => {
     const ids = favorites.map((f) => f.promptId);
