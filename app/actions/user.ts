@@ -31,3 +31,22 @@ export async function getUserProfile() {
     return null;
   }
 }
+
+export async function getPromptsByIdsAction(ids: string[]) {
+  try {
+    if (!ids || ids.length === 0) return [];
+    const prompts = await db.prompt.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    return prompts.map((p) => ({
+      ...p,
+      isPro: p.isTrending && p.copyCount > 1800,
+    })) as any[];
+  } catch (error) {
+    console.error("Error fetching prompts by IDs:", error);
+    return [];
+  }
+}

@@ -5,7 +5,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { getUserProfile } from "@/app/actions/user";
+import { getUserProfile, getPromptsByIdsAction } from "@/app/actions/user";
+import { PromptGrid } from "@/components/prompts/PromptGrid";
+import type { Prompt } from "@/types";
 import { 
   Sparkles, 
   Settings, 
@@ -28,6 +30,8 @@ export default function ProfilePage() {
   const { favorites, collections } = useFavorites();
   const [activeTab, setActiveTab] = useState<"favorites" | "collections" | "devices" | "settings">("favorites");
   const [dbUser, setDbUser] = useState<any>(null);
+  const [favoritePrompts, setFavoritePrompts] = useState<Prompt[]>([]);
+  const [loadingPrompts, setLoadingPrompts] = useState<boolean>(false);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -36,6 +40,19 @@ export default function ProfilePage() {
       });
     }
   }, [status]);
+
+  useEffect(() => {
+    const ids = favorites.map((f) => f.promptId);
+    if (ids.length > 0) {
+      setLoadingPrompts(true);
+      getPromptsByIdsAction(ids).then((prompts) => {
+        setFavoritePrompts(prompts);
+        setLoadingPrompts(false);
+      });
+    } else {
+      setFavoritePrompts([]);
+    }
+  }, [favorites]);
 
   if (status === "loading" || (status === "authenticated" && !dbUser)) {
     return (
@@ -184,18 +201,29 @@ export default function ProfilePage() {
           <div className="p-8">
             {activeTab === "devices" && <ActiveDevicesList />}
             {activeTab === "favorites" && (
-              <div className="flex flex-col items-center justify-center text-center h-[300px] opacity-60">
-                <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6">
-                  <Heart size={32} className="text-white/40" />
+              loadingPrompts ? (
+                <div className="flex items-center justify-center p-12 text-muted-foreground gap-2">
+                  <div className="w-5 h-5 rounded-full border-2 border-brand border-t-transparent animate-spin" />
+                  <span className="text-sm">Loading saved prompts...</span>
                 </div>
-                <h3 className="text-xl font-bold mb-2">No favorites yet</h3>
-                <p className="text-sm text-muted-foreground max-w-md mb-6">
-                  You haven't saved any prompts yet. Explore the studio to find inspiration for your next masterpiece.
-                </p>
-                <Link href="/" className="px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-xl text-sm font-bold transition-colors">
-                  Explore Prompts
-                </Link>
-              </div>
+              ) : favoritePrompts.length > 0 ? (
+                <div className="pt-2">
+                  <PromptGrid prompts={favoritePrompts} />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center h-[300px] opacity-60">
+                  <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6">
+                    <Heart size={32} className="text-white/40" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">No favorites yet</h3>
+                  <p className="text-sm text-muted-foreground max-w-md mb-6">
+                    You haven't saved any prompts yet. Explore the studio to find inspiration for your next masterpiece.
+                  </p>
+                  <Link href="/" className="px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-xl text-sm font-bold transition-colors">
+                    Explore Prompts
+                  </Link>
+                </div>
+              )
             )}
 
             {activeTab === "collections" && (
