@@ -95,7 +95,7 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
 /* ── Copy Button ─────────────────────────────── */
 function CardCopyButton({ text, isPro }: { text: string; isPro?: boolean }) {
   const { data: session } = useSession();
-  const { openModal } = useUpgradeModal();
+  const { openUpgradeModal } = useUpgradeModal();
   const [copied, setCopied] = useState(false);
 
   const isUserPro =
@@ -107,7 +107,7 @@ function CardCopyButton({ text, isPro }: { text: string; isPro?: boolean }) {
     e.stopPropagation();
 
     if (isPro && !isUserPro) {
-      openModal("Upgrade to PRO to copy premium prompts");
+      openUpgradeModal();
       return;
     }
 
