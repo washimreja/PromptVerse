@@ -31,7 +31,7 @@ const TIERS = [
   },
   {
     name: "Pro Member",
-    price: "$9.99",
+    price: "$0.010",
     period: "per month",
     description: "For professionals and power users building with AI.",
     popular: true,
