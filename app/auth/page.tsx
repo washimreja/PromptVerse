@@ -107,7 +107,16 @@ export default function AuthPage() {
         toast.error("Invalid email or password");
         setIsLoading(false);
       } else {
-        router.push("/");
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectPath = urlParams.get("redirect");
+        const autoCheckout = urlParams.get("autoCheckout");
+        
+        let destination = redirectPath || "/";
+        if (autoCheckout && destination.includes("/pricing")) {
+          destination = `/pricing?autoCheckout=${autoCheckout}`;
+        }
+
+        router.push(destination);
         router.refresh();
       }
     } catch (error) {
@@ -118,7 +127,16 @@ export default function AuthPage() {
 
   const handleSocialLogin = (provider: string) => {
     setIsLoading(true);
-    signIn(provider, { callbackUrl: "/" });
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectPath = urlParams.get("redirect");
+    const autoCheckout = urlParams.get("autoCheckout");
+    
+    let callbackUrl = redirectPath || "/";
+    if (autoCheckout && callbackUrl.includes("/pricing")) {
+      callbackUrl = `/pricing?autoCheckout=${autoCheckout}`;
+    }
+
+    signIn(provider, { callbackUrl });
   };
 
   return (
