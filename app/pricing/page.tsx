@@ -21,18 +21,7 @@ export default function PricingPage() {
         <div className="absolute inset-0 noise-overlay opacity-50" />
       </div>
 
-      {/* ── Header Simple ── */}
-      <header className="relative z-10 w-full flex items-center justify-between p-6 max-w-7xl mx-auto">
-        <Link href="/" className="flex items-center gap-2 group">
-          <PVLogo className="w-8 h-8" />
-          <span className="font-extrabold text-xl tracking-tight text-white">PromptVerse</span>
-        </Link>
-        <Link href="/auth" className="text-sm font-bold text-muted-foreground hover:text-white transition-colors">
-          Sign In
-        </Link>
-      </header>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 md:pt-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-12">
         
         {/* ── Hero Section ── */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
