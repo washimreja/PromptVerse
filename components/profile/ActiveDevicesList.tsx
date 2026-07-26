@@ -85,22 +85,22 @@ export function ActiveDevicesList() {
   return (
     <div className="space-y-4">
       {/* Device Usage Status Pill */}
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/30 border border-white/10 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-brand/10 text-brand">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4.5 rounded-2xl bg-secondary/30 border border-white/10 backdrop-blur-md">
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-brand/10 text-brand shrink-0">
             <Shield className="w-5 h-5" />
           </div>
           <div>
             <h4 className="text-sm font-bold text-foreground">Active Device Quota</h4>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {membership === "PRO" || membership === "LIFETIME" 
                 ? "Pro Tier allows up to 3 active devices simultaneously." 
                 : "Free Tier allows 1 active device. Upgrading to Pro unlocks 3 devices."}
             </p>
           </div>
         </div>
-        <div className="text-right">
-          <span className="text-xs font-black px-3 py-1 rounded-full bg-brand/20 text-brand border border-brand/30">
+        <div className="self-start sm:self-center shrink-0">
+          <span className="inline-flex items-center text-xs font-black px-3.5 py-1.5 rounded-full bg-brand/20 text-brand border border-brand/30">
             {sessions.length} / {maxDevices} Devices
           </span>
         </div>

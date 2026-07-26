@@ -193,17 +193,17 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none group-hover:from-black/90 transition-colors duration-300" />
 
         {/* ── TOP BADGES ── */}
-        <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10 pointer-events-none">
-          <div className="flex items-center gap-1.5">
+        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-1 z-10 pointer-events-none">
+          <div className="flex items-center gap-1.5 flex-wrap shrink-0">
             {prompt.isPro && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-black shadow-md border border-amber-200">
-                <Crown className="w-2.5 h-2.5 fill-black" />
-                <span>PRO</span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-black shadow-md border border-amber-200 shrink-0">
+                <Crown className="w-2.5 h-2.5 fill-black shrink-0" />
+                <span className="whitespace-nowrap">PRO</span>
               </span>
             )}
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white/80 text-[10px] font-semibold">
-              <Eye className="h-3 w-3 text-cyan-400" />
-              <span>{formatCopyCount(prompt.copyCount)}</span>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white/80 text-[10px] font-semibold shrink-0">
+              <Eye className="h-3 w-3 text-cyan-400 shrink-0" />
+              <span className="whitespace-nowrap">{formatCopyCount(prompt.copyCount)}</span>
             </div>
           </div>
 

@@ -24,6 +24,8 @@ import { cn } from "@/lib/utils";
 import { useFavorites } from "@/components/favorites/FavoritesContext";
 import { ActiveDevicesList } from "@/components/profile/ActiveDevicesList";
 import { EditProfileModal } from "@/components/profile/EditProfileModal";
+import { CreateCollectionModal } from "@/components/profile/CreateCollectionModal";
+import { DeleteAccountModal } from "@/components/profile/DeleteAccountModal";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -34,6 +36,8 @@ export default function ProfilePage() {
   const [favoritePrompts, setFavoritePrompts] = useState<Prompt[]>([]);
   const [loadingPrompts, setLoadingPrompts] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateCollectionOpen, setIsCreateCollectionOpen] = useState(false);
+  const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
 
   const fetchUserProfile = () => {
     if (status === "authenticated") {
@@ -247,18 +251,52 @@ export default function ProfilePage() {
             )}
 
             {activeTab === "collections" && (
-              <div className="flex flex-col items-center justify-center text-center h-[300px] opacity-60">
-                <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6">
-                  <FolderHeart size={32} className="text-white/40" />
+              collections.length > 0 ? (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-white">Your Collections ({collections.length})</h3>
+                    <button
+                      onClick={() => setIsCreateCollectionOpen(true)}
+                      className="px-4 py-2 rounded-xl bg-brand hover:bg-brand/90 text-brand-foreground text-xs font-bold transition-all shadow-md active:scale-95"
+                    >
+                      + New Collection
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {collections.map((col) => (
+                      <div
+                        key={col.id}
+                        className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all flex items-center justify-between group"
+                      >
+                        <div className="flex items-center gap-3.5">
+                          <span className="text-2xl p-2.5 rounded-xl bg-white/5">{col.icon || "📁"}</span>
+                          <div>
+                            <p className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">{col.name}</p>
+                            <p className="text-xs text-muted-foreground">{col.promptIds?.length || 0} prompts</p>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Empty Collections</h3>
-                <p className="text-sm text-muted-foreground max-w-md mb-6">
-                  Create collections to organize your favorite prompts by theme, project, or AI model.
-                </p>
-                <button className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-bold transition-colors">
-                  Create Collection
-                </button>
-              </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center h-[300px] opacity-60">
+                  <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6">
+                    <FolderHeart size={32} className="text-white/40" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Empty Collections</h3>
+                  <p className="text-sm text-muted-foreground max-w-md mb-6">
+                    Create collections to organize your favorite prompts by theme, project, or AI model.
+                  </p>
+                  <button
+                    onClick={() => setIsCreateCollectionOpen(true)}
+                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-bold transition-colors cursor-pointer"
+                  >
+                    Create Collection
+                  </button>
+                </div>
+              )
             )}
 
             {activeTab === "settings" && (
@@ -268,7 +306,7 @@ export default function ProfilePage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-white/[0.02] border border-white/5 rounded-2xl gap-4">
                     <div>
                       <p className="font-bold text-sm text-white mb-1">Email Address</p>
-                      <p className="text-sm text-muted-foreground">{user?.email}</p>
+                      <p className="text-sm text-muted-foreground">{dbUser?.email || user?.email}</p>
                     </div>
                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-3 py-1.5 rounded-lg border border-emerald-400/20">
                       <CheckCircle2 size={14} /> Verified
@@ -285,7 +323,10 @@ export default function ProfilePage() {
                   <div className="mt-8 p-6 bg-red-500/5 border border-red-500/10 rounded-2xl">
                     <h4 className="text-red-400 font-bold mb-2">Danger Zone</h4>
                     <p className="text-sm text-white/50 mb-4">Permanently delete your account and all associated data. This action cannot be undone.</p>
-                    <button className="px-5 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-sm font-bold transition-colors">
+                    <button
+                      onClick={() => setIsDeleteAccountOpen(true)}
+                      className="px-5 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-sm font-bold transition-colors cursor-pointer"
+                    >
                       Delete Account
                     </button>
                   </div>
@@ -302,6 +343,16 @@ export default function ProfilePage() {
         onClose={() => setIsEditModalOpen(false)}
         currentUser={dbUser || user || {}}
         onSaveSuccess={fetchUserProfile}
+      />
+
+      <CreateCollectionModal
+        isOpen={isCreateCollectionOpen}
+        onClose={() => setIsCreateCollectionOpen(false)}
+      />
+
+      <DeleteAccountModal
+        isOpen={isDeleteAccountOpen}
+        onClose={() => setIsDeleteAccountOpen(false)}
       />
     </div>
   );
