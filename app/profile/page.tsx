@@ -33,23 +33,47 @@ export default function ProfilePage() {
   const { favorites, collections } = useFavorites();
   const [activeTab, setActiveTab] = useState<"favorites" | "collections" | "devices" | "settings">("favorites");
   const [dbUser, setDbUser] = useState<any>(null);
+  const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
   const [favoritePrompts, setFavoritePrompts] = useState<Prompt[]>([]);
   const [loadingPrompts, setLoadingPrompts] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateCollectionOpen, setIsCreateCollectionOpen] = useState(false);
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
 
-  const fetchUserProfile = () => {
+  const fetchUserProfile = async () => {
     if (status === "authenticated") {
-      getUserProfile().then((data) => {
-        if (data) setDbUser(data);
-      });
+      try {
+        const data = await getUserProfile();
+        if (data) {
+          setDbUser(data);
+        } else if (session?.user) {
+          setDbUser({
+            name: session.user.name,
+            email: session.user.email,
+            image: session.user.image,
+            membership: "FREE",
+          });
+        }
+      } catch (err) {
+        if (session?.user) {
+          setDbUser({
+            name: session.user.name,
+            email: session.user.email,
+            image: session.user.image,
+            membership: "FREE",
+          });
+        }
+      } finally {
+        setLoadingProfile(false);
+      }
+    } else if (status === "unauthenticated") {
+      setLoadingProfile(false);
     }
   };
 
   useEffect(() => {
     fetchUserProfile();
-  }, [status]);
+  }, [status, session]);
 
   useEffect(() => {
     const ids = favorites.map((f) => f.promptId);
@@ -64,7 +88,7 @@ export default function ProfilePage() {
     }
   }, [favorites]);
 
-  if (status === "loading" || (status === "authenticated" && !dbUser)) {
+  if (status === "loading" || loadingProfile) {
     return (
       <div className="min-h-screen bg-[#040508] flex items-center justify-center">
         <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
