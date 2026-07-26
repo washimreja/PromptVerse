@@ -62,9 +62,11 @@ function SearchPageContent() {
     setDifficultyFilter(searchParams.get("difficulty") || "all");
   }, [searchParams]);
 
-  // Dropdown & Suggestions UI States
+  // Refs & Dropdown UI States
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [showSuggestions, setShowSuggestions] = useState<boolean>(true);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
 
   // Handle initial query from URL search parameters
   const urlQuery = searchParams.get("q");
@@ -80,23 +82,61 @@ function SearchPageContent() {
     inputRef.current?.focus();
   }, []);
 
-  const handleSuggestionClick = (val: string) => {
+  // Click outside listener to close search suggestions dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Execute search immediately & hide suggestions panel
+  const executeSearch = (val: string) => {
     setShowSuggestions(false);
+    setActiveIndex(-1);
     handleQueryChange(val);
     saveToHistory(val);
+    inputRef.current?.blur();
     router.replace(`/search?q=${encodeURIComponent(val)}`);
   };
 
+  const handleSuggestionClick = (val: string) => {
+    executeSearch(val);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && query.trim()) {
+    if (!showSuggestions || suggestions.length === 0) {
+      if (e.key === "Enter" && query.trim()) {
+        executeSearch(query);
+      }
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (activeIndex >= 0 && activeIndex < suggestions.length) {
+        executeSearch(suggestions[activeIndex]);
+      } else if (query.trim()) {
+        executeSearch(query);
+      }
+    } else if (e.key === "Escape") {
       setShowSuggestions(false);
-      saveToHistory(query);
-      router.replace(`/search?q=${encodeURIComponent(query)}`);
+      setActiveIndex(-1);
     }
   };
 
   const handleClear = () => {
-    setShowSuggestions(true);
+    setShowSuggestions(false);
+    setActiveIndex(-1);
     handleQueryChange("");
     router.replace("/search");
     inputRef.current?.focus();
@@ -141,7 +181,7 @@ function SearchPageContent() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 min-h-[85vh]">
       
       {/* ── Search Input Box with Focus Glow ── */}
-      <div className="relative max-w-3xl mx-auto mb-10">
+      <div ref={searchContainerRef} className="relative max-w-3xl mx-auto mb-10">
         <div className={cn(
           "flex items-center gap-3 p-1.5 rounded-2xl",
           "bg-[#080713]/60 border border-[#23203c]/20 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
@@ -156,7 +196,11 @@ function SearchPageContent() {
               value={query}
               onChange={(e) => {
                 setShowSuggestions(true);
+                setActiveIndex(-1);
                 handleQueryChange(e.target.value);
+              }}
+              onFocus={() => {
+                if (query.trim() && suggestions.length > 0) setShowSuggestions(true);
               }}
               onKeyDown={handleKeyDown}
               placeholder="Search by title, tags, description, model..."
@@ -185,17 +229,29 @@ function SearchPageContent() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
-              className="absolute left-0 right-0 mt-2.5 z-20 bg-[#080713]/95 border border-[#23203c]/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-md"
+              className="absolute left-0 right-0 mt-2.5 z-50 bg-[#080713]/95 border border-[#23203c]/40 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-xl"
             >
               <div className="py-2">
-                {suggestions.map((suggestion) => (
+                {suggestions.map((suggestion, idx) => (
                   <button
                     key={suggestion}
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="w-full text-left px-5 py-3 text-xs hover:bg-[#1a192c]/50 text-muted-foreground hover:text-white transition-colors flex items-center justify-between"
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // Prevent input blur before click registers
+                      handleSuggestionClick(suggestion);
+                    }}
+                    onMouseEnter={() => setActiveIndex(idx)}
+                    className={cn(
+                      "w-full text-left px-5 py-3 text-xs transition-colors flex items-center justify-between group",
+                      activeIndex === idx 
+                        ? "bg-[#1a192c] text-white font-bold" 
+                        : "text-muted-foreground hover:bg-[#1a192c]/50 hover:text-white"
+                    )}
                   >
                     <span>{suggestion}</span>
-                    <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 text-primary transition-opacity" />
+                    <ArrowRight className={cn(
+                      "h-3.5 w-3.5 text-primary transition-opacity",
+                      activeIndex === idx ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    )} />
                   </button>
                 ))}
               </div>
