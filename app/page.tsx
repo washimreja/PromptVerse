@@ -16,7 +16,6 @@ import { NewestPrompts } from "@/components/home/NewestPrompts";
 import { TrendingToday } from "@/components/home/TrendingToday";
 import { MostCopied } from "@/components/home/MostCopied";
 import { EditorChoice } from "@/components/home/EditorChoice";
-import { RandomPrompt } from "@/components/home/RandomPrompt";
 import { QuickActionCards } from "@/components/home/QuickActionCards";
 import { PremiumBanner } from "@/components/home/PremiumBanner";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -92,9 +91,6 @@ export default async function HomePage() {
 
       {/* 13. Quick Launchpad Cards */}
       <QuickActionCards />
-
-      {/* 14. Random Prompt Shuffle Section */}
-      <RandomPrompt />
 
     </div>
   );

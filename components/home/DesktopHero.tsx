@@ -11,7 +11,7 @@ const TRENDING_CHIPS = [
   "Cyberpunk City",
   "Portrait Photography",
   "Midjourney v6",
-  "3D Anime Character",
+  "3D Anime",
   "Flux Realism",
   "ChatGPT Prompts",
 ];
@@ -57,74 +57,48 @@ export function DesktopHero() {
   };
 
   return (
-    <div className="hidden md:flex flex-col items-center text-center max-w-4xl mx-auto z-10 relative">
+    <div className="hidden md:flex flex-col items-center text-center max-w-4xl mx-auto z-10 relative py-4">
       {/* ── Badge Pill ── */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-white/80 text-xs font-semibold mb-4 shadow-sm backdrop-blur-md cursor-default"
+        transition={{ duration: 0.35 }}
+        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-3 backdrop-blur-md cursor-default"
       >
         <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-        <span>The World's Most Advanced AI Prompt Engine</span>
+        <span>Next-Gen AI Prompt Engine</span>
       </motion.div>
 
-      {/* ── Large Headline (Compact vertical height) ── */}
+      {/* ── Compact Headline ── */}
       <motion.h1
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.05 }}
-        className="text-4xl lg:text-6xl font-black tracking-tight text-white leading-tight mb-4"
+        transition={{ duration: 0.4, delay: 0.05 }}
+        className="text-3xl lg:text-5xl font-black tracking-tight text-white leading-tight mb-2"
       >
-        Discover & Copy{" "}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-brand to-blue-500">
-          Premium AI Prompts
-        </span>
+        Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-brand to-blue-500">Premium AI Prompts</span>
       </motion.h1>
 
       {/* ── Subtitle ── */}
       <motion.p
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="text-sm lg:text-base text-muted-foreground/80 max-w-xl mx-auto mb-6 font-medium leading-relaxed"
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="text-xs lg:text-sm text-muted-foreground/80 max-w-lg mx-auto mb-5 font-medium leading-relaxed"
       >
-        10,000+ hand-crafted prompts for Midjourney, Flux, Stable Diffusion, and ChatGPT. Ready to copy in one click.
+        10,000+ ready-to-copy prompts for Midjourney, Flux, Stable Diffusion & ChatGPT.
       </motion.p>
 
-      {/* ── CTAs ── */}
+      {/* ── Integrated Search Experience ── */}
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
-        className="flex items-center justify-center gap-3 mb-6"
-      >
-        <Link
-          href="/search"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-brand to-blue-600 text-white text-xs font-bold hover:brightness-110 transition-all shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:scale-105 active:scale-95"
-        >
-          <span>Explore Prompts</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-        <Link
-          href="/category"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs font-bold hover:bg-white/10 hover:border-white/20 transition-all hover:scale-105 active:scale-95 backdrop-blur-md"
-        >
-          <Compass className="w-4 h-4 text-cyan-400" />
-          <span>Browse Categories</span>
-        </Link>
-      </motion.div>
-
-      {/* ── Search Experience ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
         ref={containerRef}
-        className="relative w-full max-w-2xl mx-auto"
+        className="relative w-full max-w-xl mx-auto"
       >
-        <div className="relative flex items-center p-1.5 rounded-2xl bg-[#090a0f]/90 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] focus-within:border-cyan-500/50 backdrop-blur-xl">
-          <Search className="w-4 h-4 text-muted-foreground/60 ml-3 shrink-0" />
+        <div className="relative flex items-center p-1 rounded-2xl bg-[#090a0f]/90 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] focus-within:border-cyan-500/50 backdrop-blur-xl transition-all">
+          <Search className="w-4 h-4 text-cyan-400 ml-3 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -155,7 +129,7 @@ export function DesktopHero() {
 
           <button
             onClick={() => executeSearch(query)}
-            className="px-4 py-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 hover:bg-cyan-500 hover:text-black text-cyan-400 text-xs font-bold transition-all shrink-0 shadow-sm"
+            className="px-4 py-2 rounded-xl bg-cyan-500 border border-cyan-400 text-black text-xs font-black transition-all shrink-0 hover:bg-cyan-400 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
           >
             Search
           </button>
@@ -188,15 +162,15 @@ export function DesktopHero() {
         </AnimatePresence>
 
         {/* Trending Chips */}
-        <div className="flex items-center justify-center flex-wrap gap-2 mt-3">
-          <span className="text-[11px] font-semibold text-muted-foreground/60 flex items-center gap-1">
+        <div className="flex items-center justify-center flex-wrap gap-1.5 mt-3">
+          <span className="text-[10px] font-semibold text-muted-foreground/60 flex items-center gap-1">
             <TrendingUp className="w-3 h-3 text-cyan-400" /> Trending:
           </span>
           {TRENDING_CHIPS.map((chip) => (
             <button
               key={chip}
               onClick={() => executeSearch(chip)}
-              className="px-2.5 py-1 rounded-full bg-white/[0.03] hover:bg-white/10 border border-white/5 hover:border-cyan-500/30 text-[11px] font-medium text-white/70 hover:text-white transition-all hover:scale-105"
+              className="px-2 py-0.5 rounded-lg bg-white/[0.03] hover:bg-white/10 border border-white/10 hover:border-cyan-500/40 text-[10px] font-semibold text-white/70 hover:text-cyan-300 transition-all"
             >
               {chip}
             </button>

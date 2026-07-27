@@ -1,6 +1,6 @@
 import { AI_MODELS } from "@/lib/constants";
 import { getModelCounts } from "@/lib/prompts";
-import { Cpu, ArrowRight } from "lucide-react";
+import { Cpu } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
@@ -18,67 +18,53 @@ export default async function AIModelsPage() {
   const counts = await getModelCounts();
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 noise-overlay">
+    <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
       
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-14 animate-fade-up">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider mb-4 border border-primary/15 shadow-[0_0_12px_rgba(97,0,220,0.05)]">
-          <Cpu className="h-3.5 w-3.5 text-primary" />
-          <span>Optimized AI Engines</span>
+      <div className="text-center max-w-xl mx-auto mb-6 sm:mb-12">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-2 sm:mb-3">
+          <Cpu className="h-3.5 w-3.5 text-cyan-400" />
+          <span>Model Architecture Engine</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">
+        <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight mb-2">
           Browse by AI Model
         </h1>
-        <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed text-pretty font-semibold">
-          Select an AI model architecture to discover prompts optimized specifically for its training set, aesthetics, and instruction-following.
+        <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed">
+          Select an AI model architecture to discover prompts optimized for its aesthetics and instruction-following.
         </p>
       </div>
 
-      {/* Grid: 4 columns on large desktop, 3 on md/lg, 2 on sm, 1 on xs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 animate-scale-in">
-        {AI_MODELS.map((model, idx) => {
+      {/* Responsive 3-column mobile grid (3 items per line) */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3.5">
+        {AI_MODELS.map((model) => {
           const promptCount = counts[model.slug] || 0;
           return (
             <Link
               key={model.slug}
               href={`/models/${model.slug}`}
               className={cn(
-                "group relative flex items-center justify-between p-4.5 rounded-2xl transition-all duration-500",
-                "bg-card/45 border border-border/30 backdrop-blur-md",
-                "tilt-card noise-overlay shine"
+                "group relative flex flex-col items-center justify-center text-center p-2.5 sm:p-3 rounded-2xl h-full transition-all duration-300 ease-out",
+                "bg-[#090a0f]/90 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-md",
+                "hover:-translate-y-1 hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.25)]"
               )}
             >
-              {/* Subtle backglow matching model primary colors */}
+              {/* Subtle backglow matching model colors */}
               <div
-                className="absolute -top-6 -right-6 w-16 h-16 rounded-full blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500"
-                style={{ backgroundColor: model.color || "var(--color-primary)" }}
+                className="absolute -top-6 -right-6 w-14 h-14 rounded-full blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+                style={{ backgroundColor: model.color || "#06b6d4" }}
               />
 
-              <div className="flex items-center gap-3.5 relative z-10">
-                {/* Brand Logo Container */}
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center bg-secondary/50 border border-border/20 transition-transform duration-300 group-hover:scale-105"
-                >
-                  <ModelLogo slug={model.slug} />
-                </div>
-                
-                <div className="flex flex-col gap-0.5 max-w-[160px] sm:max-w-[180px]">
-                  <span className="font-extrabold text-[0.88rem] tracking-tight group-hover:text-primary transition-colors duration-300">
-                    {model.name}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground/75 font-semibold line-clamp-1 leading-normal">
-                    {model.description}
-                  </span>
-                </div>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center bg-white/[0.05] border border-white/10 mb-1.5 transition-transform duration-300 group-hover:scale-105 shrink-0">
+                <ModelLogo slug={model.slug} />
               </div>
 
-              {/* Counts Badge */}
-              <div className="flex items-center gap-1.5 flex-shrink-0 relative z-10">
-                <span className="text-[9px] font-extrabold px-2.5 py-0.5 rounded-lg bg-secondary/70 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300 border border-border/10">
-                  {promptCount}
-                </span>
-                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/35 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
-              </div>
+              <span className="font-extrabold text-xs tracking-tight text-white line-clamp-1 group-hover:text-cyan-300 transition-colors w-full">
+                {model.name}
+              </span>
+
+              <span className="text-[9px] font-extrabold text-cyan-400/90 mt-0.5">
+                {promptCount} {promptCount === 1 ? 'prompt' : 'prompts'}
+              </span>
             </Link>
           );
         })}

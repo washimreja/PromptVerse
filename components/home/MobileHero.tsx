@@ -51,7 +51,7 @@ const MOBILE_GRID_ITEMS = [
 
 export function MobileHero() {
   return (
-    <div className="flex md:hidden flex-col items-center text-center w-full px-3 z-10 relative pt-2 pb-4">
+    <div className="flex md:hidden flex-col items-center text-center w-full px-2 z-10 relative pt-2 pb-4">
       {/* ── Small Heading ── */}
       <motion.h1
         initial={{ opacity: 0, y: 10 }}
@@ -67,17 +67,17 @@ export function MobileHero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05 }}
-        className="text-xs text-muted-foreground/80 mb-4 font-medium"
+        className="text-xs text-muted-foreground/80 mb-3 font-medium"
       >
         10,000+ ready-to-copy prompts.
       </motion.p>
 
-      {/* ── Compact 2-Column Grid (6 items) ── */}
+      {/* ── Compact 3-Column Grid (3 items per line) ── */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="grid grid-cols-2 gap-2.5 w-full max-w-sm"
+        className="grid grid-cols-3 gap-2 w-full max-w-md"
       >
         {MOBILE_GRID_ITEMS.map((item) => {
           const Icon = item.icon;
@@ -85,12 +85,12 @@ export function MobileHero() {
             <Link
               key={item.slug}
               href={`/category/${item.slug}`}
-              className={`flex items-center gap-2.5 p-2.5 rounded-xl bg-[#090a0f]/90 border border-white/10 ${item.borderGlow} active:scale-95 transition-all duration-200 backdrop-blur-md text-left`}
+              className={`flex flex-col items-center justify-center p-2 rounded-xl bg-[#090a0f]/90 border border-white/10 ${item.borderGlow} active:scale-95 transition-all duration-200 backdrop-blur-md text-center`}
             >
-              <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/10 shrink-0">
+              <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/10 mb-1">
                 <Icon className={`w-4 h-4 ${item.iconColor}`} />
               </div>
-              <span className="text-xs font-bold text-white tracking-tight truncate">
+              <span className="text-[11px] font-bold text-white tracking-tight truncate w-full">
                 {item.name}
               </span>
             </Link>

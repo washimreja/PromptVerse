@@ -10,14 +10,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AI_MODELS } from "@/lib/constants";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { useSession } from "next-auth/react";
-import { useUpgradeModal } from "@/components/modals/UpgradeToProModal";
 import { copyProPromptAction } from "@/app/actions/user";
 import { useRouter } from "next/navigation";
 
 interface PromptCardProps {
   prompt: Prompt;
   index?: number;
-  /** "grid" = normal grid card | "carousel" = wider card for horizontal carousels */
+  /** "grid" = normal grid card | "carousel" = compact card for horizontal carousels */
   variant?: "grid" | "carousel";
 }
 
@@ -59,7 +58,6 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
         <rect width="100%" height="100%" fill={`url(#bg-${id})`} />
         <rect width="100%" height="100%" fill={`url(#dot-${id})`} />
 
-        {/* Glow orb */}
         <ellipse
           cx="50%"
           cy="42%"
@@ -70,7 +68,6 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
           filter={`url(#blur-${id})`}
         />
 
-        {/* Shape */}
         {shape === 0 && (
           <path d="M-20 60 C 40 10, 90 90, 150 30 C 210 -10, 250 80, 320 20 L 320 200 L -20 200 Z"
             fill={`url(#mesh-${id})`} opacity="0.75" />
@@ -95,12 +92,6 @@ export function SvgThumbnail({ prompt }: { prompt: Prompt }) {
 }
 
 /* ── Copy Button ─────────────────────────────── */
-/**
- * For FREE prompts: copies `text` directly (always populated from listing data).
- * For PRO prompts: calls copyProPromptAction(promptId) server action — membership
- * is verified on the SERVER from the DB before any text is returned.
- * The `text` prop is intentionally empty ("") for PRO prompts on listing pages.
- */
 function CardCopyButton({
   promptId,
   text,
@@ -126,19 +117,16 @@ function CardCopyButton({
     e.preventDefault();
     e.stopPropagation();
 
-    // Case 1: PRO prompt, FREE user → redirect to pricing
     if (isPro && !isUserPro) {
       router.push("/pricing");
       return;
     }
 
-    // Case 2: PRO prompt, PRO user → call server action for text
     if (isPro && isUserPro) {
       setLoading(true);
       try {
         const result = await copyProPromptAction(promptId);
         if (!result.success) {
-          // Server denied — shouldn't happen for valid PRO user, but handle gracefully
           if (result.error === "UNAUTHENTICATED") {
             toast.error("Please sign in to copy this prompt.");
           } else {
@@ -149,20 +137,19 @@ function CardCopyButton({
         }
         await navigator.clipboard.writeText(result.text);
         setCopied(true);
-        toast.success("Prompt copied to clipboard!");
+        toast.success("Prompt copied!");
         setTimeout(() => setCopied(false), 2000);
       } catch {
-        toast.error("Failed to copy. Please try again.");
+        toast.error("Failed to copy.");
       } finally {
         setLoading(false);
       }
       return;
     }
 
-    // Case 3: FREE prompt → copy directly (text is already in listing data)
     navigator.clipboard.writeText(text);
     setCopied(true);
-    toast.success("Prompt copied to clipboard!");
+    toast.success("Prompt copied!");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -171,38 +158,32 @@ function CardCopyButton({
       onClick={handleCopy}
       disabled={loading}
       className={cn(
-        "relative flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 z-20",
+        "relative flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-bold transition-all shadow-md active:scale-95 z-20 shrink-0",
         isPro && !isUserPro
           ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30"
           : copied
           ? "bg-emerald-500/90 text-white shadow-emerald-500/20"
-          : "bg-black/60 hover:bg-brand hover:text-brand-foreground text-white border border-white/10 backdrop-blur-md"
+          : "bg-black/70 hover:bg-cyan-500 hover:text-black text-white border border-white/10 backdrop-blur-md"
       )}
     >
       <AnimatePresence mode="wait" initial={false}>
         {loading ? (
           <motion.span key="loading" className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full border-2 border-current border-t-transparent animate-spin" />
+            <span className="w-2.5 h-2.5 rounded-full border-2 border-current border-t-transparent animate-spin" />
           </motion.span>
         ) : copied ? (
-          <motion.span
-            key="check"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            className="flex items-center gap-1"
-          >
-            <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+          <motion.span key="check" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-1">
+            <Check className="h-3 w-3 stroke-[2.5]" />
             <span>Copied!</span>
           </motion.span>
         ) : isPro && !isUserPro ? (
           <motion.span key="pro" className="flex items-center gap-1">
-            <Lock className="h-3 w-3" />
-            <span>Pro Prompt</span>
+            <Lock className="h-2.5 w-2.5" />
+            <span>Pro</span>
           </motion.span>
         ) : (
           <motion.span key="copy" className="flex items-center gap-1">
-            <Copy className="h-3.5 w-3.5" />
+            <Copy className="h-3 w-3" />
             <span>Copy</span>
           </motion.span>
         )}
@@ -214,7 +195,7 @@ function CardCopyButton({
 export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardProps) {
   const { data: session } = useSession();
   const model = AI_MODELS.find((m) => m.slug === prompt.model);
-  const cardWidth = variant === "carousel" ? "w-[240px] sm:w-[280px] flex-shrink-0" : "w-full";
+  const cardWidth = variant === "carousel" ? "w-[170px] sm:w-[220px] flex-shrink-0" : "w-full";
 
   const isPro = prompt.accessLevel === "PRO";
   const isUserPro =
@@ -224,19 +205,19 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.4,
-        delay: Math.min(index * 0.04, 0.3),
+        duration: 0.35,
+        delay: Math.min(index * 0.03, 0.25),
         ease: [0.16, 1, 0.3, 1],
       }}
       className={cardWidth}
     >
       <Link
         href={`/prompts/${prompt.id}`}
-        className="block group relative rounded-2xl overflow-hidden bg-[#090a0f] border border-white/[0.08] hover:border-white/20 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
-        style={{ aspectRatio: "3/4" }}
+        className="block group relative rounded-xl sm:rounded-2xl overflow-hidden bg-[#090a0f] border border-white/[0.08] hover:border-cyan-500/40 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1"
+        style={{ aspectRatio: "4/4.5" }}
         aria-label={`View prompt: ${prompt.title}`}
       >
         {/* ── Thumbnail Image ── */}
@@ -251,49 +232,40 @@ export function PromptCard({ prompt, index = 0, variant = "grid" }: PromptCardPr
         )}
 
         {/* ── Vignette Overlays ── */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none group-hover:from-black/90 transition-colors duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20 pointer-events-none group-hover:from-black/95 transition-colors duration-300" />
 
         {/* ── TOP BADGES ── */}
-        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-1 z-10 pointer-events-none">
-          <div className="flex items-center gap-1.5 flex-wrap shrink-0">
+        <div className="absolute top-2 left-2 right-2 flex items-start justify-between gap-1 z-10 pointer-events-none">
+          <div className="flex items-center gap-1 flex-wrap shrink-0">
             {isPro && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-black shadow-md border border-amber-200 shrink-0">
-                {isUserPro ? (
-                  <Crown className="w-2.5 h-2.5 fill-black shrink-0" />
-                ) : (
-                  <Lock className="w-2.5 h-2.5 fill-black shrink-0" />
-                )}
-                <span className="whitespace-nowrap">{isUserPro ? "PRO" : "LOCKED"}</span>
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-300 to-yellow-500 text-black shadow-sm border border-amber-200 shrink-0">
+                {isUserPro ? <Crown className="w-2 h-2 fill-black shrink-0" /> : <Lock className="w-2 h-2 fill-black shrink-0" />}
+                <span>{isUserPro ? "PRO" : "LOCKED"}</span>
               </span>
             )}
-            {isPro && !isUserPro && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider bg-black/60 text-amber-400 border border-amber-500/30 backdrop-blur-md shrink-0">
-                <span>⭐ Premium</span>
-              </span>
-            )}
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white/80 text-[10px] font-semibold shrink-0">
-              <Eye className="h-3 w-3 text-cyan-400 shrink-0" />
-              <span className="whitespace-nowrap">{formatCopyCount(prompt.copyCount)}</span>
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white/80 text-[9px] font-semibold shrink-0">
+              <Eye className="h-2.5 w-2.5 text-cyan-400 shrink-0" />
+              <span>{formatCopyCount(prompt.copyCount)}</span>
             </div>
           </div>
 
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto scale-90 sm:scale-100">
             <FavoriteButton promptId={prompt.id} promptTitle={prompt.title} />
           </div>
         </div>
 
         {/* ── BOTTOM CONTENT ── */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 flex flex-col gap-2.5 z-10">
-          <h3 className="text-xs font-bold text-white leading-snug line-clamp-2 drop-shadow-md group-hover:text-cyan-300 transition-colors">
+        <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-3.5 flex flex-col gap-1.5 z-10">
+          <h3 className="text-[11px] sm:text-xs font-extrabold text-white leading-snug line-clamp-1 drop-shadow-md group-hover:text-cyan-300 transition-colors">
             {prompt.title}
           </h3>
 
-          <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/10">
+          <div className="flex items-center justify-between gap-1 pt-1 border-t border-white/10">
             {/* Model Badge */}
             {model && (
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/10">
-                <span className="text-[10px]">{model.icon}</span>
-                <span className="text-[9px] font-bold text-white/90 uppercase tracking-wider">{model.name}</span>
+              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/50 backdrop-blur-md border border-white/10 truncate max-w-[85px] sm:max-w-none">
+                <span className="text-[9px] text-cyan-400">{model.icon}</span>
+                <span className="text-[8px] sm:text-[9px] font-bold text-white/90 uppercase tracking-wider truncate">{model.name}</span>
               </div>
             )}
 

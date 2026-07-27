@@ -1,7 +1,7 @@
 import { CATEGORIES } from "@/lib/constants";
 import { CategoryCard } from "@/components/categories/CategoryCard";
 import { getCategoryCounts } from "@/lib/prompts";
-import { Grid3X3, Sparkles } from "lucide-react";
+import { Grid3X3 } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,24 +21,24 @@ export default async function CategoriesPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+    <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
       
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-16 animate-fade-up">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+      <div className="text-center max-w-xl mx-auto mb-6 sm:mb-12">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-2 sm:mb-3">
           <Grid3X3 className="h-3.5 w-3.5" />
-          <span>Library Directory</span>
+          <span>Category Directory</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight mb-4">
+        <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight mb-2">
           Browse by Category
         </h1>
-        <p className="text-sm text-muted-foreground leading-relaxed text-pretty">
-          Explore our handpicked prompt categories across image generations, vector designs, copywriting, and cinematic videos.
+        <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed">
+          Explore prompt categories for Midjourney, Flux, Stable Diffusion, ChatGPT, and Gemini.
         </p>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4.5">
+      {/* Responsive 3-column mobile grid (3 items per line) */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3.5">
         {categoriesWithCounts.map((category, idx) => (
           <CategoryCard key={category.slug} category={category} index={idx} />
         ))}
