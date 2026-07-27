@@ -8,7 +8,7 @@ import {
 import { HeroSection } from "@/components/home/HeroSection";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { PromptCarousel } from "@/components/home/PromptCarousel";
-import { MobileSearchPill } from "@/components/home/MobileSearchPill";
+import { ContentHighlights } from "@/components/home/ContentHighlights";
 import { AIStudioSuite } from "@/components/home/AIStudioSuite";
 import { BrowseByModel } from "@/components/home/BrowseByModel";
 import { BrowseByCategory } from "@/components/home/BrowseByCategory";
@@ -42,7 +42,7 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#040508]">
       
-      {/* 1. Hero Section (Desktop compact hero + Mobile compact dashboard) */}
+      {/* 1. Hero Section (Desktop hero with single search bar + Mobile compact dashboard) */}
       <HeroSection />
 
       {/* 2. Desktop Category Grid (Hidden on Mobile) */}
@@ -50,14 +50,14 @@ export default async function HomePage() {
         <CategoryGrid />
       </div>
 
-      {/* 3. Featured Prompt Gallery (Horizontal scrolling auto-marquee) */}
+      {/* 3. Featured Prompt Showcase Gallery (Horizontal continuous marquee) */}
       <PromptCarousel prompts={featured} />
 
-      {/* 4. Compact Floating Search Pill (Mobile Only - Moved below gallery) */}
-      <MobileSearchPill />
+      {/* 4. Content Highlights (Replaces duplicate lower search bar with Trending/New/Pro content picks) */}
+      <ContentHighlights />
 
       {/* Leaderboard Ad */}
-      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-4">
+      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-2">
         <AdSlot format="leaderboard" />
       </div>
 
