@@ -204,12 +204,35 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
       );
 
       const col = collections.find((c) => c.id === collectionId);
-      toast.success(`Saved to ${col?.name ?? "collection"}!`, {
-        icon: col?.icon ?? "📁",
-        duration: 1800,
-      });
+      toast.custom(
+        (t) => (
+          <div
+            onClick={() => {
+              toast.dismiss(t);
+              router.push(`/collections/${collectionId}`);
+            }}
+            className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-[#090a0f]/95 border border-cyan-500/30 text-white shadow-2xl backdrop-blur-xl cursor-pointer hover:bg-cyan-950/60 active:scale-95 transition-all w-full max-w-sm group"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-lg shrink-0">{col?.icon || "📁"}</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-bold text-cyan-400 truncate">
+                  Saved to {col?.name || "collection"}!
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate">
+                  Tap to view collection
+                </span>
+              </div>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 group-hover:bg-cyan-500 group-hover:text-black transition-colors shrink-0">
+              View
+            </span>
+          </div>
+        ),
+        { duration: 3500 }
+      );
     },
-    [collections, status, openModal]
+    [collections, status, openModal, router]
   );
 
   const removeFromCollection = useCallback(
