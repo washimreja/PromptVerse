@@ -6,8 +6,8 @@ import {
   getEditorChoicePrompts,
 } from "@/lib/prompts";
 import { HeroSection } from "@/components/home/HeroSection";
+import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { PromptCarousel } from "@/components/home/PromptCarousel";
-import { TrendingCategories } from "@/components/home/TrendingCategories";
 import { AIStudioSuite } from "@/components/home/AIStudioSuite";
 import { BrowseByModel } from "@/components/home/BrowseByModel";
 import { BrowseByCategory } from "@/components/home/BrowseByCategory";
@@ -41,10 +41,13 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#040508]">
       
-      {/* 1. Hero Section */}
+      {/* 1. Hero Section (Massive typography, center-aligned, radial mesh background glow) */}
       <HeroSection />
 
-      {/* 2. Interactive 3D Curvature Prompt Showcase Carousel */}
+      {/* 2. Category Grid (Immediately below Hero: 6 premium cards in 3x2 desktop / 2-col mobile) */}
+      <CategoryGrid />
+
+      {/* 3. Featured Prompt Gallery (Horizontal continuous showcase below Categories) */}
       <PromptCarousel prompts={featured} />
 
       {/* Leaderboard Ad */}
@@ -52,11 +55,8 @@ export default async function HomePage() {
         <AdSlot format="leaderboard" />
       </div>
 
-      {/* 3. PromptVerse AI Studio Suite */}
+      {/* 4. PromptVerse AI Studio Suite */}
       <AIStudioSuite />
-
-      {/* 4. Trending Categories Pills */}
-      <TrendingCategories />
 
       {/* 5. Browse by AI Model Grid */}
       <BrowseByModel />
