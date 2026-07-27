@@ -6,17 +6,18 @@ import {
   getEditorChoicePrompts,
 } from "@/lib/prompts";
 import { HeroSection } from "@/components/home/HeroSection";
+import { PromptCarousel } from "@/components/home/PromptCarousel";
 import { TrendingCategories } from "@/components/home/TrendingCategories";
 import { AIStudioSuite } from "@/components/home/AIStudioSuite";
 import { BrowseByModel } from "@/components/home/BrowseByModel";
 import { BrowseByCategory } from "@/components/home/BrowseByCategory";
-import { FeaturedPrompts } from "@/components/home/FeaturedPrompts";
 import { NewestPrompts } from "@/components/home/NewestPrompts";
 import { TrendingToday } from "@/components/home/TrendingToday";
 import { MostCopied } from "@/components/home/MostCopied";
 import { EditorChoice } from "@/components/home/EditorChoice";
 import { RandomPrompt } from "@/components/home/RandomPrompt";
 import { QuickActionCards } from "@/components/home/QuickActionCards";
+import { PremiumBanner } from "@/components/home/PremiumBanner";
 import { AdSlot } from "@/components/ads/AdSlot";
 
 export const revalidate = 3600; // Cache for 1 hour
@@ -38,52 +39,55 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#040508]">
       
       {/* 1. Hero Section */}
       <HeroSection />
 
-      {/* Leaderboard Ad (CLS = 0) */}
+      {/* 2. Interactive 3D Curvature Prompt Showcase Carousel */}
+      <PromptCarousel prompts={featured} />
+
+      {/* Leaderboard Ad */}
       <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-4">
         <AdSlot format="leaderboard" />
       </div>
 
-      {/* New AI Studio Suite Section */}
+      {/* 3. PromptVerse AI Studio Suite */}
       <AIStudioSuite />
 
-      {/* 2. Trending Categories Pills */}
+      {/* 4. Trending Categories Pills */}
       <TrendingCategories />
 
-      {/* 3. Featured Prompts Carousel */}
-      <FeaturedPrompts prompts={featured} />
-
-      {/* 4. Browse by AI Model Grid */}
+      {/* 5. Browse by AI Model Grid */}
       <BrowseByModel />
 
-      {/* 5. Trending Today Grid */}
+      {/* 6. Trending Today Grid */}
       <TrendingToday prompts={trending} />
 
-      {/* Between Grid Ad (CLS = 0) */}
+      {/* Between Grid Ad */}
       <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6">
         <AdSlot format="rectangle" />
       </div>
 
-      {/* 6. Most Copied Grid */}
+      {/* 7. Most Copied Grid */}
       <MostCopied prompts={mostCopied} />
 
-      {/* 7. Editor's Choice Section */}
+      {/* 8. Editor's Choice Section */}
       <EditorChoice prompts={editorChoice} />
 
-      {/* 8. Browse by Category Grid */}
+      {/* 9. PRO Conversion Banner */}
+      <PremiumBanner />
+
+      {/* 10. Browse by Category Grid */}
       <BrowseByCategory />
 
-      {/* 9. Newest/Latest Grid */}
+      {/* 11. Newest/Latest Grid */}
       <NewestPrompts prompts={latest} />
 
-      {/* 10. Quick Launchpad Cards */}
+      {/* 12. Quick Launchpad Cards */}
       <QuickActionCards />
 
-      {/* 11. Random Prompt Shuffle section */}
+      {/* 13. Random Prompt Shuffle Section */}
       <RandomPrompt />
 
     </div>
