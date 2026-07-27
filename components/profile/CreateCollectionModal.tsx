@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, FolderPlus, Sparkles, Check } from "lucide-react";
+import { X, FolderPlus, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useFavorites } from "@/components/favorites/FavoritesContext";
 
@@ -25,15 +25,18 @@ export function CreateCollectionModal({ isOpen, onClose }: CreateCollectionModal
       toast.error("Please enter a collection name");
       return;
     }
+    if (isLoading) return;
 
     setIsLoading(true);
-    const created = await createCollection(name.trim(), icon);
-    setIsLoading(false);
-
-    if (created) {
-      setName("");
-      setIcon("📁");
-      onClose();
+    try {
+      const created = await createCollection(name.trim(), icon);
+      if (created) {
+        setName("");
+        setIcon("📁");
+        onClose();
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,8 +56,9 @@ export function CreateCollectionModal({ isOpen, onClose }: CreateCollectionModal
               <FolderPlus className="w-5 h-5 text-brand" /> Create New Collection
             </h3>
             <button
+              disabled={isLoading}
               onClick={onClose}
-              className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+              className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors disabled:opacity-40"
             >
               <X className="w-5 h-5" />
             </button>
@@ -91,6 +95,7 @@ export function CreateCollectionModal({ isOpen, onClose }: CreateCollectionModal
                 className="w-full bg-[#121319] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand transition-colors"
                 autoFocus
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -98,15 +103,25 @@ export function CreateCollectionModal({ isOpen, onClose }: CreateCollectionModal
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 text-xs font-bold transition-colors"
+                disabled={isLoading}
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 text-xs font-bold transition-colors disabled:opacity-40"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-brand hover:bg-brand/90 text-brand-foreground text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-brand/20 active:scale-95"
+                disabled={isLoading || !name.trim()}
+                className="px-5 py-2.5 rounded-xl bg-brand hover:bg-brand/90 text-brand-foreground text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-brand/20 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
               >
-                <Check className="w-4 h-4" /> Create Collection
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Creating...
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" /> Create Collection
+                  </>
+                )}
               </button>
             </div>
           </form>

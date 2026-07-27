@@ -16,6 +16,12 @@ import {
   createCollectionAction,
   getUserFavoritesAction,
   toggleFavoriteAction,
+  addPromptToCollectionAction,
+  removePromptFromCollectionAction,
+  bulkRemovePromptsFromCollectionAction,
+  bulkMovePromptsAction,
+  updateCollectionAction,
+  deleteCollectionAction,
 } from "@/app/actions/user";
 
 // ── Types ────────────────────────────────────────────
@@ -40,9 +46,13 @@ interface FavoritesContextType {
   isFavorited: (promptId: string) => boolean;
   toggleFavorite: (promptId: string, promptTitle?: string) => void;
   removeFavorite: (promptId: string) => void;
-  addToCollection: (promptId: string, collectionId: string) => void;
+  addToCollection: (promptId: string, collectionId: string) => Promise<void>;
+  removeFromCollection: (promptId: string, collectionId: string) => Promise<void>;
+  bulkRemoveFromCollection: (promptIds: string[], collectionId: string) => Promise<void>;
+  bulkMoveToCollection: (promptIds: string[], sourceId: string, targetId: string) => Promise<void>;
   createCollection: (name: string, icon?: string) => Promise<Collection | null>;
-  deleteCollection: (collectionId: string) => void;
+  renameCollection: (collectionId: string, name: string, icon?: string) => Promise<void>;
+  deleteCollection: (collectionId: string) => Promise<void>;
   getFavoritesForCollection: (collectionId: string) => string[];
   refreshCollections: () => Promise<void>;
 }
@@ -79,13 +89,11 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (status === "authenticated") {
-      // Authenticated: always use DB data, clear any stale localStorage first
       setFavorites([]);
       setCollections([]);
       refreshCollections();
       refreshFavorites();
     } else if (status === "unauthenticated") {
-      // Only load from localStorage for guests
       try {
         const rawFav = localStorage.getItem(STORAGE_KEY_FAV);
         if (rawFav) setFavorites(JSON.parse(rawFav));
@@ -94,7 +102,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         if (rawCol) setCollections(JSON.parse(rawCol));
       } catch (_) {}
     }
-    // When status === "loading", do nothing — wait for a definitive state
     setMounted(true);
   }, [status, refreshCollections, refreshFavorites]);
 
@@ -125,7 +132,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // DB sync
       toggleFavoriteAction(promptId);
 
       setFavorites((prev) => {
@@ -179,16 +185,15 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addToCollection = useCallback(
-    (promptId: string, collectionId: string) => {
+    async (promptId: string, collectionId: string) => {
       if (status === "unauthenticated") {
         openModal("Sign in to save this prompt to your collection");
         return;
       }
 
-      setFavorites((prev) => {
-        if (prev.some((f) => f.promptId === promptId)) return prev;
-        return [...prev, { promptId, addedAt: Date.now(), collectionId }];
-      });
+      if (status === "authenticated") {
+        await addPromptToCollectionAction(promptId, collectionId);
+      }
 
       setCollections((prev) =>
         prev.map((col) => {
@@ -197,6 +202,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
           return { ...col, promptIds: [...col.promptIds, promptId] };
         })
       );
+
       const col = collections.find((c) => c.id === collectionId);
       toast.success(`Saved to ${col?.name ?? "collection"}!`, {
         icon: col?.icon ?? "📁",
@@ -204,6 +210,83 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
       });
     },
     [collections, status, openModal]
+  );
+
+  const removeFromCollection = useCallback(
+    async (promptId: string, collectionId: string) => {
+      if (status === "authenticated") {
+        await removePromptFromCollectionAction(promptId, collectionId);
+      }
+
+      setCollections((prev) =>
+        prev.map((col) => {
+          if (col.id !== collectionId) return col;
+          return {
+            ...col,
+            promptIds: col.promptIds.filter((id) => id !== promptId),
+          };
+        })
+      );
+      toast.success("Removed from collection", { icon: "🗑️", duration: 1500 });
+    },
+    [status]
+  );
+
+  const bulkRemoveFromCollection = useCallback(
+    async (promptIds: string[], collectionId: string) => {
+      if (status === "authenticated") {
+        await bulkRemovePromptsFromCollectionAction(promptIds, collectionId);
+      }
+
+      const removeSet = new Set(promptIds);
+      setCollections((prev) =>
+        prev.map((col) => {
+          if (col.id !== collectionId) return col;
+          return {
+            ...col,
+            promptIds: col.promptIds.filter((id) => !removeSet.has(id)),
+          };
+        })
+      );
+      toast.success(`Removed ${promptIds.length} prompts from collection`, { icon: "🗑️", duration: 1800 });
+    },
+    [status]
+  );
+
+  const bulkMoveToCollection = useCallback(
+    async (promptIds: string[], sourceId: string, targetId: string) => {
+      if (status === "authenticated") {
+        await bulkMovePromptsAction(promptIds, sourceId, targetId);
+      }
+
+      const moveSet = new Set(promptIds);
+      setCollections((prev) =>
+        prev.map((col) => {
+          if (col.id === sourceId) {
+            return {
+              ...col,
+              promptIds: col.promptIds.filter((id) => !moveSet.has(id)),
+            };
+          }
+          if (col.id === targetId) {
+            const existingSet = new Set(col.promptIds);
+            const newIds = [...col.promptIds];
+            promptIds.forEach((id) => {
+              if (!existingSet.has(id)) newIds.push(id);
+            });
+            return { ...col, promptIds: newIds };
+          }
+          return col;
+        })
+      );
+
+      const targetCol = collections.find((c) => c.id === targetId);
+      toast.success(`Moved ${promptIds.length} prompts to ${targetCol?.name ?? "collection"}!`, {
+        icon: targetCol?.icon ?? "📁",
+        duration: 1800,
+      });
+    },
+    [collections, status]
   );
 
   const createCollection = useCallback(
@@ -230,9 +313,31 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     [status, openModal]
   );
 
-  const deleteCollection = useCallback((collectionId: string) => {
-    setCollections((prev) => prev.filter((c) => c.id !== collectionId));
-  }, []);
+  const renameCollection = useCallback(
+    async (collectionId: string, name: string, icon = "📁") => {
+      if (status === "authenticated") {
+        await updateCollectionAction(collectionId, name, icon);
+      }
+
+      setCollections((prev) =>
+        prev.map((c) => (c.id === collectionId ? { ...c, name, icon } : c))
+      );
+      toast.success("Collection updated!", { icon: "✨", duration: 1500 });
+    },
+    [status]
+  );
+
+  const deleteCollection = useCallback(
+    async (collectionId: string) => {
+      if (status === "authenticated") {
+        await deleteCollectionAction(collectionId);
+      }
+
+      setCollections((prev) => prev.filter((c) => c.id !== collectionId));
+      toast.success("Collection deleted", { icon: "🗑️", duration: 1500 });
+    },
+    [status]
+  );
 
   const getFavoritesForCollection = useCallback(
     (collectionId: string) => {
@@ -255,7 +360,11 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         toggleFavorite,
         removeFavorite,
         addToCollection,
+        removeFromCollection,
+        bulkRemoveFromCollection,
+        bulkMoveToCollection,
         createCollection,
+        renameCollection,
         deleteCollection,
         getFavoritesForCollection,
         refreshCollections,

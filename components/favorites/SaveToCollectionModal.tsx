@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Check } from "lucide-react";
+import { X, Plus, Check, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useFavorites } from "./FavoritesContext";
@@ -24,22 +24,34 @@ export function SaveToCollectionModal({
   const [creatingNew, setCreatingNew] = useState(false);
   const [newName, setNewName] = useState("");
   const [newIcon, setNewIcon] = useState("📁");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const ICON_OPTIONS = ["📁", "⭐", "🎨", "💬", "🎬", "🧠", "📚", "✈️", "💼", "🌸", "🏆", "🔥"];
 
-  const handleAdd = (collectionId: string) => {
-    addToCollection(promptId, collectionId);
-    onClose();
+  const handleAdd = async (collectionId: string) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await addToCollection(promptId, collectionId);
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCreate = async () => {
-    if (!newName.trim()) return;
-    const newCol = await createCollection(newName.trim(), newIcon);
-    if (!newCol) return;
-    addToCollection(promptId, newCol.id);
-    setNewName("");
-    setCreatingNew(false);
-    onClose();
+    if (!newName.trim() || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      const newCol = await createCollection(newName.trim(), newIcon);
+      if (!newCol) return;
+      await addToCollection(promptId, newCol.id);
+      setNewName("");
+      setCreatingNew(false);
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,8 +87,9 @@ export function SaveToCollectionModal({
                 </p>
               </div>
               <button
+                disabled={isSubmitting}
                 onClick={onClose}
-                className="w-7 h-7 flex items-center justify-center rounded-full bg-secondary/60 hover:bg-secondary text-muted-foreground hover:text-foreground transition-all"
+                className="w-7 h-7 flex items-center justify-center rounded-full bg-secondary/60 hover:bg-secondary text-muted-foreground hover:text-foreground transition-all disabled:opacity-40"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -89,10 +102,11 @@ export function SaveToCollectionModal({
                 return (
                   <button
                     key={col.id}
+                    disabled={isSubmitting}
                     onClick={() => handleAdd(col.id)}
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold",
-                      "transition-all duration-200 text-left",
+                      "transition-all duration-200 text-left disabled:opacity-50",
                       isIn
                         ? "bg-primary/10 text-primary border border-primary/15"
                         : "hover:bg-secondary/60 text-foreground"
@@ -113,8 +127,9 @@ export function SaveToCollectionModal({
             <div className="px-3 pb-4 pt-2 border-t border-border/10">
               {!creatingNew ? (
                 <button
+                  disabled={isSubmitting}
                   onClick={() => setCreatingNew(true)}
-                  className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold text-primary hover:bg-primary/5 transition-colors"
+                  className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold text-primary hover:bg-primary/5 transition-colors disabled:opacity-40"
                 >
                   <Plus className="h-4 w-4" />
                   Create New Collection
@@ -126,9 +141,10 @@ export function SaveToCollectionModal({
                     {ICON_OPTIONS.map((icon) => (
                       <button
                         key={icon}
+                        disabled={isSubmitting}
                         onClick={() => setNewIcon(icon)}
                         className={cn(
-                          "w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all",
+                          "w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all disabled:opacity-40",
                           newIcon === icon
                             ? "bg-primary/15 border border-primary/30 scale-110"
                             : "hover:bg-secondary/60"
@@ -142,18 +158,19 @@ export function SaveToCollectionModal({
                     <input
                       autoFocus
                       type="text"
+                      disabled={isSubmitting}
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                       placeholder="Collection name…"
-                      className="flex-1 px-3 py-2 rounded-xl text-sm bg-secondary/40 border border-border/20 focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground/40"
+                      className="flex-1 px-3 py-2 rounded-xl text-sm bg-secondary/40 border border-border/20 focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground/40 disabled:opacity-40"
                     />
                     <button
                       onClick={handleCreate}
-                      disabled={!newName.trim()}
-                      className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold disabled:opacity-40 transition-opacity"
+                      disabled={!newName.trim() || isSubmitting}
+                      className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold disabled:opacity-40 transition-opacity flex items-center gap-1 shrink-0"
                     >
-                      Create
+                      {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Create"}
                     </button>
                   </div>
                 </div>

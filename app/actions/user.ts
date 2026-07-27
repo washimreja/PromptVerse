@@ -350,3 +350,283 @@ export async function copyProPromptAction(promptId: string): Promise<
     return { success: false, error: "PRO_REQUIRED" };
   }
 }
+
+export async function updateCollectionAction(id: string, name: string, icon?: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const updated = await db.collection.update({
+      where: { id },
+      data: {
+        name: name.trim(),
+        description: icon || "📁",
+      },
+    });
+
+    revalidatePath("/profile");
+    revalidatePath(`/collections/${id}`);
+    return {
+      success: true,
+      collection: {
+        id: updated.id,
+        name: updated.name,
+        icon: updated.description || "📁",
+        createdAt: updated.createdAt.getTime(),
+      },
+    };
+  } catch (error: any) {
+    console.error("Error updating collection:", error);
+    return { success: false, error: error.message || "Failed to update collection" };
+  }
+}
+
+export async function deleteCollectionAction(id: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    await db.collection.delete({
+      where: { id },
+    });
+
+    revalidatePath("/profile");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error deleting collection:", error);
+    return { success: false, error: error.message || "Failed to delete collection" };
+  }
+}
+
+export async function addPromptToCollectionAction(promptId: string, collectionId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const collection = await db.collection.findUnique({
+      where: { id: collectionId },
+    });
+
+    if (!collection) {
+      return { success: false, error: "Collection not found" };
+    }
+
+    let promptIds: string[] = [];
+    try {
+      promptIds = JSON.parse(collection.promptIds || "[]");
+    } catch (_) {}
+
+    if (!promptIds.includes(promptId)) {
+      promptIds.push(promptId);
+    }
+
+    await db.collection.update({
+      where: { id: collectionId },
+      data: {
+        promptIds: JSON.stringify(promptIds),
+      },
+    });
+
+    revalidatePath("/profile");
+    revalidatePath(`/collections/${collectionId}`);
+    return { success: true, promptIds };
+  } catch (error: any) {
+    console.error("Error adding prompt to collection:", error);
+    return { success: false, error: error.message || "Failed to add prompt" };
+  }
+}
+
+export async function removePromptFromCollectionAction(promptId: string, collectionId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const collection = await db.collection.findUnique({
+      where: { id: collectionId },
+    });
+
+    if (!collection) {
+      return { success: false, error: "Collection not found" };
+    }
+
+    let promptIds: string[] = [];
+    try {
+      promptIds = JSON.parse(collection.promptIds || "[]");
+    } catch (_) {}
+
+    const updatedIds = promptIds.filter((id) => id !== promptId);
+
+    await db.collection.update({
+      where: { id: collectionId },
+      data: {
+        promptIds: JSON.stringify(updatedIds),
+      },
+    });
+
+    revalidatePath("/profile");
+    revalidatePath(`/collections/${collectionId}`);
+    return { success: true, promptIds: updatedIds };
+  } catch (error: any) {
+    console.error("Error removing prompt from collection:", error);
+    return { success: false, error: error.message || "Failed to remove prompt" };
+  }
+}
+
+export async function bulkRemovePromptsFromCollectionAction(promptIdsToRemove: string[], collectionId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const collection = await db.collection.findUnique({
+      where: { id: collectionId },
+    });
+
+    if (!collection) {
+      return { success: false, error: "Collection not found" };
+    }
+
+    let promptIds: string[] = [];
+    try {
+      promptIds = JSON.parse(collection.promptIds || "[]");
+    } catch (_) {}
+
+    const removeSet = new Set(promptIdsToRemove);
+    const updatedIds = promptIds.filter((id) => !removeSet.has(id));
+
+    await db.collection.update({
+      where: { id: collectionId },
+      data: {
+        promptIds: JSON.stringify(updatedIds),
+      },
+    });
+
+    revalidatePath("/profile");
+    revalidatePath(`/collections/${collectionId}`);
+    return { success: true, promptIds: updatedIds };
+  } catch (error: any) {
+    console.error("Error bulk removing prompts:", error);
+    return { success: false, error: error.message || "Failed to bulk remove prompts" };
+  }
+}
+
+export async function bulkMovePromptsAction(promptIdsToMove: string[], sourceColId: string, targetColId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    // 1. Remove from source collection
+    const sourceCol = await db.collection.findUnique({ where: { id: sourceColId } });
+    if (sourceCol) {
+      let srcIds: string[] = [];
+      try { srcIds = JSON.parse(sourceCol.promptIds || "[]"); } catch (_) {}
+      const moveSet = new Set(promptIdsToMove);
+      const newSrcIds = srcIds.filter((id) => !moveSet.has(id));
+      await db.collection.update({
+        where: { id: sourceColId },
+        data: { promptIds: JSON.stringify(newSrcIds) },
+      });
+    }
+
+    // 2. Add to target collection
+    const targetCol = await db.collection.findUnique({ where: { id: targetColId } });
+    if (targetCol) {
+      let tgtIds: string[] = [];
+      try { tgtIds = JSON.parse(targetCol.promptIds || "[]"); } catch (_) {}
+      const existingSet = new Set(tgtIds);
+      promptIdsToMove.forEach((id) => {
+        if (!existingSet.has(id)) tgtIds.push(id);
+      });
+      await db.collection.update({
+        where: { id: targetColId },
+        data: { promptIds: JSON.stringify(tgtIds) },
+      });
+    }
+
+    revalidatePath("/profile");
+    revalidatePath(`/collections/${sourceColId}`);
+    revalidatePath(`/collections/${targetColId}`);
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error bulk moving prompts:", error);
+    return { success: false, error: error.message || "Failed to bulk move prompts" };
+  }
+}
+
+export async function getCollectionDetailsAction(collectionId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    let callerIsPro = false;
+    if (session?.user?.email) {
+      const user = await db.user.findUnique({
+        where: { email: session.user.email },
+        select: { membership: true, role: true },
+      });
+      callerIsPro = user?.membership === "PRO" || user?.role === "ADMIN";
+    }
+
+    const collection = await db.collection.findUnique({
+      where: { id: collectionId },
+    });
+
+    if (!collection) {
+      return null;
+    }
+
+    let promptIds: string[] = [];
+    try {
+      promptIds = JSON.parse(collection.promptIds || "[]");
+    } catch (_) {}
+
+    // Efficient single query for all prompts in collection
+    const prompts = promptIds.length > 0
+      ? await db.prompt.findMany({
+          where: { id: { in: promptIds } },
+        })
+      : [];
+
+    // Map prompts in exact promptIds order & mask PRO prompts if caller is FREE
+    const promptMap = new Map(prompts.map((p) => [p.id, p]));
+    const orderedPrompts = promptIds
+      .map((id) => promptMap.get(id))
+      .filter((p): p is typeof prompts[0] => Boolean(p))
+      .map((p) => ({
+        ...p,
+        accessLevel: (p.accessLevel ?? "FREE") as "FREE" | "PRO",
+        prompt: p.accessLevel === "PRO" && !callerIsPro ? "" : p.prompt,
+      }));
+
+    const freeCount = orderedPrompts.filter((p) => p.accessLevel === "FREE").length;
+    const proCount = orderedPrompts.filter((p) => p.accessLevel === "PRO").length;
+
+    return {
+      id: collection.id,
+      name: collection.name,
+      icon: collection.description || "📁",
+      createdAt: collection.createdAt.getTime(),
+      updatedAt: collection.updatedAt.getTime(),
+      promptIds,
+      prompts: orderedPrompts as any[],
+      stats: {
+        totalPrompts: orderedPrompts.length,
+        freeCount,
+        proCount,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching collection details:", error);
+    return null;
+  }
+}
+

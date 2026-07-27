@@ -289,19 +289,20 @@ export default function ProfilePage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {collections.map((col) => (
-                      <div
+                      <Link
                         key={col.id}
-                        className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all flex items-center justify-between group"
+                        href={`/collections/${col.id}`}
+                        className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.04] transition-all flex items-center justify-between group active:scale-98 cursor-pointer"
                       >
                         <div className="flex items-center gap-3.5">
-                          <span className="text-2xl p-2.5 rounded-xl bg-white/5">{col.icon || "📁"}</span>
+                          <span className="text-2xl p-2.5 rounded-xl bg-white/5 group-hover:scale-110 transition-transform">{col.icon || "📁"}</span>
                           <div>
                             <p className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">{col.name}</p>
                             <p className="text-xs text-muted-foreground">{col.promptIds?.length || 0} prompts</p>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
-                      </div>
+                        <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
+                      </Link>
                     ))}
                   </div>
                 </div>
