@@ -6,17 +6,17 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
-  // Image optimization
+  // Image optimization & allow all remote image domains
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**.supabase.co",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "images.unsplash.com",
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },
