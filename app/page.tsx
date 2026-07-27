@@ -8,6 +8,7 @@ import {
 import { HeroSection } from "@/components/home/HeroSection";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { PromptCarousel } from "@/components/home/PromptCarousel";
+import { MobileSearchPill } from "@/components/home/MobileSearchPill";
 import { AIStudioSuite } from "@/components/home/AIStudioSuite";
 import { BrowseByModel } from "@/components/home/BrowseByModel";
 import { BrowseByCategory } from "@/components/home/BrowseByCategory";
@@ -41,27 +42,32 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#040508]">
       
-      {/* 1. Hero Section (Massive typography, center-aligned, radial mesh background glow) */}
+      {/* 1. Hero Section (Desktop compact hero + Mobile compact dashboard) */}
       <HeroSection />
 
-      {/* 2. Category Grid (Immediately below Hero: 6 premium cards in 3x2 desktop / 2-col mobile) */}
-      <CategoryGrid />
+      {/* 2. Desktop Category Grid (Hidden on Mobile) */}
+      <div className="hidden md:block">
+        <CategoryGrid />
+      </div>
 
-      {/* 3. Featured Prompt Gallery (Horizontal continuous showcase below Categories) */}
+      {/* 3. Featured Prompt Gallery (Horizontal scrolling auto-marquee) */}
       <PromptCarousel prompts={featured} />
+
+      {/* 4. Compact Floating Search Pill (Mobile Only - Moved below gallery) */}
+      <MobileSearchPill />
 
       {/* Leaderboard Ad */}
       <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-4">
         <AdSlot format="leaderboard" />
       </div>
 
-      {/* 4. PromptVerse AI Studio Suite */}
+      {/* 5. PromptVerse AI Studio Suite */}
       <AIStudioSuite />
 
-      {/* 5. Browse by AI Model Grid */}
+      {/* 6. Browse by AI Model Grid */}
       <BrowseByModel />
 
-      {/* 6. Trending Today Grid */}
+      {/* 7. Trending Today Grid */}
       <TrendingToday prompts={trending} />
 
       {/* Between Grid Ad */}
@@ -69,25 +75,25 @@ export default async function HomePage() {
         <AdSlot format="rectangle" />
       </div>
 
-      {/* 7. Most Copied Grid */}
+      {/* 8. Most Copied Grid */}
       <MostCopied prompts={mostCopied} />
 
-      {/* 8. Editor's Choice Section */}
+      {/* 9. Editor's Choice Section */}
       <EditorChoice prompts={editorChoice} />
 
-      {/* 9. PRO Conversion Banner */}
+      {/* 10. PRO Conversion Banner */}
       <PremiumBanner />
 
-      {/* 10. Browse by Category Grid */}
+      {/* 11. Browse by Category Grid */}
       <BrowseByCategory />
 
-      {/* 11. Newest/Latest Grid */}
+      {/* 12. Newest/Latest Grid */}
       <NewestPrompts prompts={latest} />
 
-      {/* 12. Quick Launchpad Cards */}
+      {/* 13. Quick Launchpad Cards */}
       <QuickActionCards />
 
-      {/* 13. Random Prompt Shuffle Section */}
+      {/* 14. Random Prompt Shuffle Section */}
       <RandomPrompt />
 
     </div>
