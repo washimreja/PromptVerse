@@ -104,7 +104,7 @@ export default function AuthPage() {
       });
 
       if (result?.error) {
-        toast.error("Invalid email or password");
+        toast.error(result.error !== "CredentialsSignin" ? result.error : "Invalid email or password");
         setIsLoading(false);
       } else {
         const urlParams = new URLSearchParams(window.location.search);
@@ -119,8 +119,8 @@ export default function AuthPage() {
         router.push(destination);
         router.refresh();
       }
-    } catch (error) {
-      toast.error("An unexpected error occurred");
+    } catch (error: any) {
+      toast.error(error?.message || "An unexpected error occurred");
       setIsLoading(false);
     }
   };

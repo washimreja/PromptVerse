@@ -2,8 +2,9 @@
 
 import React from "react";
 import { StudioPromptCard, StudioPrompt } from "@/components/studio/StudioPromptCard";
+import { PromptStudioWorkbench } from "@/components/studio/PromptStudioWorkbench";
 import { useUpgradeModal } from "@/components/modals/UpgradeToProModal";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Sparkles } from "lucide-react";
 
 // Mock data with high-quality Unsplash placeholders and realistic prompts
 const FREE_PROMPTS: StudioPrompt[] = [
@@ -89,17 +90,36 @@ export default function StudioPage() {
 
   return (
     <div className="min-h-screen bg-[#040508] text-white">
-      {/* Top Banner (Optional, to match layout vibes) */}
+      {/* Top Banner */}
       <div className="pt-24 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-          PromptVerse Studio
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-widest mb-3">
+          <Sparkles size={13} />
+          Interactive Studio
+        </div>
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
+          PromptVerse <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-brand">Studio</span>
         </h1>
-        <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
-          Discover high-end, production-ready AI image prompts. Elevate your creations with our curated studio collection.
+        <p className="text-white/60 text-sm md:text-base max-w-2xl">
+          Craft, optimize, and engineer world-class AI prompts for Midjourney, FLUX, DALL-E 3, SDXL, and LLMs — or explore our curated showcase.
         </p>
       </div>
 
-      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-12">
+      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
+        {/* Interactive Prompt Workbench */}
+        <PromptStudioWorkbench />
+
+        {/* Curated Studio Section Header */}
+        <div className="flex items-center justify-between mt-12 mb-6 border-t border-white/10 pt-10">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Curated Community Showcase
+            </h2>
+            <p className="text-xs sm:text-sm text-white/50 mt-1">
+              Top trending prompts tested and tuned by studio creators
+            </p>
+          </div>
+        </div>
+
         {/* Free Prompts Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
           {FREE_PROMPTS.map((prompt) => (

@@ -36,15 +36,24 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials");
+          console.error("[AUTH] Credentials authorize failed: Missing email or password");
+          throw new Error("Email and password are required");
         }
+
+        console.log(`[AUTH] Attempting login for email: ${credentials.email}`);
 
         const user = await db.user.findUnique({
           where: { email: credentials.email },
         });
 
-        if (!user || !user.password) {
-          throw new Error("Invalid credentials");
+        if (!user) {
+          console.error(`[AUTH] Login failed: User not found with email ${credentials.email}`);
+          throw new Error("No account found with this email address");
+        }
+
+        if (!user.password) {
+          console.error(`[AUTH] Login failed: User ${credentials.email} registered via OAuth (no password set)`);
+          throw new Error("This account was created via social login. Please sign in with Google or Facebook.");
         }
 
         const isCorrectPassword = await bcrypt.compare(
@@ -53,9 +62,11 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isCorrectPassword) {
-          throw new Error("Invalid credentials");
+          console.error(`[AUTH] Login failed: Incorrect password for user ${credentials.email}`);
+          throw new Error("Incorrect password. Please try again.");
         }
 
+        console.log(`[AUTH] Login successful for user: ${user.email} (ID: ${user.id})`);
         return user;
       },
     }),

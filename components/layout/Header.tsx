@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, ChevronDown, ChevronRight, ExternalLink, Heart, BookOpen, HeartHandshake, User, FolderHeart, LogOut, ShieldCheck } from "lucide-react";
+import { Search, Sun, Moon, Monitor, X, Menu, Sparkles, Compass, Cpu, ChevronDown, ChevronRight, ExternalLink, Heart, BookOpen, HeartHandshake, User, FolderHeart, LogOut, ShieldCheck, Wand2 } from "lucide-react";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/constants";
@@ -55,6 +55,7 @@ export function PVLogo({ className }: { className?: string }) {
 
 const NAV_LINKS = [
   { href: "/",         label: "Discover",   icon: Compass },
+  { href: "/studio",   label: "AI Studio",  icon: Wand2 },
   { href: "/category", label: "Categories", icon: Sparkles },
   { href: "/models",   label: "AI Models",  icon: Cpu },
   { href: "/saved",    label: "Saved Prompts", icon: Heart },
@@ -76,6 +77,7 @@ const EXPLORE_MODELS = [
 ];
 
 const MORE_LINKS = [
+  { href: "/studio", label: "AI Studio", desc: "Prompt generator & optimizer", icon: Wand2 },
   { href: "/saved", label: "Saved Prompts", desc: "View bookmarked templates", icon: Heart },
   { href: "/blog", label: "Blog & Guides", desc: "Tips, tutorials & news", icon: BookOpen },
   { href: "/sponsor", label: "Sponsor Us", desc: "Promote your brand to creators", icon: HeartHandshake },
@@ -330,6 +332,30 @@ export function Header() {
                 <Compass className="w-3.5 h-3.5" />
                 <span>Discover</span>
                 {pathname === "/" && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-xl bg-primary/[0.03] border border-primary/15 shadow-[0_0_15px_rgba(20,184,166,0.15)]"
+                    transition={{ type: "spring", damping: 30, stiffness: 380 }}
+                  />
+                )}
+              </Link>
+
+              {/* AI Studio Link */}
+              <Link
+                href="/studio"
+                className={cn(
+                  "relative px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 select-none",
+                  pathname.startsWith("/studio")
+                    ? "text-primary bg-primary/[0.02]"
+                    : "text-muted-foreground/80 hover:text-foreground hover:bg-secondary/40"
+                )}
+              >
+                <Wand2 className="w-3.5 h-3.5 text-cyan-400" />
+                <span>AI Studio</span>
+                <span className="text-[9px] font-black uppercase tracking-wider text-cyan-300 px-1.5 py-0.5 rounded-md bg-cyan-500/20 border border-cyan-500/30">
+                  NEW
+                </span>
+                {pathname.startsWith("/studio") && (
                   <motion.span
                     layoutId="nav-active"
                     className="absolute inset-0 rounded-xl bg-primary/[0.03] border border-primary/15 shadow-[0_0_15px_rgba(20,184,166,0.15)]"

@@ -37,14 +37,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log(`[AUTH API] User registered successfully: ${user.email} (ID: ${user.id})`);
+
     return NextResponse.json(
       { message: "User registered successfully", user: { id: user.id, email: user.email } },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("Registration Error:", error);
+  } catch (error: any) {
+    console.error("[AUTH API ERROR] Registration Error:", error?.stack || error?.message || error);
     return NextResponse.json(
-      { message: "An error occurred during registration" },
+      { message: error?.message || "An error occurred during registration" },
       { status: 500 }
     );
   }

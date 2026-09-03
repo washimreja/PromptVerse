@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Compass, Sparkles, Cpu, Search, User } from "lucide-react";
+import { Compass, Sparkles, Cpu, Search, User, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/", label: "Discover", icon: Compass },
+  { href: "/studio", label: "Studio", icon: Wand2 },
   { href: "/category", label: "Categories", icon: Sparkles },
-  { href: "/models", label: "AI Models", icon: Cpu },
-  { href: "/search", label: "Search", icon: Search },
+  { href: "/models", label: "Models", icon: Cpu },
   { href: "/profile", label: "Profile", icon: User },
 ];
 
