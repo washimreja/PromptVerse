@@ -19,17 +19,17 @@ export function PromptCarousel({ prompts }: PromptCarouselProps) {
   const carouselItems = [...prompts, ...prompts];
 
   return (
-    <section className="relative py-6 sm:py-8 bg-[#040508] overflow-hidden select-none">
+    <section className="relative py-6 sm:py-8 bg-[#08090d] overflow-hidden select-none">
       {/* ── Section Header ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-brand">Prompt Showcase</span>
+            Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-amber-200">Prompt Showcase</span>
           </h2>
         </div>
         <Link
           href="/search"
-          className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-white transition-colors group"
+          className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-white transition-colors group px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08]"
         >
           <span>Explore All</span>
           <span className="group-hover:translate-x-1 transition-transform">→</span>
@@ -39,8 +39,8 @@ export function PromptCarousel({ prompts }: PromptCarouselProps) {
       {/* ── Continuous Horizontal Carousel Container ── */}
       <div className="relative w-full overflow-hidden py-2">
         {/* Left & Right Shadow Gradients for seamless edge blending */}
-        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-20 bg-gradient-to-r from-[#040508] to-transparent z-20 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-20 bg-gradient-to-l from-[#040508] to-transparent z-20 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-r from-[#08090d] to-transparent z-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-[#08090d] to-transparent z-20 pointer-events-none" />
 
         {/* Ticker Track */}
         <div className="flex gap-3 sm:gap-4 animate-marquee hover:[animation-play-state:paused] w-max">
@@ -57,7 +57,7 @@ export function PromptCarousel({ prompts }: PromptCarouselProps) {
               <Link
                 key={itemKey}
                 href={`/prompts/${item.id}`}
-                className="relative group flex-shrink-0 w-44 sm:w-56 h-48 sm:h-60 rounded-xl overflow-hidden border border-white/10 bg-[#090a0f] hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.25)] transition-all duration-300 transform hover:-translate-y-1 cursor-pointer block"
+                className="relative group flex-shrink-0 w-44 sm:w-56 h-48 sm:h-60 rounded-2xl overflow-hidden border border-white/[0.1] bg-[#10131b] hover:border-cyan-400/50 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_10px_30px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(6,182,212,0.25)] transition-all duration-300 transform hover:-translate-y-1 cursor-pointer block"
               >
                 {/* ── Image Component with Fallback ── */}
                 <div className="relative w-full h-full">
@@ -74,7 +74,7 @@ export function PromptCarousel({ prompts }: PromptCarouselProps) {
                   )}
 
                   {/* Vignette Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#040508] via-[#040508]/30 to-black/20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#08090d] via-[#08090d]/40 to-black/20" />
 
                   {/* ── Top Badges ── */}
                   <div className="absolute top-2 left-2 right-2 flex items-center justify-between z-10 pointer-events-none">

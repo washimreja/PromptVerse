@@ -91,7 +91,7 @@ export default function ProfilePage() {
 
   if (status === "loading" || loadingProfile) {
     return (
-      <div className="min-h-screen bg-[#040508] flex items-center justify-center">
+      <div className="min-h-screen bg-[#08090d] flex items-center justify-center">
         <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
       </div>
     );
@@ -106,7 +106,7 @@ export default function ProfilePage() {
   const isPro = dbUser?.membership === "PRO";
 
   return (
-    <div className="min-h-screen bg-[#040508] text-white pt-24 pb-20">
+    <div className="min-h-screen bg-[#08090d] text-white pt-24 pb-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Header Section */}

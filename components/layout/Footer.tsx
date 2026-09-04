@@ -14,9 +14,9 @@ export function Footer() {
   if (!isAllowedPage) return null;
 
   return (
-    <footer className="relative border-t border-white/10 bg-[#040508] text-white py-8 px-4 sm:px-6 lg:px-8 mb-20 md:mb-0 select-none">
+    <footer className="relative border-t border-white/[0.08] bg-[#08090d] text-white py-8 px-4 sm:px-6 lg:px-8 mb-20 md:mb-0 select-none">
       {/* Subtle top glow line */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-cyan-500/40 via-brand/40 to-blue-500/40" />
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/35 to-transparent" />
 
       <div className="mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
         {/* Brand info */}

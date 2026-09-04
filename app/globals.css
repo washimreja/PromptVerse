@@ -121,53 +121,53 @@
 
 /* ─── Dark Mode (Primary / Default) ────────── */
 .dark, :root {
-  --background:   oklch(0.12 0.01 250); /* Deep Space Black */
-  --foreground:   oklch(0.98 0.01 250);
+  --background:   oklch(0.125 0.015 255); /* Deep Obsidian Noir (#08090d) */
+  --foreground:   oklch(0.985 0.005 250);
 
-  --card:         oklch(0.18 0.01 250); /* Dark Charcoal */
-  --card-foreground: oklch(0.98 0.01 250);
+  --card:         oklch(0.165 0.018 255); /* Velvet Charcoal (#10131b) */
+  --card-foreground: oklch(0.985 0.005 250);
 
-  --popover:      oklch(0.18 0.01 250);
-  --popover-foreground: oklch(0.98 0.01 250);
+  --popover:      oklch(0.165 0.018 255);
+  --popover-foreground: oklch(0.985 0.005 250);
 
-  --primary:      oklch(0.65 0.15 200); /* Deep Cyan */
-  --primary-foreground: oklch(0.12 0.01 250);
+  --primary:      oklch(0.68 0.16 195); /* Refined Hyper-Cyan */
+  --primary-foreground: oklch(0.12 0.015 255);
 
-  --secondary:    oklch(0.22 0.02 250);
+  --secondary:    oklch(0.20 0.022 255);
   --secondary-foreground: oklch(0.98 0.01 250);
 
-  --muted:        oklch(0.20 0.01 250);
-  --muted-foreground: oklch(0.70 0.02 250);
+  --muted:        oklch(0.18 0.016 255);
+  --muted-foreground: oklch(0.72 0.02 250);
 
-  --accent:       oklch(0.25 0.03 250);
-  --accent-foreground: oklch(0.65 0.15 200);
+  --accent:       oklch(0.24 0.035 255);
+  --accent-foreground: oklch(0.68 0.16 195);
 
-  --emerald:      oklch(0.65 0.15 150);
-  --purple:       oklch(0.4 0.2 290);
+  --emerald:      oklch(0.68 0.16 155);
+  --purple:       oklch(0.55 0.22 295);
 
   /* Teal Brand */
-  --brand:        oklch(0.65 0.15 200);
-  --brand-foreground: oklch(0.12 0.01 250);
-  --brand-muted:  oklch(0.22 0.05 200);
-  --brand-glow:   oklch(0.65 0.15 200 / 0.20);
+  --brand:        oklch(0.68 0.16 195);
+  --brand-foreground: oklch(0.12 0.015 255);
+  --brand-muted:  oklch(0.22 0.05 195);
+  --brand-glow:   oklch(0.68 0.16 195 / 0.22);
 
   /* Premium Champagne Gold Accent */
-  --gold:         oklch(0.7 0.15 75);
-  --gold-glow:    oklch(0.7 0.15 75 / 0.18);
+  --gold:         oklch(0.75 0.16 75);
+  --gold-glow:    oklch(0.75 0.16 75 / 0.20);
 
   --destructive:  oklch(0.600 0.200 25);
-  --border:       oklch(0.98 0.01 250 / 0.04);
-  --input:        oklch(0.98 0.01 250 / 0.05);
-  --ring:         oklch(0.65 0.15 200);
+  --border:       oklch(0.98 0.01 250 / 0.08);
+  --input:        oklch(0.98 0.01 250 / 0.08);
+  --ring:         oklch(0.68 0.16 195);
 
-  --sidebar:      oklch(0.18 0.01 250);
+  --sidebar:      oklch(0.14 0.015 255);
   --sidebar-foreground: oklch(0.98 0.01 250);
-  --sidebar-primary: oklch(0.65 0.15 200);
-  --sidebar-primary-foreground: oklch(0.12 0.01 250);
-  --sidebar-accent: oklch(0.22 0.02 250);
-  --sidebar-accent-foreground: oklch(0.65 0.15 200);
-  --sidebar-border: oklch(0.98 0.01 250 / 0.04);
-  --sidebar-ring: oklch(0.65 0.15 200);
+  --sidebar-primary: oklch(0.68 0.16 195);
+  --sidebar-primary-foreground: oklch(0.12 0.015 255);
+  --sidebar-accent: oklch(0.20 0.022 255);
+  --sidebar-accent-foreground: oklch(0.68 0.16 195);
+  --sidebar-border: oklch(0.98 0.01 250 / 0.08);
+  --sidebar-ring: oklch(0.68 0.16 195);
 }
 
 /* ─── Base ────────────────────────────────────── */
@@ -297,8 +297,40 @@
   }
 
   .dark .glass-card {
-    background: oklch(0.075 0.010 220 / 0.65);
-    border: 1px solid oklch(1 0 0 / 0.04);
+    background: oklch(0.155 0.018 255 / 0.75);
+    border: 1px solid oklch(0.98 0.01 250 / 0.08);
+  }
+
+  /* ── Ultra Luxury Surface System ── */
+  .bg-obsidian {
+    background-color: #08090d;
+  }
+
+  .glass-ultra {
+    backdrop-filter: blur(20px) saturate(190%);
+    -webkit-backdrop-filter: blur(20px) saturate(190%);
+    background: linear-gradient(180deg, rgba(22, 26, 38, 0.7) 0%, rgba(12, 14, 21, 0.85) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 16px 36px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  .specular-card {
+    position: relative;
+    background: linear-gradient(180deg, rgba(20, 24, 35, 0.65) 0%, rgba(10, 12, 18, 0.8) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.09), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .specular-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(6, 182, 212, 0.35);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 25px -4px rgba(6, 182, 212, 0.2);
+  }
+
+  .luminous-divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(6, 182, 212, 0.25) 50%, transparent 100%);
   }
 
   /* ── Card Image Overlay system ── */

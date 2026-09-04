@@ -54,7 +54,7 @@ export default async function StudioToolPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-[#040508] text-white">
+    <div className="min-h-screen bg-[#08090d] text-white">
       {/* Top Banner */}
       <div className="pt-24 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
         <div className="w-full flex items-center justify-start mb-4">

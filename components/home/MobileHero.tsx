@@ -52,6 +52,17 @@ const MOBILE_GRID_ITEMS = [
 export function MobileHero() {
   return (
     <div className="flex md:hidden flex-col items-center text-center w-full px-2 z-10 relative pt-2 pb-4">
+      {/* ── Editorial Studio Mini Pill ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/[0.08] border border-cyan-400/20 text-cyan-300 text-[10px] font-semibold mb-2"
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+        <span>10,000+ Human-Tested Prompts</span>
+      </motion.div>
+
       {/* ── Small Heading ── */}
       <motion.h1
         initial={{ opacity: 0, y: 10 }}
@@ -59,7 +70,7 @@ export function MobileHero() {
         transition={{ duration: 0.4 }}
         className="text-xl font-extrabold tracking-tight text-white mb-1"
       >
-        Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-brand">Premium AI Prompts</span>
+        Crafted <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-amber-200">AI Prompts</span>
       </motion.h1>
 
       {/* ── Short Subtitle ── */}
@@ -69,7 +80,7 @@ export function MobileHero() {
         transition={{ duration: 0.4, delay: 0.05 }}
         className="text-xs text-muted-foreground/80 mb-3 font-medium"
       >
-        10,000+ ready-to-copy prompts.
+        Curated for Midjourney, Flux & ChatGPT.
       </motion.p>
 
       {/* ── Compact 3-Column Grid (3 items per line) ── */}
@@ -85,7 +96,7 @@ export function MobileHero() {
             <Link
               key={item.slug}
               href={`/category/${item.slug}`}
-              className={`flex flex-col items-center justify-center p-2 rounded-xl bg-[#090a0f]/90 border border-white/10 ${item.borderGlow} active:scale-95 transition-all duration-200 backdrop-blur-md text-center`}
+              className={`flex flex-col items-center justify-center p-2 rounded-xl bg-[#10131b]/95 border border-white/[0.1] ${item.borderGlow} active:scale-95 transition-all duration-200 backdrop-blur-md text-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]`}
             >
               <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/10 mb-1">
                 <Icon className={`w-4 h-4 ${item.iconColor}`} />

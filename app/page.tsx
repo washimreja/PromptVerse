@@ -39,7 +39,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#040508]">
+    <div className="flex flex-col min-h-screen bg-[#08090d] text-foreground relative selection:bg-cyan-500/25">
       
       {/* 1. Hero Section (Desktop hero with single search bar + Mobile compact dashboard) */}
       <HeroSection />
@@ -49,16 +49,22 @@ export default async function HomePage() {
         <CategoryGrid />
       </div>
 
+      {/* Subtle Luminous Divider */}
+      <div className="luminous-divider max-w-7xl mx-auto my-2 opacity-40" />
+
       {/* 3. Featured Prompt Showcase Gallery (Horizontal continuous marquee) */}
       <PromptCarousel prompts={featured} />
 
-      {/* 4. Content Highlights (Replaces duplicate lower search bar with Trending/New/Pro content picks) */}
+      {/* 4. Content Highlights (Trending/New/Pro content picks) */}
       <ContentHighlights />
 
       {/* Leaderboard Ad */}
       <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-2">
         <AdSlot format="leaderboard" />
       </div>
+
+      {/* Subtle Luminous Divider */}
+      <div className="luminous-divider max-w-7xl mx-auto my-4 opacity-40" />
 
       {/* 5. PromptVerse AI Studio Suite */}
       <AIStudioSuite />

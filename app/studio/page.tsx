@@ -89,7 +89,7 @@ export default function StudioPage() {
   const { openUpgradeModal } = useUpgradeModal();
 
   return (
-    <div className="min-h-screen bg-[#040508] text-white">
+    <div className="min-h-screen bg-[#08090d] text-white">
       {/* Top Banner */}
       <div className="pt-24 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-widest mb-3">

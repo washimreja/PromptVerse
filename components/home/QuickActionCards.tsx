@@ -66,11 +66,11 @@ const QUICK_ACTIONS = [
 
 export function QuickActionCards() {
   return (
-    <section className="py-8 sm:py-12 bg-[#040508] border-b border-white/5">
+    <section className="py-8 sm:py-12 bg-[#08090d] border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-xl mx-auto mb-6 sm:mb-8">
-          <span className="text-[10px] font-black uppercase tracking-widest text-brand mb-1 block">Quick Access</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400 mb-1 block">Quick Access</span>
           <h2 className="text-xl sm:text-2xl font-extrabold text-white">Explore PromptVerse Engine</h2>
         </div>
 
@@ -88,7 +88,7 @@ export function QuickActionCards() {
               >
                 <Link
                   href={item.href}
-                  className="group flex items-center gap-2.5 p-3 rounded-xl bg-[#090a0f] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.03] transition-all duration-300 shadow-md hover:-translate-y-0.5"
+                  className="group flex items-center gap-2.5 p-3.5 rounded-xl bg-[#10131b]/90 border border-white/[0.1] hover:border-cyan-500/40 hover:bg-white/[0.04] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-y-0.5"
                 >
                   <div className={cn("w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105", item.bg)}>
                     <Icon className={cn("h-4 w-4", item.color)} />

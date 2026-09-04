@@ -234,7 +234,7 @@ export function CollectionDetailClient({
 
   if (!collection) {
     return (
-      <div className="min-h-screen bg-[#040508] text-white pt-24 pb-20 flex flex-col items-center justify-center text-center px-4">
+      <div className="min-h-screen bg-[#08090d] text-white pt-24 pb-20 flex flex-col items-center justify-center text-center px-4">
         <div className="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center mb-4">
           <FolderHeart className="w-8 h-8 text-white/40" />
         </div>
@@ -259,7 +259,7 @@ export function CollectionDetailClient({
   });
 
   return (
-    <div className="min-h-screen bg-[#040508] text-white pt-24 pb-24">
+    <div className="min-h-screen bg-[#08090d] text-white pt-24 pb-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation Back */}
